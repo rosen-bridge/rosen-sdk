@@ -1,0 +1,45 @@
+{
+  "name": "@rosen/sdk",
+  "version": "0.1.0",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "prettify": "prettier --write . --ignore-path .gitignore",
+    "lint": "eslint --fix . && npm run prettify",
+    "build": "tsc --build",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "@vitest/coverage-istanbul": "^1.6.0",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "husky": "^7.0.0",
+    "jest": "^27.5.1",
+    "lint-staged": "^11.0.0",
+    "nodemon": "^2.0.9",
+    "prettier": "^2.3.2",
+    "ts-jest": "^27.1.5",
+    "ts-node": "^10.0.0",
+    "tsx": "^4.7.2",
+    "typescript": "^4.3.5",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@emurgo/cardano-serialization-lib-nodejs": "^11.5.0",
+    "@rosen-bridge/json-bigint": "^0.1.0",
+    "@rosen-bridge/minimum-fee": "^0.1.13",
+    "@rosen-bridge/tokens": "^1.0.0",
+    "@rosen-clients/cardano-koios": "^2.0.1",
+    "@rosen-clients/ergo-explorer": "^1.0.3",
+    "ergo-lib-wasm-nodejs": "^0.24.0"
+  }
+}

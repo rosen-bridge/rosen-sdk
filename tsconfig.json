@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.novite.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "./"
+  },
+  "include": [
+    "src",
+    "./tests/test-rosen-tokens.json",
+    "minimumFee.json",
+    "tests"
+  ]
+}
