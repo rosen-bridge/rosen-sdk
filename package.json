@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "prettify": "prettier --write . --ignore-path .gitignore",
     "lint": "eslint --fix . && npm run prettify",
-    "build": "tsc --build",
+    "build": "rimraf ./dist && tsc && tsc-alias",
+    "start": "node --experimental-specifier-resolution=node dist/src/index.js",
     "test": "vitest",
     "type-check": "tsc --noEmit"
   },
@@ -15,7 +17,7 @@
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@types/jest": "^27.5.2",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.12.11",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",
     "@vitest/coverage-istanbul": "^1.6.0",
@@ -29,8 +31,10 @@
     "prettier": "^2.3.2",
     "ts-jest": "^27.1.5",
     "ts-node": "^10.0.0",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.7.2",
     "typescript": "^4.3.5",
+    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"
   },
   "dependencies": {

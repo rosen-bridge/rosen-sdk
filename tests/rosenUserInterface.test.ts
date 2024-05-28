@@ -114,4 +114,15 @@ describe("rosen user interface", () => {
       TokenType.NATIVE
     );
   });
+
+  it("getMinimumTransferAmountForToken", async () => {
+    const fee = await rosenUI.getMinimumTransferAmountForToken(
+      "ergo",
+      1273933,
+      "erg",
+      "cardano"
+    );
+
+    console.log(fee);
+  });
 });
