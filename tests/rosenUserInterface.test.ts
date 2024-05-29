@@ -6,6 +6,30 @@ import minimumFee from "../minimumFee.json";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { TokenType } from "../src/types/tokensType";
 
+const TEST_INPUTS = {
+  ergo: {
+    transferAmount: 100000000000000n,
+    height: 1275209,
+  },
+  cardano: {
+    transferAmount: 100000000000000n,
+    height: 10378915,
+  },
+};
+
+const TEST_RESULT_CONSTANT = {
+  ergo: {
+    minimumFee: 9096452714n,
+    bridgeFee: 500000000000n,
+    networkFee: 1344514729n,
+  },
+  cardano: {
+    minimumFee: 23343482n,
+    bridgeFee: 500000000000n,
+    networkFee: 625451n,
+  },
+};
+
 describe("rosen user interface", () => {
   const rosenUI: RosenUserInterface = new RosenUserInterface(
     tokens,
@@ -115,14 +139,59 @@ describe("rosen user interface", () => {
     );
   });
 
+  /**
+   * Calculates the minimum fee for transferring at a certain
+   * block height
+   */
   it("getMinimumTransferAmountForToken", async () => {
-    const fee = await rosenUI.getMinimumTransferAmountForToken(
+    const ergoMinimumFee = await rosenUI.getMinimumTransferAmountForToken(
       "ergo",
-      1273933,
       "erg",
-      "cardano"
+      "cardano",
+      TEST_INPUTS.ergo.height
+    );
+    const cardanoMinimumFee = await rosenUI.getMinimumTransferAmountForToken(
+      "cardano",
+      "ada",
+      "ergo",
+      TEST_INPUTS.cardano.height
     );
 
-    console.log(fee);
+    assert.equal(ergoMinimumFee, TEST_RESULT_CONSTANT.ergo.minimumFee);
+    assert.equal(cardanoMinimumFee, TEST_RESULT_CONSTANT.cardano.minimumFee);
+  });
+
+  it("getFeeByTransferAmount", async () => {
+    const ergoMinimumFee = await rosenUI.getFeeByTransferAmount(
+      "ergo",
+      "erg",
+      "cardano",
+      TEST_INPUTS.ergo.transferAmount,
+      -1n,
+      TEST_INPUTS.ergo.height
+    );
+
+    const cardanoMinimumFee = await rosenUI.getFeeByTransferAmount(
+      "cardano",
+      "ada",
+      "ergo",
+      TEST_INPUTS.cardano.transferAmount,
+      -1n,
+      TEST_INPUTS.cardano.height
+    );
+
+    assert.equal(ergoMinimumFee.bridgeFee, TEST_RESULT_CONSTANT.ergo.bridgeFee);
+    assert.equal(
+      ergoMinimumFee.networkFee,
+      TEST_RESULT_CONSTANT.ergo.networkFee
+    );
+    assert.equal(
+      cardanoMinimumFee.bridgeFee,
+      TEST_RESULT_CONSTANT.cardano.bridgeFee
+    );
+    assert.equal(
+      cardanoMinimumFee.networkFee,
+      TEST_RESULT_CONSTANT.cardano.networkFee
+    );
   });
 });

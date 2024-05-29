@@ -72,9 +72,9 @@ export interface IRosenUserInterface {
    */
   getMinimumTransferAmountForToken: (
     fromChain: keyof typeof Networks,
-    height: number,
     tokenId: string,
-    toChain: keyof typeof Networks
+    toChain: keyof typeof Networks,
+    height: number
   ) => Promise<bigint>;
 
   /**
@@ -89,11 +89,11 @@ export interface IRosenUserInterface {
    */
   getFeeByTransferAmount: (
     fromChain: keyof typeof Networks,
-    height: number,
     tokenId: string,
     toChain: keyof typeof Networks,
     amount: bigint,
-    recommendedNetworkFee: bigint
+    recommendedNetworkFee: bigint,
+    height: number
   ) => Promise<Fees>;
 }
 
@@ -200,17 +200,13 @@ export class RosenUserInterface implements IRosenUserInterface {
    */
   async getMinimumTransferAmountForToken(
     fromChain: keyof typeof Networks,
-    height: number,
     tokenId: string,
-    toChain: keyof typeof Networks
+    toChain: keyof typeof Networks,
+    height: number = -1
   ): Promise<bigint> {
-    const tokenOnToChainID = this.getTokenIdFromChain(
-      fromChain,
-      tokenId,
-      toChain
-    );
+    const tokenIdOnErgo = this.checkTokenSupported(fromChain, tokenId, toChain);
 
-    const explorerUrl = this.network.GetExplorerUrl(fromChain);
+    const explorerUrl = this.network.GetExplorerUrl("ergo");
 
     const minimumFee = new BridgeMinimumFee(
       explorerUrl,
@@ -218,7 +214,18 @@ export class RosenUserInterface implements IRosenUserInterface {
     );
 
     try {
-      const fees = await minimumFee.getFee(tokenOnToChainID, fromChain, height);
+      var networkHeightForUse = 0;
+      if (height === -1) {
+        networkHeightForUse = await this.network.GetHeight(fromChain);
+      } else {
+        networkHeightForUse = height;
+      }
+
+      const fees = await minimumFee.getFee(
+        tokenIdOnErgo,
+        fromChain,
+        networkHeightForUse
+      );
       const minimumFees: bigint =
         BigInt(fees.bridgeFee) + BigInt(fees.networkFee);
       const networkFeeRatio: bigint = BigIntMath.ceil(
@@ -229,6 +236,7 @@ export class RosenUserInterface implements IRosenUserInterface {
 
       return minimumTransfer;
     } catch (error) {
+      console.log(error);
       throw new FeeRetrievalFailureException("Failed to retrieve minimum fee");
     }
   }
@@ -245,18 +253,14 @@ export class RosenUserInterface implements IRosenUserInterface {
    */
   async getFeeByTransferAmount(
     fromChain: keyof typeof Networks,
-    height: number,
     tokenId: string,
     toChain: keyof typeof Networks,
     amount: bigint,
-    recommendedNetworkFee: bigint
+    recommendedNetworkFee: bigint = -1n,
+    height: number = -1
   ): Promise<Fees> {
-    const tokenOnToChainID = this.getTokenIdFromChain(
-      fromChain,
-      tokenId,
-      toChain
-    );
-    const explorerUrl = this.network.GetExplorerUrl(fromChain);
+    const tokenIdOnErgo = this.checkTokenSupported(fromChain, tokenId, toChain);
+    const explorerUrl = this.network.GetExplorerUrl("ergo");
 
     const minimumFee = new BridgeMinimumFee(
       explorerUrl,
@@ -264,10 +268,16 @@ export class RosenUserInterface implements IRosenUserInterface {
     );
 
     try {
+      var networkHeightForUse = 0;
+      if (height === -1) {
+        networkHeightForUse = await this.network.GetHeight(fromChain);
+      } else {
+        networkHeightForUse = height;
+      }
       const feesInfo = await minimumFee.getFee(
-        tokenOnToChainID,
+        tokenIdOnErgo,
         fromChain,
-        height
+        networkHeightForUse
       );
       const feeRatioDivisor: bigint = feesInfo
         ? BigInt(minimumFee.feeRatioDivisor)
@@ -298,7 +308,11 @@ export class RosenUserInterface implements IRosenUserInterface {
   }
 
   // <utils>
-  getTokenIdFromChain(fromChain: string, tokenId: string, toChain: string) {
+  checkTokenSupported(
+    fromChain: string,
+    tokenId: string,
+    toChain: string
+  ): string {
     const tokens = this.tokenMap.search(fromChain, { tokenId: tokenId });
     if (tokens.length <= 0) {
       throw new TokenNotFoundException();
@@ -307,12 +321,13 @@ export class RosenUserInterface implements IRosenUserInterface {
     const token = tokens[0];
 
     // Check if the chain exists
-    const tokenOnToChain = token[toChain];
-    if (tokenOnToChain === null) {
+    try {
+      this.tokenMap.getID(token, toChain);
+    } catch (error) {
       throw new ChainNotSupportedException();
     }
 
-    return this.tokenMap.getID(tokenOnToChain, toChain);
+    return this.tokenMap.getID(token, "ergo");
   }
   // </utils>
 }

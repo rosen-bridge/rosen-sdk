@@ -34,17 +34,25 @@ export class Network {
     }
   }
 
-  GetHeight(): Height {
-    return {
-      cardano: async () => (await this.cardanoClient.getTip())[0].block_no,
-      ergo: async () =>
-        Number((await this.ergoClient.v1.getApiV1Networkstate()).height),
-      bitcoin: async (): Promise<number> => {
+  async GetHeight(chain: keyof typeof Networks): Promise<number> {
+    switch (chain) {
+      case "cardano": {
+        const cardanoBlock = (await this.cardanoClient.getTip())[0].block_no;
+        return cardanoBlock !== null && cardanoBlock !== undefined
+          ? cardanoBlock
+          : 0;
+      }
+      case "ergo": {
+        return Number((await this.ergoClient.v1.getApiV1Networkstate()).height);
+      }
+      case "bitcoin": {
         const response = await fetch(
           `${this.networkConfig.BitcoinExplorerAPI}/blocks/tip/height`
         );
         return response.json();
-      },
-    };
+      }
+      default:
+        throw new Error("error");
+    }
   }
 }
