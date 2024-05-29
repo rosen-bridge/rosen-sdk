@@ -194,4 +194,33 @@ describe("rosen user interface", () => {
       TEST_RESULT_CONSTANT.cardano.networkFee
     );
   });
+
+  it("getFeeByTransferAmount with Variable network fee", async () => {
+    const variableNetworkFee = 10000000000n;
+    const ergoMinimumFee = await rosenUI.getFeeByTransferAmount(
+      "ergo",
+      "erg",
+      "cardano",
+      TEST_INPUTS.ergo.transferAmount,
+      variableNetworkFee,
+      TEST_INPUTS.ergo.height
+    );
+
+    const cardanoMinimumFee = await rosenUI.getFeeByTransferAmount(
+      "cardano",
+      "ada",
+      "ergo",
+      TEST_INPUTS.cardano.transferAmount,
+      variableNetworkFee,
+      TEST_INPUTS.cardano.height
+    );
+
+    assert.equal(ergoMinimumFee.bridgeFee, TEST_RESULT_CONSTANT.ergo.bridgeFee);
+    assert.equal(ergoMinimumFee.networkFee, variableNetworkFee);
+    assert.equal(
+      cardanoMinimumFee.bridgeFee,
+      TEST_RESULT_CONSTANT.cardano.bridgeFee
+    );
+    assert.equal(cardanoMinimumFee.networkFee, variableNetworkFee);
+  });
 });

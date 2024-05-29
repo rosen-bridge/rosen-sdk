@@ -157,12 +157,12 @@ public getTokenDetailsOnTargetChain: (chain: string, tokenId: string, targetChai
  * calculates the minimum allowed transfer for a token based
  * on minimum bridge fee and network fee on a specific height
  * @param fromChain
- * @param height blockchain height of fromChain
  * @param tokenId token id on fromChain
  * @param toChain
+ * @param height blockchain height of fromChain
  * @returns the minimum allowed transfer
  */
-public getMinimumTransferAmountForToken: (fromChain: string, height: number, tokenId: string, toChain: string) => bigint;
+public getMinimumTransferAmountForToken: (fromChain: string, tokenId: string, toChain: string, height: number) => bigint;
 ```
 
 #### `getFeeByTransferAmount`
@@ -192,14 +192,14 @@ public getMinimumTransferAmountForToken: (fromChain: string, height: number, tok
 /**
  * gets list of chains that supports a token
  * @param fromChain
- * @param height blockchain height of fromChain
  * @param tokenId token id on fromChain
  * @param toChain
  * @param amount transfer amount
  * @param recommendedNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getAssetNetworkFee` function of toChain)
+ * @param height blockchain height of fromChain
  * @returns the bridge and network fee
  */
-public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: string, toChain: string, amount: bigint, recommendedNetworkFee: bigint): { bridgeFee: bigint, networkFee: bigint };
+public getFeeByTransferAmount: (fromChain: string, tokenId: string, toChain: string, amount: bigint, recommendedNetworkFee: bigint, height: number): { bridgeFee: bigint, networkFee: bigint };
 ```
 
 ### Chain-Specific
