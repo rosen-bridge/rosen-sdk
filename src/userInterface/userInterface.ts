@@ -17,6 +17,7 @@ import {
   TokenNotFoundException,
 } from "../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
+import { Residency } from "../types/tokensType";
 
 export class Fees {
   bridgeFee: bigint;
@@ -102,7 +103,7 @@ export interface IRosenUserInterface {
 
   convertFeeToAssetUnit: (
     tokenId: string,
-    toChain: string,
+    toChain: keyof typeof Networks,
     height: number,
     baseNetworkFee: bigint
   ) => Promise<bigint>;
@@ -134,7 +135,7 @@ export class RosenUserInterface implements IRosenUserInterface {
   /**
    * @returns list of supported chains
    */
-  getSupportedChains(): Array<string> {
+  public getSupportedChains(): Array<string> {
     const networks: Array<string> = [];
 
     for (const key in Networks) {
@@ -155,7 +156,7 @@ export class RosenUserInterface implements IRosenUserInterface {
    * @param chain
    * @returns the list of supported tokens
    */
-  getChainSupportedTokens(chain: string): Array<RosenChainToken> {
+  public getChainSupportedTokens(chain: string): Array<RosenChainToken> {
     return this.tokenMap.search(chain, {}).map((obj) => obj[chain]);
   }
 
@@ -165,7 +166,10 @@ export class RosenUserInterface implements IRosenUserInterface {
    * @param tokenId token id on the given chain
    * @returns the list of chains that support
    */
-  getAvailableChainsForToken(chain: string, tokenId: string): Array<string> {
+  public getAvailableChainsForToken(
+    chain: string,
+    tokenId: string
+  ): Array<string> {
     // 1. Get the RosenChainToken
     const tokens = this.tokenMap.search(chain, { tokenId: tokenId });
 
@@ -186,7 +190,7 @@ export class RosenUserInterface implements IRosenUserInterface {
    * @param targetChain
    * @returns the token details
    */
-  getTokenDetailsOnTargetChain(
+  public getTokenDetailsOnTargetChain(
     chain: string,
     tokenId: string,
     targetChain: string
@@ -212,41 +216,22 @@ export class RosenUserInterface implements IRosenUserInterface {
    * @param toChain
    * @returns the minimum allowed transfer
    */
-  async getMinimumTransferAmountForToken(
+  public async getMinimumTransferAmountForToken(
     fromChain: keyof typeof Networks,
     tokenId: string,
     toChain: keyof typeof Networks,
     height: number = -1
   ): Promise<bigint> {
-    const tokenIdOnErgo = this.checkTokenSupported(fromChain, tokenId, toChain);
-
-    const explorerUrl = this.network.GetExplorerUrl("ergo");
-
-    const minimumFee = new MinimumFeeBox(
-      tokenIdOnErgo,
-      this.config.FeeConfigTokenId,
-      this.ergoNetworkType,
-      explorerUrl,
-      this.logger
-    );
-    console.log(this.config.FeeConfigTokenId);
-    console.log(tokenIdOnErgo);
-    console.log(explorerUrl);
-
-    const fetchedBox = await minimumFee.fetchBox();
-    if (!fetchedBox) {
-      console.log("fetch box failure");
-      throw new FeeRetrievalFailureException("Fetch Minimum fee box failed");
-    }
-
     try {
-      var networkHeightForUse = 0;
-      if (height === -1) {
-        networkHeightForUse = await this.network.GetHeight(fromChain);
-      } else {
-        networkHeightForUse = height;
-      }
-      console.log(networkHeightForUse);
+      const tokenIdOnErgo = this.checkTokenSupported(
+        fromChain,
+        tokenId,
+        toChain
+      );
+      var networkHeightForUse = await this.getNetworkHeight(height, fromChain);
+      const minimumFee: MinimumFeeBox = await this.getMinimumFeeBox(
+        tokenIdOnErgo
+      );
 
       const fees: ChainMinimumFee = await minimumFee.getFee(
         fromChain,
@@ -264,8 +249,9 @@ export class RosenUserInterface implements IRosenUserInterface {
 
       return minimumTransfer;
     } catch (error) {
-      console.log(error);
-      throw new FeeRetrievalFailureException("Failed to retrieve minimum fee");
+      throw new FeeRetrievalFailureException(
+        "Failed to retrieve minimum fee: " + error
+      );
     }
   }
 
@@ -279,7 +265,7 @@ export class RosenUserInterface implements IRosenUserInterface {
    * @param recommendedNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
    * @returns the bridge and network fee
    */
-  async getFeeByTransferAmount(
+  public async getFeeByTransferAmount(
     fromChain: keyof typeof Networks,
     tokenId: string,
     toChain: keyof typeof Networks,
@@ -287,36 +273,22 @@ export class RosenUserInterface implements IRosenUserInterface {
     recommendedNetworkFee: bigint = -1n,
     height: number = -1
   ): Promise<Fees> {
-    const tokenIdOnErgo = this.checkTokenSupported(fromChain, tokenId, toChain);
-    const explorerUrl = this.network.GetExplorerUrl("ergo");
-
-    const minimumFee = new MinimumFeeBox(
-      tokenIdOnErgo,
-      this.config.FeeConfigTokenId,
-      this.ergoNetworkType,
-      explorerUrl,
-      this.logger
-    );
-
-    const fetchedBox = await minimumFee.fetchBox();
-    if (!fetchedBox) {
-      console.log("fetch box failure");
-      throw new FeeRetrievalFailureException("Fetch Minimum fee box failed");
-    }
-
     try {
-      var networkHeightForUse = 0;
-      if (height === -1) {
-        networkHeightForUse = await this.network.GetHeight(fromChain);
-      } else {
-        networkHeightForUse = height;
-      }
+      const tokenIdOnErgo = this.checkTokenSupported(
+        fromChain,
+        tokenId,
+        toChain
+      );
+      var networkHeightForUse = await this.getNetworkHeight(height, fromChain);
+      const minimumFee: MinimumFeeBox = await this.getMinimumFeeBox(
+        tokenIdOnErgo
+      );
+
       const feesInfo: ChainMinimumFee = await minimumFee.getFee(
         fromChain,
         networkHeightForUse,
         toChain
       );
-      console.log(feesInfo);
 
       const feeRatioDivisor: bigint = feesInfo
         ? BigInt(feesInfo.feeRatioDivisor)
@@ -342,48 +314,97 @@ export class RosenUserInterface implements IRosenUserInterface {
       const fees = new Fees(bridgeFee, networkFeeToReturn);
       return fees;
     } catch (error) {
+      throw new FeeRetrievalFailureException(
+        "Failed to retrieve fee: " + error
+      );
+    }
+  }
+
+  /**
+   * converts base network fee for a chain to the given asset unit
+   * @param tokenId
+   * @param toChain
+   * @param height blockchain height of toChain
+   * @param baseNetworkFee base network fee in toChain native token unit
+   * @returns the network fee in asset unit
+   */
+  public async convertFeeToAssetUnit(
+    tokenId: string,
+    toChain: keyof typeof Networks,
+    height: number,
+    baseNetworkFee: bigint
+  ): Promise<bigint> {
+    try {
+      // 1. Search the token in the token map
+      const tokens = this.tokenMap.search(toChain, { tokenId: tokenId });
+
+      // 1a. If an empty list is returned, throw an error
+      if (tokens.length <= 0) {
+        throw new TokenNotFoundException();
+      }
+
+      // 2. Get the first element of the list
+      const token = tokens[0];
+      // 2a. If the target chain is not on the list of its keys, throw an error
+      if (!token[toChain]) {
+        throw new ChainNotSupportedException();
+      }
+
+      // 3. Get the corresponding tokenId on the ergo network using this object
+      // and the getID function of the token map
+      const tokenIdOnErgo: string = this.tokenMap.getID(token, "ergo");
+
+      // 4. Search the native token of the target chain in the token map
+      const nativeTokens = this.tokenMap
+        .search(toChain, {})
+        .filter(
+          (searchedNativeTokens) =>
+            searchedNativeTokens[toChain]?.metaData.type === Residency.native
+        );
+
+      if (nativeTokens.length <= 0) {
+        throw new Error("Native token not found");
+      }
+
+      // 5. Get the first element of the list
+      const nativeToken = nativeTokens[0];
+
+      // 6. Get the corresponding token ID on the Ergo network using this object and the
+      // 'getID'
+      const nativeTokenIdOnErgo: string = this.tokenMap.getID(
+        nativeToken,
+        "ergo"
+      );
+
+      const minimumFeeForSelectedToken = await this.getMinimumFeeBox(tokenId);
+      const minimumFeeForNativeChainToken = await this.getMinimumFeeBox(
+        nativeTokenIdOnErgo
+      );
+
+      var networkHeightForUse = await this.getNetworkHeight(height, toChain);
+      const selectedTokenFeesInfo: ChainMinimumFee =
+        await minimumFeeForSelectedToken.getFee(
+          toChain,
+          networkHeightForUse,
+          toChain
+        );
+      const nativeTokenFeesInfo: ChainMinimumFee =
+        await minimumFeeForNativeChainToken.getFee(
+          toChain,
+          networkHeightForUse,
+          toChain
+        );
+
+      console.log(selectedTokenFeesInfo);
+      console.log(nativeTokenFeesInfo);
+    } catch (error) {
       console.log(error);
       throw new FeeRetrievalFailureException();
     }
   }
 
-  async convertFeeToAssetUnit(
-    tokenId: string,
-    toChain: string,
-    height: number,
-    baseNetworkFee: bigint
-  ): Promise<bigint> {
-    const tokenOnErgo = this.checkTokenSupported(toChain, tokenId, toChain);
-
-    const tokens = this.tokenMap.search(toChain, { tokenId: tokenId });
-    const tokenOnTargetChain = tokens[0];
-    const explorerUrl = this.network.GetExplorerUrl("ergo");
-
-    const minimumFee = new MinimumFeeBox(
-      tokenId,
-      this.config.FeeConfigTokenId,
-      ErgoNetworkType.explorer,
-      explorerUrl,
-      this.logger
-    );
-
-    const fetchedBox = await minimumFee.fetchBox();
-    if (!fetchedBox) {
-      console.log("fetch box failure");
-      throw new FeeRetrievalFailureException("Fetch Minimum fee box failed");
-    }
-
-    try {
-      const nativeRsnRatio = minimumFee.getFee;
-    } catch (error) {
-      throw new FeeRetrievalFailureException();
-    }
-
-    throw new Error("Not Implemented");
-  }
-
   // <utils>
-  checkTokenSupported(
+  private checkTokenSupported(
     fromChain: string,
     tokenId: string,
     toChain: string
@@ -403,6 +424,36 @@ export class RosenUserInterface implements IRosenUserInterface {
     }
 
     return this.tokenMap.getID(token, "ergo");
+  }
+
+  private async getNetworkHeight(
+    height: number,
+    chain: keyof typeof Networks
+  ): Promise<number> {
+    if (height === -1) {
+      return await this.network.GetHeight(chain);
+    } else {
+      return height;
+    }
+  }
+
+  private async getMinimumFeeBox(tokenId: string): Promise<MinimumFeeBox> {
+    const explorerUrl = this.network.GetExplorerUrl("ergo");
+
+    const minimumFee = new MinimumFeeBox(
+      tokenId,
+      this.config.FeeConfigTokenId,
+      this.ergoNetworkType,
+      explorerUrl,
+      this.logger
+    );
+
+    const fetchedBox = await minimumFee.fetchBox();
+    if (!fetchedBox) {
+      throw new FeeRetrievalFailureException("Fetch Minimum fee box failed");
+    }
+
+    return minimumFee;
   }
   // </utils>
 }

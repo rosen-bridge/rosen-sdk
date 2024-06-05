@@ -6,6 +6,8 @@ import loenConfig from "../loen-config.json";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { TokenType } from "../src/types/tokensType";
 import { LoenRosenSDKConfig } from "../src/config/RosenSDKConfig";
+import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
+import { RosenChains } from "../src";
 
 const TEST_INPUTS = {
   ergo: {
@@ -20,14 +22,14 @@ const TEST_INPUTS = {
 
 const TEST_RESULT_CONSTANT = {
   ergo: {
-    minimumFee: 9096452714n,
-    bridgeFee: 500000000000n,
-    networkFee: 1344514729n,
+    minimumFee: 500000000n,
+    bridgeFee: 1000000000000n,
+    networkFee: 250000000n,
   },
   cardano: {
-    minimumFee: 23343482n,
-    bridgeFee: 500000000000n,
-    networkFee: 625451n,
+    minimumFee: 4800000n,
+    bridgeFee: 1000000000000n,
+    networkFee: 800000n,
   },
 };
 
@@ -36,7 +38,7 @@ describe("rosen user interface", () => {
     // @ts-ignore
     tokens,
     loenConfig.tokens.RSNRatioNFT,
-    minimumFee.addresses.MinimumFeeAddress,
+    ErgoNetworkType.explorer,
     LoenRosenSDKConfig
   );
 
@@ -225,5 +227,16 @@ describe("rosen user interface", () => {
       TEST_RESULT_CONSTANT.cardano.bridgeFee
     );
     assert.equal(cardanoMinimumFee.networkFee, variableNetworkFee);
+  });
+
+  it("getFeeByTransferAmount with Variable network fee", async () => {
+    const wrappedAdaTokenId =
+      "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e";
+    const convertFeeToAssetUnit = await rosenUI.convertFeeToAssetUnit(
+      wrappedAdaTokenId,
+      "cardano",
+      -1,
+      RosenChains.getBaseNetworkFee("cardano")
+    );
   });
 });
