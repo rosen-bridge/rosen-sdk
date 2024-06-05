@@ -138,12 +138,12 @@ A simple version of this function is available at [`@rosen-bridge/ui` GitHub](ht
  * @returns hex representation of the unsigned tx
  */
 export const generateLockTransaction = async (
+  changeAddress: string,
+  lockAddress: string,
   protocolParams: CardanoProtocolParams,
   utxoIterator:
     | AsyncIterator<CardanoUtxo, undefined>
     | Iterator<CardanoUtxo, undefined>,
-  lockAddress: string,
-  changeAddress: string,
   policyIdHex: string,
   assetNameHex: string,
   amountString: string,

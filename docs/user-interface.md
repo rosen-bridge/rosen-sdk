@@ -15,6 +15,7 @@ This document states the required functionality in Rosen SDK alongside the sugge
     - [getTokenDetailsOnTargetChain](#gettokendetailsontargetchain)
     - [getMinimumTransferAmountForToken](#getminimumtransferamountfortoken)
     - [getFeeByTransferAmount](#getfeebytransferamount)
+    - [convertFeeToAssetUnit](#convertfeetoassetunit)
   - [Chain-Specific](#chain-specific)
     - [Ergo](#ergo)
     - [Cardano](#cardano)
@@ -29,8 +30,9 @@ This document states the required functionality in Rosen SDK alongside the sugge
   4. `getTokenDetailsOnTargetChain`: returns details of an asset on the given chain (such as name, decimals, id, ...)
   5. `getMinimumTransferAmountForToken`: returns the minimum allowed transfer for an asset
   6. `getFeeByTransferAmount`: returns bridge fee and network fee for a transfer request
+  7. `convertFeeToAssetUnit`: converts base network fee for a chain to the asset unit
 - Chain-Specific:
-  1. `getAssetNetworkFee`: returns network fee for an asset
+  1. `getBaseNetworkFee`: returns network fee in native-token unit
   2. `generateLockTransaction`: returns an unsigned transaction for a transfer request
 
 ## Suggested Structure
@@ -54,12 +56,18 @@ export class RosenUserInterface {
   tokenMap: TokenMap;
   minimumFeeNFT: string;
   minimumFeeAddress: string;
+  // these two variables are used to generate Ergo client in order to fetch minimum-fee boxes from the blockchain
+  ergoNetworkType: ErgoNetworkType; // available in @rosen-bridge/minimum-fee
+  networkUrl: string;
 
   // get and init above variables in constructor
   constructor (
     tokens: RosenTokens,
     minimumFeeNFT: string,
-    minimumFeeAddress: string
+    minimumFeeAddress: string,
+    ergoNetworkType: ErgoNetworkType,
+    networkUrl: string,
+    logger?: AbstractLogger
   ) {
     ...
   }
@@ -140,7 +148,7 @@ public getTokenDetailsOnTargetChain: (chain: string, tokenId: string, targetChai
 - Get the first element of the list
   - If the target chain is not on the list of its keys, throw an error
 - Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
-- Get minimum bridge fee, network fee and fee ratio for the token using `@rosen-bridge/minimum-fee` package
+- Get the minimum bridge fee, network fee and fee ratio for the token using the `@rosen-bridge/minimum-fee` package
 - Calculate minimum transfer using this formula:
 
   - $mt$: minimum transfer
@@ -157,12 +165,12 @@ public getTokenDetailsOnTargetChain: (chain: string, tokenId: string, targetChai
  * calculates the minimum allowed transfer for a token based
  * on minimum bridge fee and network fee on a specific height
  * @param fromChain
+ * @param height blockchain height of fromChain
  * @param tokenId token id on fromChain
  * @param toChain
- * @param height blockchain height of fromChain
  * @returns the minimum allowed transfer
  */
-public getMinimumTransferAmountForToken: (fromChain: string, tokenId: string, toChain: string, height: number) => bigint;
+public getMinimumTransferAmountForToken: (fromChain: string, height: number, tokenId: string, toChain: string) => bigint;
 ```
 
 #### `getFeeByTransferAmount`
@@ -172,7 +180,8 @@ public getMinimumTransferAmountForToken: (fromChain: string, tokenId: string, to
 - Get the first element of the list
   - If the target chain is not on the list of its keys, throw an error
 - Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
-- Get minimum bridge fee, network fee and fee ratio for the token using `@rosen-bridge/minimum-fee` package
+- Get the minimum bridge fee, network fee and fee ratio for the token using the `@rosen-bridge/minimum-fee` package
+- Convert recommendedNetworkFee to the asset unit using the `convertFeeToAssetUnit` function
 - Calculate bridge fee:
 
   - $mbf$: minimum bridge fee
@@ -184,22 +193,57 @@ public getMinimumTransferAmountForToken: (fromChain: string, tokenId: string, to
 
 - Calculate network fee:
   - $mnf$: minimum network fee
+  - $rnfau$: recommended network fee in asset unit
     $$
-    nf = max(mnf, recommendedNetworkFee)
+    nf = max(mnf, rnfau)
     $$
 
 ```ts
 /**
- * gets list of chains that supports a token
+ * calculates the bridge fee and network fee for a token transfer
  * @param fromChain
+ * @param height blockchain height of fromChain
  * @param tokenId token id on fromChain
  * @param toChain
  * @param amount transfer amount
- * @param recommendedNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getAssetNetworkFee` function of toChain)
- * @param height blockchain height of fromChain
+ * @param recommendedNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
  * @returns the bridge and network fee
  */
-public getFeeByTransferAmount: (fromChain: string, tokenId: string, toChain: string, amount: bigint, recommendedNetworkFee: bigint, height: number): { bridgeFee: bigint, networkFee: bigint };
+public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: string, toChain: string, amount: bigint, recommendedNetworkFee: bigint): { bridgeFee: bigint, networkFee: bigint };
+```
+
+#### `convertFeeToAssetUnit`
+
+- Search the token in the token map
+  - If an empty list is returned, throw an error
+- Get the first element of the list
+  - If the target chain is not on the list of its keys, throw an error
+- Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
+- Search the native token of the target chain in the token map
+- Get the first element of the list
+- Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
+- Get the RSN ratio for the token and the native token using the `@rosen-bridge/minimum-fee` package
+- Convert base network fee to the token unit:
+  - $nr$: native-token (ADA) RSN ratio
+  - $nrdiv$: native-token (ADA) RSN ratio divisor
+  - $ndec$: native-token (ADA) decimals
+  - $ar$: the asset RSN ratio
+  - $ardiv$: the asset RSN ratio divisor
+  - $adec$: the asset decimals
+    $$
+    nf = (baseNetworkFee * 10^{adec} * nr * ardiv) / (ar * 10^{ndec} * nrdiv)
+    $$
+
+```ts
+/**
+ * converts base network fee for a chain to the given asset unit
+ * @param tokenId
+ * @param toChain
+ * @param height blockchain height of toChain
+ * @param baseNetworkFee base network fee in toChain native token unit
+ * @returns the network fee in asset unit
+ */
+public convertFeeToAssetUnit: (tokenId: string, toChain: string, fromChain: string, height: number, baseNetworkFee: bigint) => bigint;
 ```
 
 ### Chain-Specific
@@ -208,11 +252,11 @@ The chain-specific functions are explained in a separate document for each chain
 
 #### Ergo
 
-_TBD. link to Ergo document_
+[**Ergo Specification**](./sdk-ergo.md)
 
 #### Cardano
 
-_TBD. link to Cardano document_
+[**Cardano Specification**](./sdk-cardano.md)
 
 #### Bitcoin
 

@@ -1,15 +1,16 @@
-// import { RosenSDK } from '../RosenSDK'; // Adjust the path based on your structure
 import { it, assert, describe } from "vitest";
 import { RosenUserInterface } from "../src/userInterface/userInterface";
-import tokens from "./test-rosen-tokens.json";
+import tokens from "./test-rosen-loen-tokens.json";
 import minimumFee from "../minimumFee.json";
+import loenConfig from "../loen-config.json";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { TokenType } from "../src/types/tokensType";
+import { LoenRosenSDKConfig } from "../src/config/RosenSDKConfig";
 
 const TEST_INPUTS = {
   ergo: {
     transferAmount: 100000000000000n,
-    height: 1275209,
+    height: 1278805,
   },
   cardano: {
     transferAmount: 100000000000000n,
@@ -32,9 +33,11 @@ const TEST_RESULT_CONSTANT = {
 
 describe("rosen user interface", () => {
   const rosenUI: RosenUserInterface = new RosenUserInterface(
+    // @ts-ignore
     tokens,
-    minimumFee.tokens.RSNRatioNFT,
-    minimumFee.addresses.MinimumFeeAddress
+    loenConfig.tokens.RSNRatioNFT,
+    minimumFee.addresses.MinimumFeeAddress,
+    LoenRosenSDKConfig
   );
 
   it("getSupportedChains", () => {
@@ -106,21 +109,21 @@ describe("rosen user interface", () => {
     };
 
     const rsErgTokenId =
-      "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273455247";
+      "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e";
     const rsADATokenId =
-      "e023c5f382b6e96fbd878f6811aac73345489032157ad5affb84aefd4956c297";
+      "0bf47c19e49944a38948c635c0aef93d89737aa68df5ad881b07c8f9a63e398d";
     checkTokenDetailsOnTargetChain(
       "ergo",
       "erg",
       "cardano",
-      "rsERG",
+      "wrERG-loen",
       TokenType.CIP26
     );
     checkTokenDetailsOnTargetChain(
       "cardano",
       "ada",
       "ergo",
-      "rsADA",
+      "wrADA-loen",
       TokenType.EIPOO4
     );
     checkTokenDetailsOnTargetChain(

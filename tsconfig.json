@@ -17,7 +17,9 @@
   "include": [
     "src",
     "./tests/test-rosen-tokens.json",
+    "./tests/test-rosen-loen-tokens.json",
     "minimumFee.json",
-    "tests"
+    "tests",
+    "loen-config.json"
   ]
 }

@@ -112,10 +112,10 @@ A simple version of this function is available at [`@rosen-bridge/ui` GitHub](ht
  */
 export const generateUnsignedTx = async (
   changeAddress: string,
+  lockAddress: string,
   utxoIterator:
     | AsyncIterator<ErgoBoxProxy, undefined>
     | Iterator<ErgoBoxProxy, undefined>,
-  lockAddress: string,
   toChain: string,
   toAddress: string,
   tokenId: string,

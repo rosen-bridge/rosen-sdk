@@ -24,6 +24,7 @@
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
+    "extensionless": "^1.9.9",
     "husky": "^7.0.0",
     "jest": "^27.5.1",
     "lint-staged": "^11.0.0",
@@ -35,13 +36,13 @@
     "tsx": "^4.7.2",
     "typescript": "^4.3.5",
     "vite-tsconfig-paths": "^4.3.2",
-    "extensionless": "^1.9.9",
     "vitest": "^1.6.0"
   },
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "^11.5.0",
+    "@rosen-bridge/abstract-logger": "^1.0.0",
     "@rosen-bridge/json-bigint": "^0.1.0",
-    "@rosen-bridge/minimum-fee": "^0.1.13",
+    "@rosen-bridge/minimum-fee": "^2.0.1",
     "@rosen-bridge/tokens": "^1.0.0",
     "@rosen-clients/cardano-koios": "^2.0.1",
     "@rosen-clients/ergo-explorer": "^1.0.3",

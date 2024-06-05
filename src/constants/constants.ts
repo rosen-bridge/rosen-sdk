@@ -7,6 +7,9 @@ export const Networks = {
 export const FEE_CONFIG_TOKEN_ID =
   "405cb1483b46340ee1a111aa42eaaffa53451cab3220fe9deb752a03f2ab0b85";
 
+export const LOEN_FEE_CONFIG_TOKEN_ID =
+  "05690d3e7a8daae13495b32af8ab58aaec8a5435f5974f6adf17095d28cac1f5";
+
 export const CARDANO_BASE_TX_URL = "https://cardanoscan.io/transaction/";
 export const ERGO_BASE_TX_URL =
   "https://explorer.ergoplatform.com/transactions/";
