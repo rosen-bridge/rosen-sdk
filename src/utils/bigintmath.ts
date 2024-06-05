@@ -16,4 +16,8 @@ export class BigIntMath {
     const ceilResult = n / d;
     return ceilResult;
   }
+
+  static pow(base: bigint, exponent: bigint): bigint {
+    return base ** exponent;
+  }
 }

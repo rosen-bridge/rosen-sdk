@@ -229,14 +229,32 @@ describe("rosen user interface", () => {
     assert.equal(cardanoMinimumFee.networkFee, variableNetworkFee);
   });
 
-  it("getFeeByTransferAmount with Variable network fee", async () => {
+  /**
+   * Sample tests value
+   * native
+   * nativeRsnRatio: 500000
+   * nativeRsnDivisor: 100000000
+   * nativeDecimals: 6
+   * nativePoweredDecimal: 1000000
+   * asset
+   * assetRsnRatio: 200000
+   * assetRsnDivisor: 10000000000
+   * assetDecimals: 9
+   * assetPoweredDecimal: 1000000000
+   * baseNetworkFee: 3400000
+   * total
+   * networkFeeInNativeToken: 850000000000
+   */
+  it("convertFeeToAssetUnit", async () => {
     const wrappedAdaTokenId =
       "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e";
     const convertFeeToAssetUnit = await rosenUI.convertFeeToAssetUnit(
       wrappedAdaTokenId,
       "cardano",
-      -1,
+      10408366,
       RosenChains.getBaseNetworkFee("cardano")
     );
+
+    assert.equal(convertFeeToAssetUnit, 850000000000n);
   });
 });

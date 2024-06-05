@@ -13,6 +13,7 @@ import { Network } from "../config/Network";
 import { BigIntMath } from "../utils/bigintmath";
 import {
   ChainNotSupportedException,
+  FeeConversionFailureException,
   FeeRetrievalFailureException,
   TokenNotFoundException,
 } from "../errors";
@@ -376,14 +377,18 @@ export class RosenUserInterface implements IRosenUserInterface {
         "ergo"
       );
 
-      const minimumFeeForSelectedToken = await this.getMinimumFeeBox(tokenId);
+      // 7. Get the rsn ratio for the token and the nativetoken using the minimum fee
+      // package
+      const minimumFeeForAssetToken = await this.getMinimumFeeBox(
+        tokenIdOnErgo
+      );
       const minimumFeeForNativeChainToken = await this.getMinimumFeeBox(
         nativeTokenIdOnErgo
       );
 
       var networkHeightForUse = await this.getNetworkHeight(height, toChain);
-      const selectedTokenFeesInfo: ChainMinimumFee =
-        await minimumFeeForSelectedToken.getFee(
+      const assetTokenFeesInfo: ChainMinimumFee =
+        await minimumFeeForAssetToken.getFee(
           toChain,
           networkHeightForUse,
           toChain
@@ -395,15 +400,53 @@ export class RosenUserInterface implements IRosenUserInterface {
           toChain
         );
 
-      console.log(selectedTokenFeesInfo);
-      console.log(nativeTokenFeesInfo);
+      const nativeRsnRatio: bigint = nativeTokenFeesInfo.rsnRatio;
+      const nativeRsnDivisor: bigint = nativeTokenFeesInfo.rsnRatioDivisor;
+      const nativeDecimals: number = nativeToken[toChain].decimals;
+      const assetRsnRatio: bigint = assetTokenFeesInfo.rsnRatio;
+      const assetRsnDivisor: bigint = assetTokenFeesInfo.rsnRatioDivisor;
+      const assetDecimals: number = token[toChain].decimals;
+      const networkFeeInAssetUnitToken: bigint =
+        this.calculateFeeToAssetUnitNetworkFee(
+          nativeRsnRatio,
+          nativeRsnDivisor,
+          nativeDecimals,
+          assetRsnRatio,
+          assetRsnDivisor,
+          assetDecimals,
+          baseNetworkFee
+        );
+
+      return networkFeeInAssetUnitToken;
     } catch (error) {
-      console.log(error);
-      throw new FeeRetrievalFailureException();
+      throw new FeeConversionFailureException(
+        "Failed to convert fee to native network fee: " + error
+      );
     }
   }
 
   // <utils>
+  public calculateFeeToAssetUnitNetworkFee(
+    nativeRsnRatio: bigint,
+    nativeRsnDivisor: bigint,
+    nativeDecimals: number,
+    assetRsnRatio: bigint,
+    assetRsnDivisor: bigint,
+    assetDecimals: number,
+    baseNetworkFee: bigint
+  ): bigint {
+    const nativePoweredDecimal: bigint = BigInt(Math.pow(10, nativeDecimals));
+    const assetPoweredDecimal: bigint = BigInt(Math.pow(10, assetDecimals));
+    const networkFeeInAssetUnitToken: bigint =
+      (baseNetworkFee *
+        assetPoweredDecimal *
+        nativeRsnRatio *
+        assetRsnDivisor) /
+      (assetRsnRatio * nativePoweredDecimal * nativeRsnDivisor);
+
+    return networkFeeInAssetUnitToken;
+  }
+
   private checkTokenSupported(
     fromChain: string,
     tokenId: string,

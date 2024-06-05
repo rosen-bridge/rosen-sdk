@@ -20,4 +20,9 @@ describe("BigIntMath", () => {
     assert.equal(BigIntMath.floor(121n, 3n), 40n);
     assert.equal(BigIntMath.floor(122n, 3n), 40n);
   });
+
+  it("pow", () => {
+    assert.equal(BigIntMath.pow(10n, 3n), 1000n);
+    assert.equal(BigIntMath.pow(2n, 2n), 4n);
+  });
 });

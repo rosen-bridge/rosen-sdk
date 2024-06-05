@@ -1,9 +1,13 @@
 import { ChainNotSupportedException } from "./ChainErrors";
-import { FeeRetrievalFailureException } from "./FeeErrors";
+import {
+  FeeRetrievalFailureException,
+  FeeConversionFailureException,
+} from "./FeeErrors";
 import { TokenNotFoundException } from "./TokenErrors";
 
 export {
   ChainNotSupportedException,
   FeeRetrievalFailureException,
+  FeeConversionFailureException,
   TokenNotFoundException,
 };
