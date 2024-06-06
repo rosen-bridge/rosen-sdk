@@ -474,14 +474,14 @@ export class RosenUserInterface implements IRosenUserInterface {
     chain: keyof typeof Networks
   ): Promise<number> {
     if (height === -1) {
-      return await this.network.GetHeight(chain);
+      return await this.network.getHeight(chain);
     } else {
       return height;
     }
   }
 
   private async getMinimumFeeBox(tokenId: string): Promise<MinimumFeeBox> {
-    const explorerUrl = this.network.GetExplorerUrl("ergo");
+    const explorerUrl = this.network.getExplorerUrl("ergo");
 
     const minimumFee = new MinimumFeeBox(
       tokenId,

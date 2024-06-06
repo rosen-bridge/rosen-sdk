@@ -1,7 +1,7 @@
 import { Networks } from "./constants/constants";
 import { IRosenUserInterface, RosenUserInterface } from "./userInterface";
 import { IRosenChain } from "./types/chainTypes";
-import { RosenChains } from "./chains";
+import { RosenChains, ErgoRosenSDK, CardanoRosenSDK } from "./chains";
 
 // index.ts
 export {
@@ -10,4 +10,6 @@ export {
   RosenUserInterface,
   IRosenChain,
   RosenChains,
+  ErgoRosenSDK,
+  CardanoRosenSDK,
 };

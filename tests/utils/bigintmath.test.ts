@@ -1,6 +1,5 @@
-// import { RosenSDK } from '../RosenSDK'; // Adjust the path based on your structure
 import { it, assert, describe } from "vitest";
-import { BigIntMath } from "../src/utils/bigintmath";
+import { BigIntMath } from "../../src/utils/bigintmath";
 
 describe("BigIntMath", () => {
   it("max", () => {

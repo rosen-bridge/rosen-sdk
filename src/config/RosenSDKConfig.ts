@@ -27,11 +27,13 @@ export const LoenRosenSDKConfig = {
   FeeConfigTokenId: LOEN_FEE_CONFIG_TOKEN_ID,
 };
 
+export const DefaultNetworkConfig = {
+  CardanoExplorerAPI: CARDANO_EXPLORER_URL,
+  ErgoExplorerAPI: ERGO_EXPLORER_URL,
+  BitcoinExplorerAPI: BITCOIN_EXPLORER_URL,
+};
+
 export const DefaultRosenSDKConfig = {
-  NetworkConfig: {
-    CardanoExplorerAPI: CARDANO_EXPLORER_URL,
-    ErgoExplorerAPI: ERGO_EXPLORER_URL,
-    BitcoinExplorerAPI: BITCOIN_EXPLORER_URL,
-  },
+  NetworkConfig: DefaultNetworkConfig,
   FeeConfigTokenId: FEE_CONFIG_TOKEN_ID,
 };

@@ -1,13 +1,12 @@
 import { it, assert, describe } from "vitest";
-import { RosenUserInterface } from "../src/userInterface/userInterface";
-import tokens from "./test-rosen-loen-tokens.json";
-import minimumFee from "../minimumFee.json";
-import loenConfig from "../loen-config.json";
+import { RosenUserInterface } from "../../src/userInterface/userInterface";
+import tokens from "../test-rosen-loen-tokens.json";
+import loenConfig from "../../loen-config.json";
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { TokenType } from "../src/types/tokensType";
-import { LoenRosenSDKConfig } from "../src/config/RosenSDKConfig";
+import { TokenType } from "../../src/types/tokensType";
+import { LoenRosenSDKConfig } from "../../src/config/RosenSDKConfig";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
-import { RosenChains } from "../src";
+import { RosenChains } from "../../src";
 
 const TEST_INPUTS = {
   ergo: {

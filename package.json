@@ -41,6 +41,7 @@
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "^11.5.0",
     "@rosen-bridge/abstract-logger": "^1.0.0",
+    "@rosen-bridge/cardano-utxo-selection": "^1.1.0",
     "@rosen-bridge/json-bigint": "^0.1.0",
     "@rosen-bridge/minimum-fee": "^2.0.1",
     "@rosen-bridge/tokens": "^1.0.0",
