@@ -1,7 +1,7 @@
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
-import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 import { AssetBalance, BoxInfo } from "../types/utxoTypes";
 import { InvalidArgumentException } from "../errors";
+import { ErgoBoxProxy } from "../types/ergo/ergoBox";
 
 export class BoxInfoExtractor {
   private static isCardanoUtxo(

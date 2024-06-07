@@ -3,10 +3,18 @@ import * as wasm from "ergo-lib-wasm-nodejs";
 import { fee, minBoxValue } from "./consts";
 import { AssetBalance, CoveringBoxes } from "../../types/utxoTypes";
 import { SDKNetwork } from "../../utils/sdkNetwork";
-import { ErgoBoxProxy, UnsignedErgoTxProxy } from "@rosen-ui/wallet-api";
 import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { AssetBalanceMath } from "../../utils/assetBalanceMath";
+import { RosenChainToken } from "@rosen-bridge/tokens";
+import { staticImplements } from "../../utils/staticImplements";
+import { IRosenSDK } from "../../types/chainTypes";
+import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
+import { UnsignedErgoTxProxy } from "../../types/ergo/eip-wallet-api";
+import { InvalidArgumentException } from "../../errors";
+import { AbstractLogger } from "@rosen-bridge/abstract-logger";
+import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 
+@staticImplements<IRosenSDK>()
 export class ErgoRosenSDK {
   /**
    * Creates a lock box with Rosen Tx Structure
@@ -84,19 +92,30 @@ export class ErgoRosenSDK {
    * @param networkFee
    */
   static async generateLockTransaction(
+    token: RosenChainToken,
+    toChain: string,
+    toAddress: string,
     changeAddress: string,
-    lockAddress: string,
+    amount: bigint,
+    bridgeFee: bigint,
+    networkFee: bigint,
     utxoIterator:
       | AsyncIterator<ErgoBoxProxy, undefined>
       | Iterator<ErgoBoxProxy, undefined>,
-    toChain: string,
-    toAddress: string,
-    tokenId: string,
-    amount: bigint,
-    bridgeFee: bigint,
-    networkFee: bigint
+    lockAddress: string = LOCK_ADDRESSES.ergo,
+    logger?: AbstractLogger
   ): Promise<UnsignedErgoTxProxy> {
+    if (
+      (utxoIterator as AsyncIterator<ErgoBoxProxy, undefined>) === null ||
+      (utxoIterator as Iterator<ErgoBoxProxy, undefined>) === null
+    ) {
+      throw new InvalidArgumentException(
+        "[Generate Lock Transaction] UtxoIterator does not have ErgoBoxProxy"
+      );
+    }
+
     const height = await SDKNetwork.getHeight("ergo");
+    const tokenId = token.tokenId;
 
     // generate lock box
     const lockAssets: AssetBalance = {

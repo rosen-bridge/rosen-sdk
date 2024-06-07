@@ -4,6 +4,12 @@ import {
   Networks,
 } from "../constants/constants";
 
+/**
+ * Returns the base transaction URL for a given blockchain network.
+ *
+ * @param chain - The blockchain network for which to get the base transaction URL.
+ * @returns The base transaction URL as a string.
+ */
 export const baseTxUrl = (chain: keyof typeof Networks): string => {
   switch (chain) {
     case Networks.ergo:

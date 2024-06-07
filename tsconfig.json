@@ -3,6 +3,7 @@
   "compilerOptions": {
     "target": "esnext",
     "outDir": "dist",
+    "experimentalDecorators": true,
     "moduleResolution": "node",
     "rootDir": "./"
   },

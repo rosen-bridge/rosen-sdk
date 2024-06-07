@@ -1,263 +1,274 @@
-# Rosen SDK Documantation
+# RosenChain SDK Documentation
 
-This document states the required functionality in Rosen SDK alongside the suggested structure and implementation details of it.
+## Overview
 
-## Contents
+The RosenChain SDK (`@rosen/sdk`) provides a set of tools and functions to interact with multiple blockchain networks, including Ergo, Cardano, and Bitcoin. This SDK enables developers to utilize Rosen-Bridge as an underlying technology to transfer assets between blockchain networks.
 
-- [Required Functionality](#required-functionality)
-- [Suggested Structure](#suggested-structure)
-- [Implmentation Details](#implmentation-details)
-  - [Common](#common)
-    - [RosenUserInterface](#rosenuserinterface)
-    - [getSupportedChains](#getsupportedchains)
-    - [getChainSupportedTokens](#getchainsupportedtokens)
-    - [getAvailableChainsForToken](#getavailablechainsfortoken)
-    - [getTokenDetailsOnTargetChain](#gettokendetailsontargetchain)
-    - [getMinimumTransferAmountForToken](#getminimumtransferamountfortoken)
-    - [getFeeByTransferAmount](#getfeebytransferamount)
-    - [convertFeeToAssetUnit](#convertfeetoassetunit)
-  - [Chain-Specific](#chain-specific)
-    - [Ergo](#ergo)
-    - [Cardano](#cardano)
-    - [Bitcoin](#bitcoin)
+## Installation
 
-## Required Functionality
+To install the RosenChain SDK, use the following command:
 
-- Common:
-  1. `getSupportedChains`: returns list of supported chains
-  2. `getChainSupportedTokens`: returns the list of supported tokens for a chain
-  3. `getAvailableChainsForToken`: returns the list of chains that support an asset
-  4. `getTokenDetailsOnTargetChain`: returns details of an asset on the given chain (such as name, decimals, id, ...)
-  5. `getMinimumTransferAmountForToken`: returns the minimum allowed transfer for an asset
-  6. `getFeeByTransferAmount`: returns bridge fee and network fee for a transfer request
-  7. `convertFeeToAssetUnit`: converts base network fee for a chain to the asset unit
-- Chain-Specific:
-  1. `getBaseNetworkFee`: returns network fee in native-token unit
-  2. `generateLockTransaction`: returns an unsigned transaction for a transfer request
-
-## Suggested Structure
-
-We suggest a mono-repo structure for more organized and easier maintenance. The repo contains a package for each supported chain that implements the required chain-specific functions.
-
-There is a core package that implements common functions. It also re-exports the chain-specific packages.
-
-As almost all of the common functions need the list of supported tokens which is available in the `tokens.json` file, implementing common functions in a class facilitates interacting with them.
-
-## Implmentation Details
-
-### Common
-
-#### `RosenUserInterface`
-
-Implementing a base class that contains the common functions. It gets the required parameters on initialization, such as the list of supported tokens.
-
-```ts
-export class RosenUserInterface {
-  tokenMap: TokenMap;
-  minimumFeeNFT: string;
-  minimumFeeAddress: string;
-  // these two variables are used to generate Ergo client in order to fetch minimum-fee boxes from the blockchain
-  ergoNetworkType: ErgoNetworkType; // available in @rosen-bridge/minimum-fee
-  networkUrl: string;
-
-  // get and init above variables in constructor
-  constructor (
-    tokens: RosenTokens,
-    minimumFeeNFT: string,
-    minimumFeeAddress: string,
-    ergoNetworkType: ErgoNetworkType,
-    networkUrl: string,
-    logger?: AbstractLogger
-  ) {
-    ...
-  }
-
-  // common functions
-  ...
-}
+```bash
+npm install @rosen/sdk
 ```
 
-#### `getSupportedChains`
+## Getting Started
 
-The list of supported chains can be hard-coded or fetched from the token map. Hard-coded seems more reasonable since the chain-specific functions are also re-exported in the package.
+### Importing the SDK
 
-```ts
-/**
- * @returns list of supported chains
- */
-public getSupportedChains = (): Array<string> => SUPPORTED_CHAINS;
+To use the SDK, import the necessary modules into your project:
+
+```typescript
+import {
+  ErgoRosenChain,
+  CardanoRosenChain,
+  BitcoinRosenChain,
+  RosenChains,
+  RosenUserInterface,
+} from "@rosen/sdk";
 ```
 
-#### `getChainSupportedTokens`
+## Environment Variables
 
-- Search the token in the token map
-- Return the expected field (the given chain) for each element of the result
+The package comes with default values for Explorer URLs.
+To utilize your preferred explorer urls, you can set it in the a `.env` file like this:
 
-```ts
-/**
- * gets details of all supported tokens on a chain
- * @param chain
- * @returns the list of supported tokens
- */
-public getChainSupportedTokens = (chain: string): Array<RosenChainToken> => {
-  return this.tokenMap
-    .search(chain, {})
-    .map(obj => obj[chain])
-}
+```
+CARDANO_EXPLORER_API=https://api.koios.rest/api/v1
+ERGO_EXPLORER_API=https://api.ergoplatform.com
+BITCOIN_EXPLORER_API=https://api.koios.rest/api/v1
 ```
 
-#### `getAvailableChainsForToken`
+## Classes and Interfaces
 
-- Search the token in the token map
-  - If an empty list is returned, throw an error
-- Get the first element of the list and return its keys
+### `IRosenUserInterface`
 
-```ts
-/**
- * gets list of chains that supports a token
- * @param chain
- * @param tokenId token id on the given chain
- * @returns the list of chains that support
- */
-public getAvailableChainsForToken: (chain: string, tokenId: string): Array<string>;
+The `IRosenUserInterface` interface defines methods for interacting with supported chains and tokens.
+
+#### Methods
+
+- `getSupportedChains(): Array<string>`: Returns a list of supported chains.
+- `getChainSupportedTokens(chain: string): Array<RosenChainToken>`: Gets details of all supported tokens on a chain.
+- `getAvailableChainsForToken(chain: string, tokenId: string): Array<string>`: Gets a list of chains that support a specific token.
+- `getTokenDetailsOnTargetChain(chain: string, tokenId: string, targetChain: string): RosenChainToken | null`: Gets details of a token on a specific target chain.
+- `getMinimumTransferAmountForToken(fromChain: keyof typeof Networks, tokenId: string, toChain: keyof typeof Networks, height: number): Promise<bigint>`: Calculates the minimum allowed transfer for a token.
+- `getFeeByTransferAmount(fromChain: keyof typeof Networks, tokenId: string, toChain: keyof typeof Networks, amount: bigint, recommendedNetworkFee: bigint, height: number): Promise<Fees>`: Gets the bridge and network fee by transfer amount.
+- `convertFeeToAssetUnit(tokenId: string, toChain: keyof typeof Networks, height: number, baseNetworkFee: bigint): Promise<bigint>`: Converts base network fee for a chain to the given asset unit.
+
+### `RosenUserInterface`
+
+The `RosenUserInterface` class implements the `IRosenUserInterface` and provides methods to interact with supported chains and tokens.
+
+#### Constructor
+
+```typescript
+constructor(
+  tokens: RosenTokens,
+  minimumFeeNFT: string,
+  ergoNetworkType: ErgoNetworkType = ErgoNetworkType.explorer,
+  config: RosenSDKConfig = DefaultRosenSDKConfig,
+  logger?: AbstractLogger
+)
 ```
 
-#### `getTokenDetailsOnTargetChain`
+to utilize this class, you can instantiate it following these steps:
 
-- Search the token in the token map
-  - If an empty list is returned, throw an error
-- Get the first element of the list
-  - If the target chain is not on the list of its keys, throw an error
-- Return value under the target chain key
+1. Retrieve the latest tokens from rosen-bridge
 
-```ts
-/**
- * gets details of an token on a chain
- * @param chain
- * @param tokenId token id on the given chain
- * @param targetChain
- * @returns the token details
- */
-public getTokenDetailsOnTargetChain: (chain: string, tokenId: string, targetChain: string): RosenChainToken;
+```bash
+npx @rosen-bridge/cli download-assets --include-prereleases --chain-type loen --out some/download/path
 ```
 
-#### `getMinimumTransferAmountForToken`
+or download it from this link: https://github.com/rosen-bridge/contract/releases
 
-- Search the token in the token map
-  - If an empty list is returned, throw an error
-- Get the first element of the list
-  - If the target chain is not on the list of its keys, throw an error
-- Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
-- Get the minimum bridge fee, network fee and fee ratio for the token using the `@rosen-bridge/minimum-fee` package
-- Calculate minimum transfer using this formula:
+In our contracts repository releases, there are two types of files: those with names ending in “loen” and those ending in “public-launch”. The “public-launch” files represent the actual bridge. The “loen” files are for specific testing use cases.
 
-  - $mt$: minimum transfer
-  - $mnf$: minimum network fee
-  - $mbf$: minimum bridge fee
-  - $p$: fee ratio
+Please download the appropriate files for your project, ensuring you select the latest prerelease version rather than a stable release. This will ensure you have the most up-to-date features and improvements.
 
-  $$
-  mt = max(mnf + mbf, mnf / (1-p))
-  $$
+2. Instantiate RosenUserInterface class
 
-```ts
-/**
- * calculates the minimum allowed transfer for a token based
- * on minimum bridge fee and network fee on a specific height
- * @param fromChain
- * @param height blockchain height of fromChain
- * @param tokenId token id on fromChain
- * @param toChain
- * @returns the minimum allowed transfer
- */
-public getMinimumTransferAmountForToken: (fromChain: string, height: number, tokenId: string, toChain: string) => bigint;
+```typescript
+import tokens from "../rosen-public-tokens.json";
+import rosenConfig from "../../rosen-config.json";
+import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
+import { RosenUserInterface, DefaultRosenSDKConfig } from "@rosen/sdk";
+
+const rosenUI: RosenUserInterface = new RosenUserInterface(
+  tokens,
+  rosenConfig.tokens.RSNRatioNFT,
+  ErgoNetworkType.explorer,
+  DefaultRosenSDKConfig
+);
 ```
 
-#### `getFeeByTransferAmount`
+#### Methods
 
-- Search the token in the token map
-  - If an empty list is returned, throw an error
-- Get the first element of the list
-  - If the target chain is not on the list of its keys, throw an error
-- Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
-- Get the minimum bridge fee, network fee and fee ratio for the token using the `@rosen-bridge/minimum-fee` package
-- Convert recommendedNetworkFee to the asset unit using the `convertFeeToAssetUnit` function
-- Calculate bridge fee:
+- `getSupportedChains(): Array<string>`: Returns a list of supported chains.
+- `getChainSupportedTokens(chain: string): Array<RosenChainToken>`: Gets details of all supported tokens on a chain.
+- `getAvailableChainsForToken(chain: string, tokenId: string): Array<string>`: Gets a list of chains that support a specific token.
+- `getTokenDetailsOnTargetChain(chain: string, tokenId: string, targetChain: string): RosenChainToken | null`: Gets details of a token on a specific target chain.
+- `getMinimumTransferAmountForToken(fromChain: keyof typeof Networks, tokenId: string, toChain: keyof typeof Networks, height: number): Promise<bigint>`: Calculates the minimum allowed transfer for a token.
+- `getFeeByTransferAmount(fromChain: keyof typeof Networks, tokenId: string, toChain: keyof typeof Networks, amount: bigint, recommendedNetworkFee: bigint, height: number): Promise<Fees>`: Gets the bridge and network fee by transfer amount.
+- `convertFeeToAssetUnit(tokenId: string, toChain: keyof typeof Networks, height: number, baseNetworkFee: bigint): Promise<bigint>`: Converts base network fee for a chain to the given asset unit.
 
-  - $mbf$: minimum bridge fee
-  - $fr$: fee ratio
-  - $frd$: fee ratio divisor
-    $$
-    bf = max(mbf, fr * amount / frd)
-    $$
+### `IRosenChain`
 
-- Calculate network fee:
-  - $mnf$: minimum network fee
-  - $rnfau$: recommended network fee in asset unit
-    $$
-    nf = max(mnf, rnfau)
-    $$
+The `IRosenChain` interface defines methods for interacting with a blockchain network within the Rosen bridge.
 
-```ts
-/**
- * calculates the bridge fee and network fee for a token transfer
- * @param fromChain
- * @param height blockchain height of fromChain
- * @param tokenId token id on fromChain
- * @param toChain
- * @param amount transfer amount
- * @param recommendedNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
- * @returns the bridge and network fee
- */
-public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: string, toChain: string, amount: bigint, recommendedNetworkFee: bigint): { bridgeFee: bigint, networkFee: bigint };
+#### Methods
+
+- `getBaseNetworkFee(): bigint`: Returns the base network fee for the blockchain network.
+- `generateUnsignedBridgeTx(
+  token: RosenChainToken,
+  toChain: string,
+  toAddress: string,
+  changeAddress: string,
+  amount: bigint,
+  bridgeFee: bigint,
+  networkFee: bigint,
+  utxoIterator: AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined> | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>
+): Promise<string | UnsignedErgoTxProxy>`: Generates an unsigned bridge transaction for transferring tokens to another blockchain network.
+
+### `ErgoRosenChain`
+
+The `ErgoRosenChain` class provides methods to interact with the Ergo blockchain within the Rosen bridge.
+
+#### Methods
+
+- `static getBaseNetworkFee(): bigint`: Returns the base network fee for the Ergo blockchain.
+- `static async generateUnsignedBridgeTx(
+  token: RosenChainToken,
+  toChain: string,
+  toAddress: string,
+  changeAddress: string,
+  amount: bigint,
+  bridgeFee: bigint,
+  networkFee: bigint,
+  utxoIterator: AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined> | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
+  lockAddress: string = LOCK_ADDRESSES.ergo,
+  logger?: AbstractLogger
+): Promise<string | UnsignedErgoTxProxy>`: Generates an unsigned bridge transaction for transferring tokens to another blockchain network.
+
+### `CardanoRosenChain`
+
+The `CardanoRosenChain` class provides methods to interact with the Cardano blockchain within the Rosen bridge.
+
+#### Methods
+
+- `static getBaseNetworkFee(): bigint`: Returns the base network fee for the Cardano blockchain.
+- `static async generateUnsignedBridgeTx(
+  token: RosenChainToken,
+  toChain: string,
+  toAddress: string,
+  changeAddress: string,
+  amount: bigint,
+  bridgeFee: bigint,
+  networkFee: bigint,
+  utxoIterator: AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined> | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>
+): Promise<string>`: Generates an unsigned bridge transaction for transferring tokens to another blockchain network.
+
+### `BitcoinRosenChain`
+
+The `BitcoinRosenChain` class provides methods to interact with the Bitcoin blockchain within the Rosen bridge.
+
+#### Methods
+
+- `static getBaseNetworkFee(): bigint`: Returns the base network fee for the Bitcoin blockchain.
+- `static async generateUnsignedBridgeTx(
+  token: RosenChainToken,
+  toChain: string,
+  toAddress: string,
+  changeAddress: string,
+  amount: bigint,
+  bridgeFee: bigint,
+  networkFee: bigint,
+  utxoIterator: AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined> | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>
+): Promise<string>`: Generates an unsigned bridge transaction for transferring tokens to another blockchain network.
+
+## Utilities
+
+### `LOCK_ADDRESSES`
+
+An object containing the lock addresses for different blockchain networks.
+
+#### Example
+
+```typescript
+import { LOCK_ADDRESSES } from "@rosen/sdk";
+
+console.log(LOCK_ADDRESSES.ergo); // Prints the Ergo lock address
+console.log(LOCK_ADDRESSES.cardano); // Prints the Cardano lock address
+console.log(LOCK_ADDRESSES.bitcoin); // Prints the Bitcoin lock address
 ```
 
-#### `convertFeeToAssetUnit`
+### `baseTxUrl`
 
-- Search the token in the token map
-  - If an empty list is returned, throw an error
-- Get the first element of the list
-  - If the target chain is not on the list of its keys, throw an error
-- Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
-- Search the native token of the target chain in the token map
-- Get the first element of the list
-- Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
-- Get the RSN ratio for the token and the native token using the `@rosen-bridge/minimum-fee` package
-- Convert base network fee to the token unit:
-  - $nr$: native-token (ADA) RSN ratio
-  - $nrdiv$: native-token (ADA) RSN ratio divisor
-  - $ndec$: native-token (ADA) decimals
-  - $ar$: the asset RSN ratio
-  - $ardiv$: the asset RSN ratio divisor
-  - $adec$: the asset decimals
-    $$
-    nf = (baseNetworkFee * 10^{adec} * nr * ardiv) / (ar * 10^{ndec} * nrdiv)
-    $$
+Returns the base transaction URL for a given blockchain network.
 
-```ts
-/**
- * converts base network fee for a chain to the given asset unit
- * @param tokenId
- * @param toChain
- * @param height blockchain height of toChain
- * @param baseNetworkFee base network fee in toChain native token unit
- * @returns the network fee in asset unit
- */
-public convertFeeToAssetUnit: (tokenId: string, toChain: string, fromChain: string, height: number, baseNetworkFee: bigint) => bigint;
+#### Parameters
+
+- `chain: keyof typeof Networks`: The blockchain network.
+
+#### Returns
+
+- `string`: The base transaction URL.
+
+#### Example
+
+```typescript
+import { baseTxUrl, Networks } from "@rosen/sdk";
+
+const ergoTxUrl = baseTxUrl(Networks.ergo);
+console.log(ergoTxUrl); // Prints the base transaction URL for Ergo
+
+const cardanoTxUrl = baseTxUrl(Networks.cardano);
+console.log(cardanoTxUrl); // Prints the base transaction URL for Cardano
+
+const bitcoinTxUrl = baseTxUrl(Networks.bitcoin);
+console.log(bitcoinTxUrl); // Prints the base transaction URL for Bitcoin
 ```
 
-### Chain-Specific
+## Example Usage
 
-The chain-specific functions are explained in a separate document for each chain alongside other requirements for that chain.
+### Generating an Unsigned Bridge Transaction
 
-#### Ergo
+```typescript
+import { ErgoRosenChain, RosenChainToken, LOCK_ADDRESSES } from "@rosen/sdk";
 
-[**Ergo Specification**](./sdk-ergo.md)
+// Define the token and transaction parameters
+const token: RosenChainToken = {
+  id: "token-id",
+  name: "Token Name",
+  decimals: 2,
+};
+const toChain = "cardano";
+const toAddress = "addr1..."; // Destination Cardano Address
+const changeAddress = "958fi2"; // Current Chain (Ergo) change address
+const amount = 1000000n;
+const bridgeFee = 50000n;
+const networkFee = 20000n;
+const utxoIterator = getUtxoIterator(); // Assume this function provides the UTXO iterator
 
-#### Cardano
+// Generate the unsigned bridge transaction
+const unsignedTx = await ErgoRosenChain.generateUnsignedBridgeTx(
+  token,
+  toChain,
+  toAddress,
+  changeAddress,
+  amount,
+  bridgeFee,
+  networkFee,
+  utxoIterator,
+  LOCK_ADDRESSES.ergo
+);
 
-[**Cardano Specification**](./sdk-cardano.md)
+console.log(unsignedTx); // Prints the unsigned transaction
+```
 
-#### Bitcoin
+## Conclusion
 
-_TBD. link to Bitcoin document_
+The RosenChain SDK provides a powerful and flexible way to interact with multiple blockchain networks and manage assets within the Rosen bridge. With a variety of utility functions and classes, developers can easily integrate blockchain functionality into their applications.
+
+For more information and detailed API documentation, please refer to the official documentation or contact the support team.
+
+---
