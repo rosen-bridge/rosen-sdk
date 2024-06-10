@@ -493,7 +493,7 @@ export class RosenUserInterface implements IRosenUserInterface {
 
     const fetchedBox = await minimumFee.fetchBox();
     if (!fetchedBox) {
-      throw new FeeRetrievalFailureException("Fetch Minimum fee box failed");
+      throw new FeeRetrievalFailureException(`Failed to fetch Minimum fee box for token [${tokenId}]`);
     }
 
     return minimumFee;
