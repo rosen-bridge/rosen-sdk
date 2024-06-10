@@ -1,4 +1,4 @@
-import { IRosenChain } from "../../types/chainTypes";
+import { IRosenChain } from "../types/chainTypes";
 
 const ERGO_BASE_NETWORK_FEE: bigint = 1300000n;
 

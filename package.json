@@ -9,7 +9,6 @@
     "prettify": "prettier --write . --ignore-path .gitignore",
     "lint": "eslint --fix . && npm run prettify",
     "build": "rimraf ./dist && tsc && tsc-alias",
-    "start": "node --experimental-specifier-resolution=node dist/src/index.js",
     "test": "NODE_OPTIONS=--loader=extensionless vitest",
     "type-check": "tsc --noEmit"
   },
@@ -46,6 +45,6 @@
     "@rosen-bridge/tokens": "^1.0.0",
     "@rosen-clients/cardano-koios": "^2.0.1",
     "@rosen-clients/ergo-explorer": "^1.0.2",
-    "ergo-lib-wasm-nodejs": "^0.24.0"
+    "ergo-lib-wasm-nodejs": "^0.24.1"
   }
 }

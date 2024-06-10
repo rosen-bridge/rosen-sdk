@@ -1,4 +1,4 @@
-import { CardanoProtocolParams, CardanoUtxo } from "../../types/cardanoTypes";
+import { CardanoProtocolParams, CardanoUtxo } from "./types/cardanoTypes";
 
 export class CardanoRosenSDK {
   /**

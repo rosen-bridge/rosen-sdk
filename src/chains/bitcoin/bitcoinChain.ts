@@ -1,4 +1,4 @@
-import { IRosenChain } from "../../types/chainTypes";
+import { IRosenChain } from "../types/chainTypes";
 
 export class BitcoinRosenChain implements IRosenChain {
   getBaseNetworkFee(): bigint {

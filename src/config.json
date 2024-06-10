@@ -1,7 +1,0 @@
-{
-  "FeeConfigTokenId": "405cb1483b46340ee1a111aa42eaaffa53451cab3220fe9deb752a03f2ab0b85",
-  "NetworkConfig": {
-    "CardanoExplorerAPI": "https://api.koios.rest/api/v1",
-    "ErgoExplorerAPI": "https://api.ergoplatform.com"
-  }
-}
