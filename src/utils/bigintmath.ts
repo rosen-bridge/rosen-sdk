@@ -8,13 +8,11 @@ export class BigIntMath {
   }
 
   static ceil(n: bigint, d: bigint): bigint {
-    const ceilResult = n / d + (n % d ? 1n : 0n);
-    return ceilResult;
+    return n / d + (n % d ? 1n : 0n);
   }
 
   static floor(n: bigint, d: bigint): bigint {
-    const ceilResult = n / d;
-    return ceilResult;
+    return n / d;
   }
 
   static pow(base: bigint, exponent: bigint): bigint {

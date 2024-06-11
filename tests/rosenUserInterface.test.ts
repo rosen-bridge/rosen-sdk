@@ -1,14 +1,14 @@
 import { it, assert, describe } from "vitest";
 import { RosenUserInterface } from "../src/userInterface/userInterface";
 import tokens from "./test-rosen-loen-tokens.json";
-import minimumFee from "../minimumFee.json";
-import loenConfig from "../loen-config.json";
-import { RosenChainToken } from "@rosen-bridge/tokens";
-import { TokenType } from "../src/types/tokensType";
-import { LoenRosenSDKConfig } from "../src/config/RosenSDKConfig";
+import { NATIVE_TOKEN, RosenChainToken } from "@rosen-bridge/tokens";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
 import { RosenChains } from "../src";
+import { LoenRosenSDKConfig, testRSNRatioNFT } from "./testConfig";
+import { ERGO_EXPLORER_URL } from "../src/constants/constants";
 
+const EIP4 = "EIP-004";
+const CIP26 = "CIP26";
 const TEST_INPUTS = {
   ergo: {
     transferAmount: 100000000000000n,
@@ -37,8 +37,9 @@ describe("rosen user interface", () => {
   const rosenUI: RosenUserInterface = new RosenUserInterface(
     // @ts-ignore
     tokens,
-    loenConfig.tokens.RSNRatioNFT,
+    testRSNRatioNFT,
     ErgoNetworkType.explorer,
+    ERGO_EXPLORER_URL,
     LoenRosenSDKConfig
   );
 
@@ -61,7 +62,7 @@ describe("rosen user interface", () => {
     const checkChainSupportedTokensMetadataType = (
       chain: string,
       nativeTokenName: string,
-      metadataType: TokenType
+      metadataType: string
     ) => {
       const tokens: Array<RosenChainToken> =
         rosenUI.getChainSupportedTokens(chain);
@@ -73,8 +74,8 @@ describe("rosen user interface", () => {
       });
     };
 
-    checkChainSupportedTokensMetadataType("ergo", "ERG", TokenType.EIPOO4);
-    checkChainSupportedTokensMetadataType("cardano", "ADA", TokenType.CIP26);
+    checkChainSupportedTokensMetadataType("ergo", "ERG", EIP4);
+    checkChainSupportedTokensMetadataType("cardano", "ADA", CIP26);
   });
 
   it("getAvailableChainsForToken", () => {
@@ -91,6 +92,33 @@ describe("rosen user interface", () => {
 
     checkAvailableChainsForToken("cardano", "ada");
     checkAvailableChainsForToken("ergo", "erg");
+  });
+
+  it("checkAvailableChainsForToken against btc", () => {
+    const btcChainsForToken = rosenUI.getAvailableChainsForToken(
+      "bitcoin",
+      "btc"
+    );
+    const isBTCAvailableInErgo = btcChainsForToken.includes("ergo");
+    const isBTCAvailableInCardano = btcChainsForToken.includes("cardano");
+    const isBTCAvailableInBitcoin = btcChainsForToken.includes("bitcoin");
+    const isBTCAvailableInXYZ = btcChainsForToken.includes("xyz");
+
+    assert.isTrue(isBTCAvailableInCardano);
+    assert.isTrue(isBTCAvailableInErgo);
+    assert.isTrue(isBTCAvailableInBitcoin);
+    assert.isFalse(isBTCAvailableInXYZ);
+
+    const rsnChainsForToken = rosenUI.getAvailableChainsForToken("ergo", "erg");
+    const isRsnAvailableInErgo = rsnChainsForToken.includes("ergo");
+    const isRsnAvailableInCardano = rsnChainsForToken.includes("cardano");
+    const isRsnAvailableInBitcoin = rsnChainsForToken.includes("bitcoin");
+    const isRsnAvailableInXYZ = rsnChainsForToken.includes("xyz");
+
+    assert.isTrue(isRsnAvailableInCardano);
+    assert.isTrue(isRsnAvailableInErgo);
+    assert.isFalse(isRsnAvailableInBitcoin);
+    assert.isFalse(isRsnAvailableInXYZ);
   });
 
   it("getTokenDetailsOnTargetChain", () => {
@@ -119,28 +147,28 @@ describe("rosen user interface", () => {
       "erg",
       "cardano",
       "wrERG-loen",
-      TokenType.CIP26
+      CIP26
     );
     checkTokenDetailsOnTargetChain(
       "cardano",
       "ada",
       "ergo",
       "wrADA-loen",
-      TokenType.EIPOO4
+      EIP4
     );
     checkTokenDetailsOnTargetChain(
       "cardano",
       rsErgTokenId,
       "ergo",
       "ERG",
-      TokenType.NATIVE
+      NATIVE_TOKEN
     );
     checkTokenDetailsOnTargetChain(
       "ergo",
       rsADATokenId,
       "cardano",
       "ADA",
-      TokenType.NATIVE
+      NATIVE_TOKEN
     );
   });
 
