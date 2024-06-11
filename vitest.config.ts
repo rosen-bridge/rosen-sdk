@@ -1,13 +1,18 @@
 import { defineConfig } from "vitest/config";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   test: {
+    globals: true,
     coverage: {
-      enabled: true,
+      all: true,
       provider: "istanbul",
-      reporter: ["cobertura"],
+      reporter: "cobertura",
+    },
+    passWithNoTests: true,
+    poolOptions: {
+      threads: {
+        singleThread: true,
+      },
     },
   },
-  plugins: [tsconfigPaths()],
 });

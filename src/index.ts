@@ -1,13 +1,4 @@
-import { Networks } from "./constants/constants";
-import { IRosenUserInterface, RosenUserInterface } from "./userInterface";
-import { IRosenChain } from "./chains/types/chainTypes";
-import { RosenChains } from "./chains";
-
-// index.ts
-export {
-  Networks,
-  IRosenUserInterface,
-  RosenUserInterface,
-  IRosenChain,
-  RosenChains,
-};
+export { Networks } from "./constants/constants";
+export { IRosenUserInterface, RosenUserInterface } from "./userInterface";
+export { IRosenChain } from "./chains/types/chainTypes";
+export { RosenChains } from "./chains";

@@ -1,2 +1,1 @@
-import { RosenUserInterface, IRosenUserInterface } from "./userInterface";
-export { RosenUserInterface, IRosenUserInterface };
+export { RosenUserInterface, IRosenUserInterface } from "./userInterface";
