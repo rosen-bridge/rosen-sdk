@@ -205,13 +205,16 @@ export class RosenUserInterface implements IRosenUserInterface {
     }
 
     const chains = tokensInChain[0];
-    const destChainToken = chains[targetChain];
 
-    if (destChainToken === null) {
+    try {
+      this.tokenMap.getID(chains, targetChain);
+    } catch (error) {
       throw new ChainNotSupportedException(
         "Token is not supported on destination chain"
       );
     }
+
+    const destChainToken = chains[targetChain];
 
     return destChainToken;
   }
@@ -506,7 +509,6 @@ export class RosenUserInterface implements IRosenUserInterface {
         `Failed to fetch Minimum fee box for token [${tokenId}]`
       );
     }
-    console.log(minimumFee);
 
     return minimumFee;
   }

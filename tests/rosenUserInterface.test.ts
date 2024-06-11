@@ -172,6 +172,20 @@ describe("rosen user interface", () => {
     );
   });
 
+  it("getTokenDetailsOnTargetChain chain not supported", () => {
+    const checkTokenDetailsOnTargetChain = (
+      chain: string,
+      tokenId: string,
+      targetChain: string
+    ) => {
+      expect(() =>
+        rosenUI.getTokenDetailsOnTargetChain(chain, tokenId, targetChain)
+      ).toThrowError("Token is not supported on destination chain");
+    };
+
+    checkTokenDetailsOnTargetChain("ergo", "erg", "bitcoin");
+  });
+
   /**
    * Calculates the minimum fee for transferring at a certain
    * block height
