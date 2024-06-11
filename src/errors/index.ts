@@ -4,3 +4,4 @@ export {
   FeeConversionFailureException,
 } from "./FeeErrors";
 export { TokenNotFoundException } from "./TokenErrors";
+export { InvalidArgumentException } from "./CommonErrors";

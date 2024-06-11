@@ -1,11 +1,11 @@
 import { it, assert, describe } from "vitest";
-import { RosenUserInterface } from "../src/userInterface/userInterface";
-import tokens from "./test-rosen-loen-tokens.json";
+import { RosenUserInterface } from "../../src/userInterface/userInterface";
+import tokens from "../test-rosen-loen-tokens.json";
 import { NATIVE_TOKEN, RosenChainToken } from "@rosen-bridge/tokens";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
-import { RosenChains } from "../src";
-import { LoenRosenSDKConfig, testRSNRatioNFT } from "./testConfig";
-import { ERGO_EXPLORER_URL } from "../src/constants/constants";
+import { RosenChains } from "../../src";
+import { LoenRosenSDKConfig, testRSNRatioNFT } from "../testConfig";
+import { ERGO_EXPLORER_URL } from "../../src/constants/constants";
 
 const EIP4 = "EIP-004";
 const CIP26 = "CIP26";

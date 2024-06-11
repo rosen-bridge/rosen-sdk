@@ -21,7 +21,7 @@ export class Network {
     this.networkConfig = networkConfig;
   }
 
-  GetExplorerUrl(chain: keyof typeof Networks): string {
+  getExplorerUrl(chain: keyof typeof Networks): string {
     switch (chain) {
       case "ergo":
         return this.networkConfig.ErgoExplorerAPI;
@@ -34,7 +34,7 @@ export class Network {
     }
   }
 
-  async GetHeight(chain: keyof typeof Networks): Promise<number> {
+  async getHeight(chain: keyof typeof Networks): Promise<number> {
     switch (chain) {
       case "cardano": {
         const cardanoBlock = (await this.cardanoClient.getTip())[0].block_no;

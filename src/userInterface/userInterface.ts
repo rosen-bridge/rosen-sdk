@@ -483,7 +483,7 @@ export class RosenUserInterface implements IRosenUserInterface {
     chain: keyof typeof Networks
   ): Promise<number> {
     if (height === -1) {
-      return await this.network.GetHeight(chain);
+      return await this.network.getHeight(chain);
     } else {
       return height;
     }
