@@ -1,0 +1,128 @@
+{
+  "idKeys": {
+    "ergo": "tokenId",
+    "cardano": "tokenId",
+    "bitcoin": "tokenId"
+  },
+  "tokens": [
+    {
+      "ergo": {
+        "tokenId": "98bc813d77b8b938fddb08f75c5c686ffe38cf1d99a887f91403cc6f0c5c76bf",
+        "name": "rsBTC-loen",
+        "decimals": 8,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "wrapped"
+        }
+      },
+      "cardano": {
+        "tokenId": "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0.72734254432d6c6f656e",
+        "policyId": "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0",
+        "assetName": "72734254432d6c6f656e",
+        "name": "rsBTC-loen",
+        "decimals": 8,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      },
+      "bitcoin": {
+        "tokenId": "btc",
+        "name": "BTC",
+        "decimals": 8,
+        "metaData": {
+          "type": "native",
+          "residency": "native"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "cdf549fccbb09ab8f38ecbf9a5ed37c926707753adf8fed19b039684a0772bfe",
+        "name": "RSN-loen",
+        "decimals": 3,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.777252534e2d6c6f656e",
+        "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
+        "assetName": "777252534e2d6c6f656e",
+        "name": "wrRSN-loen",
+        "decimals": 3,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "erg",
+        "name": "ERG",
+        "decimals": 9,
+        "metaData": {
+          "type": "native",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e",
+        "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
+        "assetName": "77724552472d6c6f656e",
+        "name": "wrERG-loen",
+        "decimals": 9,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "0bf47c19e49944a38948c635c0aef93d89737aa68df5ad881b07c8f9a63e398d",
+        "name": "wrADA-loen",
+        "decimals": 6,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "wrapped"
+        }
+      },
+      "cardano": {
+        "tokenId": "ada",
+        "policyId": "",
+        "assetName": "414441",
+        "name": "ADA",
+        "decimals": 6,
+        "metaData": {
+          "type": "native",
+          "residency": "native"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "9d9887f126735dbce60a4562eb2f8b19a9100f85a0cb1c88fd3963d7a39dec46",
+        "name": "wrToken-loen",
+        "decimals": 2,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "wrapped"
+        }
+      },
+      "cardano": {
+        "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.546f6b656e2d6c6f656e",
+        "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
+        "assetName": "546f6b656e2d6c6f656e",
+        "name": "Token-loen",
+        "decimals": 2,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "native"
+        }
+      }
+    }
+  ]
+}

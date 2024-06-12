@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.novite.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "rootDir": "./"
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  },
+  "include": [
+    "src",
+    "./tests/test-rosen-tokens.json",
+    "./tests/test-rosen-loen-tokens.json",
+    "minimumFee.json",
+    "tests",
+    "loen-config.json"
+  ]
+}

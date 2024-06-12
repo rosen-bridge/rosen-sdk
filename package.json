@@ -1,0 +1,47 @@
+{
+  "name": "@rosen/sdk",
+  "version": "0.1.0",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "prettify": "prettier --write . --ignore-path .gitignore",
+    "lint": "eslint --fix . && npm run prettify",
+    "build": "rimraf ./dist && tsc && tsc-alias",
+    "test": "NODE_OPTIONS=--loader=extensionless vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@types/node": "^20.12.11",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "@vitest/coverage-istanbul": "^1.6.0",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "extensionless": "^1.9.9",
+    "husky": "^7.0.0",
+    "lint-staged": "^11.0.0",
+    "nodemon": "^2.0.9",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.0.0",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.7.2",
+    "typescript": "^4.3.5",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@emurgo/cardano-serialization-lib-nodejs": "^11.5.0",
+    "@rosen-bridge/abstract-logger": "^1.0.0",
+    "@rosen-bridge/json-bigint": "^0.1.0",
+    "@rosen-bridge/minimum-fee": "^2.0.1",
+    "@rosen-bridge/tokens": "^1.0.0",
+    "@rosen-clients/cardano-koios": "^2.0.1",
+    "@rosen-clients/ergo-explorer": "^1.0.2",
+    "ergo-lib-wasm-nodejs": "^0.24.1"
+  }
+}

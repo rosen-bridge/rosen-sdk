@@ -1,0 +1,184 @@
+{
+  "idKeys": {
+    "ergo": "tokenId",
+    "cardano": "tokenId"
+  },
+  "tokens": [
+    {
+      "ergo": {
+        "tokenId": "0cd8c9f416e5b1ca9f986a7f10a84191dfb85941619e49e53c0dc30ebf83324b",
+        "name": "COMET",
+        "decimals": 0,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "d85d4588d4625b370121597ff88f3c1fa66f2a0cb7e4a7a9573a3c3e.7273434f4d4554",
+        "policyId": "d85d4588d4625b370121597ff88f3c1fa66f2a0cb7e4a7a9573a3c3e",
+        "assetName": "7273434f4d4554",
+        "name": "rsCOMET",
+        "decimals": 0,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "003bd19d0187117f130b62e1bcab0939929ff5c7709f843c5c4dd158949285d0",
+        "name": "SigRSV",
+        "decimals": 0,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "e6e5dbd69a741e73b0d89d50c23c96dff38a60ab26dcd40077e23704.7273536967525356",
+        "policyId": "e6e5dbd69a741e73b0d89d50c23c96dff38a60ab26dcd40077e23704",
+        "assetName": "7273536967525356",
+        "name": "rsSigRSV",
+        "decimals": 0,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "e023c5f382b6e96fbd878f6811aac73345489032157ad5affb84aefd4956c297",
+        "name": "rsADA",
+        "decimals": 6,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "wrapped"
+        }
+      },
+      "cardano": {
+        "tokenId": "ada",
+        "policyId": "",
+        "assetName": "414441",
+        "name": "ADA",
+        "decimals": 6,
+        "metaData": {
+          "type": "native",
+          "residency": "native"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "9a06d9e545a41fd51eeffc5e20d818073bf820c635e2a9d922269913e0de369d",
+        "name": "SPF",
+        "decimals": 6,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "bb99f13b062933c326f552db5325355ee2ff3cc795fc2e4ee3b17326.7273535046",
+        "policyId": "bb99f13b062933c326f552db5325355ee2ff3cc795fc2e4ee3b17326",
+        "assetName": "7273535046",
+        "name": "rsSPF",
+        "decimals": 6,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "6ad70cdbf928a2bdd397041a36a5c2490a35beb4d20eabb5666f004b103c7189",
+        "name": "rsHOSKY",
+        "decimals": 0,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "wrapped"
+        }
+      },
+      "cardano": {
+        "tokenId": "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235.484f534b59",
+        "policyId": "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235",
+        "assetName": "484f534b59",
+        "name": "HOSKY",
+        "decimals": 0,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "native"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "8b08cdd5449a9592a9e79711d7d79249d7a03c535d17efaee83e216e80a44c4b",
+        "name": "RSN",
+        "decimals": 3,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.727352534e",
+        "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+        "assetName": "727352534e",
+        "name": "rsRSN",
+        "decimals": 3,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "03faf2cb329f2e90d6d23b58d91bbb6c046aa143261cc21f52fbe2824bfcbf04",
+        "name": "SigUSD",
+        "decimals": 2,
+        "metaData": {
+          "type": "EIP-004",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273536967555344",
+        "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+        "assetName": "7273536967555344",
+        "name": "rsSigUSD",
+        "decimals": 2,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    },
+    {
+      "ergo": {
+        "tokenId": "erg",
+        "name": "ERG",
+        "decimals": 9,
+        "metaData": {
+          "type": "native",
+          "residency": "native"
+        }
+      },
+      "cardano": {
+        "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273455247",
+        "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+        "assetName": "7273455247",
+        "name": "rsERG",
+        "decimals": 9,
+        "metaData": {
+          "type": "CIP26",
+          "residency": "wrapped"
+        }
+      }
+    }
+  ]
+}
