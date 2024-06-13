@@ -1,8 +1,8 @@
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { ErgoBoxProxy } from "./ergo/ergoBox";
-import { UnsignedErgoTxProxy } from "./ergo/eip-wallet-api";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
+import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
+import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 
 /**
  * IRosenChain
@@ -45,7 +45,7 @@ export interface IRosenChain {
       | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
     lockAddress: string,
     logger?: AbstractLogger
-  ) => Promise<string | UnsignedErgoTxProxy>;
+  ) => Promise<string | UnsignedTransaction>;
 }
 
 /**
@@ -81,6 +81,7 @@ export interface IRosenSDK {
       | AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined>
       | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
     lockAddress: string,
+    height: number,
     logger?: AbstractLogger
-  ): Promise<string | UnsignedErgoTxProxy>;
+  ): Promise<string | UnsignedTransaction>;
 }

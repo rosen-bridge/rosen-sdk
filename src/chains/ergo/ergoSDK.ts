@@ -7,12 +7,12 @@ import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { AssetBalanceMath } from "../../utils/assetBalanceMath";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { staticImplements } from "../../utils/staticImplements";
-import { IRosenSDK } from "../../types/chainTypes";
 import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 import { UnsignedErgoTxProxy } from "../../types/ergo/eip-wallet-api";
 import { InvalidArgumentException } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
+import { IRosenSDK } from "../types/chainTypes";
 
 @staticImplements<IRosenSDK>()
 export class ErgoRosenSDK {
@@ -103,8 +103,9 @@ export class ErgoRosenSDK {
       | AsyncIterator<ErgoBoxProxy, undefined>
       | Iterator<ErgoBoxProxy, undefined>,
     lockAddress: string = LOCK_ADDRESSES.ergo,
+    height: number = -1,
     logger?: AbstractLogger
-  ): Promise<UnsignedErgoTxProxy> {
+  ): Promise<wasm.UnsignedTransaction> {
     if (
       (utxoIterator as AsyncIterator<ErgoBoxProxy, undefined>) === null ||
       (utxoIterator as Iterator<ErgoBoxProxy, undefined>) === null
@@ -114,7 +115,12 @@ export class ErgoRosenSDK {
       );
     }
 
-    const height = await SDKNetwork.getHeight("ergo");
+    var networkHeight = height;
+    if (height === -1) {
+      networkHeight = await SDKNetwork.getHeight("ergo");
+    } else {
+      networkHeight = height;
+    }
     const tokenId = token.tokenId;
 
     // generate lock box
@@ -122,6 +128,7 @@ export class ErgoRosenSDK {
       nativeToken: minBoxValue,
       tokens: [],
     };
+
     if (tokenId === "erg") {
       /**
        * TODO: fix ergo native token name
@@ -132,9 +139,10 @@ export class ErgoRosenSDK {
       // lock token
       lockAssets.tokens.push({ id: tokenId, value: amount });
     }
+
     const lockBox = this.createLockBox(
       lockAddress,
-      height,
+      networkHeight,
       tokenId,
       amount,
       toChain,
@@ -143,6 +151,7 @@ export class ErgoRosenSDK {
       bridgeFee,
       networkFee
     );
+
     // calculate required assets to get input boxes
     const requiredAssets = AssetBalanceMath.sum(lockAssets, {
       nativeToken: minBoxValue + fee,
@@ -161,6 +170,7 @@ export class ErgoRosenSDK {
       nativeToken: 0n,
       tokens: [],
     };
+
     // add input boxes to transaction
     const unsignedInputs = new wasm.UnsignedInputs();
     inputs.boxes.forEach((box) => {
@@ -176,23 +186,25 @@ export class ErgoRosenSDK {
     // calculate change box assets and transaction fee
     const changeAssets = AssetBalanceMath.subtract(inputAssets, lockAssets);
     changeAssets.nativeToken -= fee;
-    const changeBox = this.createChangeBox(changeAddress, height, changeAssets);
+    const changeBox = this.createChangeBox(
+      changeAddress,
+      networkHeight,
+      changeAssets
+    );
     const feeBox = wasm.ErgoBoxCandidate.new_miner_fee_box(
       wasm.BoxValue.from_i64(wasm.I64.from_str(fee.toString())),
-      height
+      networkHeight
     );
 
     const txOutputs = new wasm.ErgoBoxCandidates(lockBox);
     txOutputs.add(changeBox);
     txOutputs.add(feeBox);
 
-    const unsignedTx = new wasm.UnsignedTransaction(
+    return new wasm.UnsignedTransaction(
       unsignedInputs,
       new wasm.DataInputs(),
       txOutputs
     );
-
-    return this.unsignedTransactionToProxy(unsignedTx, inputs.boxes);
   }
 
   // <utils>

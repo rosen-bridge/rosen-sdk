@@ -1,2 +1,3 @@
 export { RosenChains } from "./chains";
-export { ErgoRosenSDK, CardanoRosenSDK } from "./ergo/ergoSDK";
+export { ErgoRosenSDK } from "./ergo/ergoSDK";
+export { CardanoRosenSDK } from "./cardano/cardanoSDK";

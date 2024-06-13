@@ -493,7 +493,7 @@ export class RosenUserInterface implements IRosenUserInterface {
     const explorerUrl =
       this.networkUrl !== ""
         ? this.networkUrl
-        : this.network.GetExplorerUrl("ergo");
+        : this.network.getExplorerUrl("ergo");
 
     const minimumFee = new MinimumFeeBox(
       tokenId,

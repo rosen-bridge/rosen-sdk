@@ -1,3 +1,9 @@
+import {
+  BITCOIN_EXPLORER_URL,
+  CARDANO_EXPLORER_URL,
+  ERGO_EXPLORER_URL,
+} from "../constants/constants";
+
 export interface NetworkConfig {
   CardanoExplorerAPI: string;
   ErgoExplorerAPI: string;
@@ -8,3 +14,11 @@ export interface NetworkConfig {
 export interface RosenSDKConfig {
   NetworkConfig: NetworkConfig;
 }
+
+export const DefaultRosenSDKConfig = {
+  NetworkConfig: {
+    CardanoExplorerAPI: CARDANO_EXPLORER_URL,
+    ErgoExplorerAPI: ERGO_EXPLORER_URL,
+    BitcoinExplorerAPI: BITCOIN_EXPLORER_URL,
+  },
+};

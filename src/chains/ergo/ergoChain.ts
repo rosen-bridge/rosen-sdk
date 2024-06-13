@@ -1,5 +1,4 @@
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { IRosenChain } from "../../types/chainTypes";
 import { staticImplements } from "../../utils/staticImplements";
 import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 import { UnsignedErgoTxProxy } from "../../types/ergo/eip-wallet-api";
@@ -7,6 +6,8 @@ import { ErgoRosenSDK } from "./ergoSDK";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
+import { IRosenChain } from "../types/chainTypes";
+import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
 
 const ERGO_BASE_NETWORK_FEE: bigint = 1300000n;
 
@@ -28,7 +29,7 @@ export class ErgoRosenChain {
       | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
     lockAddress: string = LOCK_ADDRESSES.ergo,
     logger?: AbstractLogger
-  ): Promise<string | UnsignedErgoTxProxy> {
+  ): Promise<string | UnsignedTransaction> {
     return await ErgoRosenSDK.generateLockTransaction(
       token,
       toChain,

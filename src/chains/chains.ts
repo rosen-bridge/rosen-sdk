@@ -6,7 +6,7 @@ import { CardanoRosenChain } from "./cardano/cardanoChain";
 import { ErgoRosenChain } from "./ergo/ergoChain";
 import { ErgoBoxProxy } from "../types/ergo/ergoBox";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
-import { UnsignedErgoTxProxy } from "../types/ergo/eip-wallet-api";
+import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
 
 /**
  * RosenChains
@@ -63,7 +63,7 @@ export class RosenChains {
     utxoIterator:
       | AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined>
       | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>
-  ): Promise<string | UnsignedErgoTxProxy> {
+  ): Promise<string | UnsignedTransaction> {
     switch (fromChain) {
       case Networks.ergo:
         return await ErgoRosenChain.generateUnsignedBridgeTx(

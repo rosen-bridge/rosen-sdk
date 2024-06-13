@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.novite.json",
   "compilerOptions": {
+    "module": "esnext",
     "target": "esnext",
     "outDir": "dist",
     "experimentalDecorators": true,
@@ -19,8 +20,8 @@
     "src",
     "./tests/test-rosen-tokens.json",
     "./tests/test-rosen-loen-tokens.json",
-    "minimumFee.json",
-    "tests",
-    "loen-config.json"
+    "./tests/**/**.ts",
+    "./tests/**/**/**.ts",
+    "./tests/assets/**.json"
   ]
 }

@@ -1,8 +1,8 @@
-import { CardanoProtocolParams, CardanoUtxo } from "../../types/cardanoTypes";
 import * as wasm from "@emurgo/cardano-serialization-lib-nodejs";
 import { ADA_POLICY_ID } from "./types";
 import {
   AssetBalance,
+  CardanoUtxo,
   selectCardanoUtxos,
 } from "@rosen-bridge/cardano-utxo-selection";
 import { feeAndMinBoxValue } from "./consts";
@@ -11,10 +11,12 @@ import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import cardanoKoiosClientFactory from "@rosen-clients/cardano-koios";
 import { staticImplements } from "../../utils/staticImplements";
-import { IRosenSDK } from "../../types/chainTypes";
 import { InvalidArgumentException } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
+import { IRosenSDK } from "../types/chainTypes";
+import { CardanoProtocolParams } from "./types/cardanoTypes";
+import { CARDANO_EXPLORER_URL } from "../../constants/constants";
 
 @staticImplements<IRosenSDK>()
 export class CardanoRosenSDK {
@@ -88,6 +90,7 @@ export class CardanoRosenSDK {
       | AsyncIterator<CardanoUtxo, undefined>
       | Iterator<CardanoUtxo, undefined>,
     lockAddress: string = LOCK_ADDRESSES.cardano,
+    height: number = -1,
     logger?: AbstractLogger
   ): Promise<string> {
     if (
@@ -95,7 +98,7 @@ export class CardanoRosenSDK {
       (utxoIterator as Iterator<CardanoUtxo, undefined>) === null
     ) {
       throw new InvalidArgumentException(
-        "[Generate Lock Transaction] UtxoIterator does not have ErgoBoxProxy"
+        "[Generate Lock Transaction] UtxoIterator does not have CardanoUtxo"
       );
     }
     const auxiliaryDataHex = await this.generateLockAuxiliaryData(
@@ -327,9 +330,7 @@ export class CardanoRosenSDK {
    * @returns
    */
   static async getCardanoProtocolParams(): Promise<CardanoProtocolParams> {
-    const cardanoKoiosClient = cardanoKoiosClientFactory(
-      process.env.CARDANO_KOIOS_API!
-    );
+    const cardanoKoiosClient = cardanoKoiosClientFactory(CARDANO_EXPLORER_URL);
     return await cardanoKoiosClient.getEpochParams().then((epochParams) => {
       const params = epochParams[0];
       if (

@@ -1,11 +1,11 @@
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { IRosenChain } from "../../types/chainTypes";
 import { staticImplements } from "../../utils/staticImplements";
-import { UnsignedErgoTxProxy } from "../../types/ergo/eip-wallet-api";
 import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
+import { IRosenChain } from "../types/chainTypes";
+import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
 
 @staticImplements<IRosenChain>()
 export class BitcoinRosenChain {
@@ -26,7 +26,7 @@ export class BitcoinRosenChain {
       | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
     lockAddress: string = LOCK_ADDRESSES.bitcoin,
     logger?: AbstractLogger
-  ): Promise<string | UnsignedErgoTxProxy> {
+  ): Promise<string | UnsignedTransaction> {
     throw new Error("Not Implemented");
   }
 }

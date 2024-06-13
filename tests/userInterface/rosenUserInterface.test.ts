@@ -1,6 +1,6 @@
-import { it, assert, describe } from "vitest";
+import { it, assert, describe, expect } from "vitest";
 import { RosenUserInterface } from "../../src/userInterface/userInterface";
-import tokens from "../test-rosen-loen-tokens.json";
+import tokens from "../assets/test-rosen-loen-tokens.json";
 import { NATIVE_TOKEN, RosenChainToken } from "@rosen-bridge/tokens";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
 import { RosenChains } from "../../src";
