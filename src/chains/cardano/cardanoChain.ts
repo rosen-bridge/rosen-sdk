@@ -38,6 +38,7 @@ export class CardanoRosenChain {
       networkFee,
       utxoIterator as Iterator<CardanoUtxo, undefined>,
       lockAddress,
+      -1,
       logger
     );
   }

@@ -263,7 +263,6 @@ export class ErgoRosenSDK {
       return uncoveredTokens.length > 0 || uncoveredNativeToken > 0n;
     };
 
-    let offset = 0;
     const result: Array<ErgoBoxProxy> = [];
 
     // get boxes until requirements are satisfied
@@ -284,7 +283,6 @@ export class ErgoRosenSDK {
           skipBox = true;
           break;
         }
-        const previousBoxId = boxInfo.id;
         boxInfo = BoxInfoExtractor.getBoxInfo(trackedBox);
       }
 
@@ -320,25 +318,4 @@ export class ErgoRosenSDK {
       boxes: result,
     };
   }
-
-  /**
-   * converts wasm UnsignedTransaction to UnsignedErgoTxProxy format
-   * @param unsignedTx
-   * @param inputs
-   * @returns
-   */
-  private static unsignedTransactionToProxy = (
-    unsignedTx: wasm.UnsignedTransaction,
-    inputs: ErgoBoxProxy[]
-  ): UnsignedErgoTxProxy => {
-    const unsignedErgoTxProxy = unsignedTx.to_js_eip12();
-    unsignedErgoTxProxy.inputs = inputs.map((box) => {
-      return {
-        ...box,
-        extension: {},
-      };
-    });
-    return unsignedErgoTxProxy;
-  };
-  // </utils>
 }
