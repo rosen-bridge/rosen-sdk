@@ -11,7 +11,10 @@ import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import cardanoKoiosClientFactory from "@rosen-clients/cardano-koios";
 import { staticImplements } from "../../utils/staticImplements";
-import { InvalidArgumentException } from "../../errors";
+import {
+  InsufficientAssetsException,
+  InvalidArgumentException,
+} from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 import { IRosenSDK } from "../types/chainTypes";
@@ -193,6 +196,7 @@ export class CardanoRosenSDK {
 
     // add required ADA estimation for tx fee and change box
     requiredAssets.nativeToken += feeAndMinBoxValue;
+
     // get input boxes
     const inputs = await selectCardanoUtxos(
       requiredAssets,
@@ -200,7 +204,8 @@ export class CardanoRosenSDK {
       new Map(),
       utxoIterator
     );
-    if (!inputs.covered) throw Error(`Not enough assets`);
+
+    if (!inputs.covered) throw new InsufficientAssetsException();
     let inputAssets: AssetBalance = {
       nativeToken: 0n,
       tokens: [],

@@ -9,7 +9,10 @@ import { RosenChainToken } from "@rosen-bridge/tokens";
 import { staticImplements } from "../../utils/staticImplements";
 import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 import { UnsignedErgoTxProxy } from "../../types/ergo/eip-wallet-api";
-import { InvalidArgumentException } from "../../errors";
+import {
+  InsufficientAssetsException,
+  InvalidArgumentException,
+} from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 import { IRosenSDK } from "../types/chainTypes";
@@ -165,7 +168,7 @@ export class ErgoRosenSDK {
       new Map(),
       utxoIterator
     );
-    if (!inputs.covered) throw Error(`Not enough assets`);
+    if (!inputs.covered) throw new InsufficientAssetsException();
     let inputAssets: AssetBalance = {
       nativeToken: 0n,
       tokens: [],

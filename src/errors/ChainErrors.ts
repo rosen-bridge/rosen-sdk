@@ -1,4 +1,6 @@
-type ChainErrorName = "CHAIN_NOT_SUPPORTED_EXCEPTION";
+type ChainErrorName =
+  | "CHAIN_NOT_SUPPORTED_EXCEPTION"
+  | "INSUFFICIENT_ASSETS_EXCEPTION";
 
 export class ChainError extends Error {
   name: ChainErrorName;
@@ -24,5 +26,11 @@ export class ChainError extends Error {
 export class ChainNotSupportedException extends ChainError {
   constructor(message?: string) {
     super({ name: "CHAIN_NOT_SUPPORTED_EXCEPTION", message: message ?? "" });
+  }
+}
+
+export class InsufficientAssetsException extends ChainError {
+  constructor(message?: string) {
+    super({ name: "INSUFFICIENT_ASSETS_EXCEPTION", message: message ?? "" });
   }
 }

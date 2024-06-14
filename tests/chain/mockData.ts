@@ -80,13 +80,13 @@ export const blockFrostRosenData = {
     bridgeFee: "1968503938",
     networkFee: "9842520",
     fromAddress:
-      "addr_test1vzg07d2qp3xje0w77f982zkhqey50gjxrsdqh89yx8r7nasu97hr0",
+      "addr1qydwtxthz2nmgjl4cuajhdjfwggdr4kajcwnksxqtsad42psz7up3krtt688fcwzj4le8k7dp5hnsur300h5af9h3fcs2fm358",
     sourceChainTokenId:
-      "ace7bcc2ce705679149746620de3a84660ce57573df54b5a096e39a2.7369676d61",
-    amount: "3000000000",
-    targetChainTokenId: "erg",
-    sourceTxId:
-      "9f00d372e930d685c3b410a10f2bd035cd9a927c4fd8ef8e419c79b210af7ba6",
+      "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0.72734254432d6c6f656e",
+    amount: "9899899",
+    targetChainTokenId:
+      "98bc813d77b8b938fddb08f75c5c686ffe38cf1d99a887f91403cc6f0c5c76bf",
+    sourceTxId: "",
   },
   validAdaLock: {
     toChain: "ergo",
@@ -117,5 +117,20 @@ export const ergoRosenData = {
       "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e",
     sourceTxId:
       "d59413c7500c75b525e30d992ae3869d91ce5a542f3f7c12d9e39af90f7151c8",
+  },
+  bitcoinTx: {
+    toChain: "cardano",
+    toAddress:
+      "addr1qyrgrphdsy7lta2rae2pu8hp5mw2fnpvu8se00rxa6zzmc4sh4gyfkdhpwfq8lnh5l95663d09n3s9crutnc9ywamcvqs5e5m6",
+    bridgeFee: "200000000",
+    networkFee: "1000000",
+    fromAddress: "9hZxV3YNSfbCqS6GEses7DhAVSatvaoNtdsiNvkimPGG2c8fzkG",
+    sourceChainTokenId:
+      "98bc813d77b8b938fddb08f75c5c686ffe38cf1d99a887f91403cc6f0c5c76bf",
+    amount: "384284957",
+    targetChainTokenId:
+      "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0.72734254432d6c6f656e",
+    sourceTxId:
+      "b0a27bf8b8464ee72611f4da97937fd6e03db4ac716654809063ddbc035fbb26",
   },
 };
