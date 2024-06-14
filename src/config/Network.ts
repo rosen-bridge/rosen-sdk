@@ -2,6 +2,8 @@ import { NetworkConfig } from "./RosenSDKConfig";
 import cardanoKoiosClientFactory from "@rosen-clients/cardano-koios";
 import ergoExplorerClientFactory from "@rosen-clients/ergo-explorer";
 import { Networks } from "../constants/constants";
+import { NetworkConnectionException } from "../errors/NetworkErrors";
+import { ChainNotSupportedException } from "../errors";
 
 export interface Height {
   cardano: () => Promise<number | null | undefined>;
@@ -35,24 +37,36 @@ export class Network {
   }
 
   async getHeight(chain: keyof typeof Networks): Promise<number> {
-    switch (chain) {
-      case "cardano": {
-        const cardanoBlock = (await this.cardanoClient.getTip())[0].block_no;
-        return cardanoBlock !== null && cardanoBlock !== undefined
-          ? cardanoBlock
-          : 0;
+    try {
+      switch (chain) {
+        case "cardano": {
+          const cardanoBlock = (await this.cardanoClient.getTip())[0].block_no;
+          return cardanoBlock !== null && cardanoBlock !== undefined
+            ? cardanoBlock
+            : 0;
+        }
+        case "ergo": {
+          return Number(
+            (await this.ergoClient.v1.getApiV1Networkstate()).height
+          );
+        }
+        case "bitcoin": {
+          const response = await fetch(
+            `${this.networkConfig.BitcoinExplorerAPI}/blocks/tip/height`
+          );
+          return response.json();
+        }
+        default:
+          throw new ChainNotSupportedException(
+            `[Network.getHeight] ${chain} is not supported`
+          );
       }
-      case "ergo": {
-        return Number((await this.ergoClient.v1.getApiV1Networkstate()).height);
-      }
-      case "bitcoin": {
-        const response = await fetch(
-          `${this.networkConfig.BitcoinExplorerAPI}/blocks/tip/height`
-        );
-        return response.json();
-      }
-      default:
-        throw new Error("error");
+    } catch (error) {
+      throw new NetworkConnectionException(
+        `[Network.getHeight] Failed to connect to ${chain} network: Explorer url = ${this.getExplorerUrl(
+          chain
+        )}`
+      );
     }
   }
 }

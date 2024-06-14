@@ -8,7 +8,6 @@ import { AssetBalanceMath } from "../../utils/assetBalanceMath";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { staticImplements } from "../../utils/staticImplements";
 import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
-import { UnsignedErgoTxProxy } from "../../types/ergo/eip-wallet-api";
 import {
   InsufficientAssetsException,
   InvalidArgumentException,
@@ -119,11 +118,15 @@ export class ErgoRosenSDK {
     }
 
     var networkHeight = height;
+
+    // Provide user with the option to put in a height, or get
+    // with latest height.
     if (height === -1) {
       networkHeight = await SDKNetwork.getHeight("ergo");
     } else {
       networkHeight = height;
     }
+
     const tokenId = token.tokenId;
 
     // generate lock box
