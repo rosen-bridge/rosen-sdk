@@ -34,7 +34,6 @@
     "ts-node": "^10.0.0",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.7.2",
-    "typeorm": "^0.3.20",
     "typescript": "^4.3.5",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"
