@@ -2,7 +2,7 @@ import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
-import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
+import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
 /**
  * IRosenChain

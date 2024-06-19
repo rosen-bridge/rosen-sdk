@@ -7,7 +7,6 @@ import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { AssetBalanceMath } from "../../utils/assetBalanceMath";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import { staticImplements } from "../../utils/staticImplements";
-import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 import {
   InsufficientAssetsException,
   InvalidArgumentException,
@@ -15,6 +14,7 @@ import {
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 import { IRosenSDK } from "../types/chainTypes";
+import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
 @staticImplements<IRosenSDK>()
 export class ErgoRosenSDK {

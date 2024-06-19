@@ -66,7 +66,7 @@ export interface IRosenUserInterface {
     chain: string,
     tokenId: string,
     targetChain: string
-  ) => RosenChainToken | null;
+  ) => RosenChainToken;
 
   /**
    * calculates the minimum allowed transfer for a token based

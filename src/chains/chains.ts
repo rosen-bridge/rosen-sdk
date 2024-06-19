@@ -4,9 +4,9 @@ import { ChainNotSupportedException } from "../errors";
 import { BitcoinRosenChain } from "./bitcoin/bitcoinChain";
 import { CardanoRosenChain } from "./cardano/cardanoChain";
 import { ErgoRosenChain } from "./ergo/ergoChain";
-import { ErgoBoxProxy } from "../types/ergo/ergoBox";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
+import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
 /**
  * RosenChains

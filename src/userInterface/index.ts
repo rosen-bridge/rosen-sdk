@@ -1,1 +1,1 @@
-export { RosenUserInterface, IRosenUserInterface } from "./userInterface";
+export { RosenUserInterface, IRosenUserInterface, Fees } from "./userInterface";

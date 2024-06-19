@@ -5,13 +5,15 @@ import { LoenRosenSDKConfig, testRSNRatioNFT } from "../testConfig";
 import { ErgoRosenSDK, RosenUserInterface } from "../../src";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
 import { ERGO_EXPLORER_URL } from "../../src/constants/constants";
-import { ErgoBoxProxy } from "../../src/types/ergo/ergoBox";
-import { TokenAmountProxy } from "../../src/types/ergo/tokenAmount";
-import { Registers } from "../../src/types/ergo/registers";
 import { ErgoRosenExtractor } from "@rosen-bridge/rosen-extractor";
 import { Transaction, UnsignedTransaction } from "ergo-lib-wasm-nodejs";
 import { mockInputBox, ergoRosenData } from "./mockData";
 import { InsufficientAssetsException } from "../../src/errors";
+import {
+  ErgoBoxProxy,
+  Registers,
+  TokenAmountProxy,
+} from "@rosen-ui/wallet-api";
 
 const rsBtc = {
   tokenId: "98bc813d77b8b938fddb08f75c5c686ffe38cf1d99a887f91403cc6f0c5c76bf",

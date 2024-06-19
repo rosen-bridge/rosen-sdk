@@ -2,10 +2,10 @@ import { RosenChainToken } from "@rosen-bridge/tokens";
 import { staticImplements } from "../../utils/staticImplements";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { CardanoRosenSDK } from "./cardanoSDK";
-import { ErgoBoxProxy } from "../../types/ergo/ergoBox";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 import { IRosenChain } from "../types/chainTypes";
+import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
 const CARDANO_BASE_NETWORK_FEE: bigint = 3400000n;
 
