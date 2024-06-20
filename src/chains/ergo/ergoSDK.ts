@@ -11,7 +11,6 @@ import {
   InvalidArgumentException,
 } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
-import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 import { selectErgoBoxes } from "@rosen-bridge/ergo-box-selection";
 
@@ -102,7 +101,7 @@ export class ErgoRosenSDK {
     utxoIterator:
       | AsyncIterator<ErgoBoxProxy, undefined>
       | Iterator<ErgoBoxProxy, undefined>,
-    lockAddress: string = LOCK_ADDRESSES.ergo,
+    lockAddress: string,
     height: number = -1,
     logger?: AbstractLogger
   ): Promise<wasm.UnsignedTransaction> {

@@ -15,7 +15,6 @@ import {
   InvalidArgumentException,
 } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
-import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
 import { CardanoProtocolParams } from "./types/cardanoTypes";
 import { CARDANO_EXPLORER_URL } from "../../constants/constants";
 
@@ -101,7 +100,7 @@ export class CardanoRosenSDK {
     utxoIterator:
       | AsyncIterator<CardanoUtxo, undefined>
       | Iterator<CardanoUtxo, undefined>,
-    lockAddress: string = LOCK_ADDRESSES.cardano,
+    lockAddress: string,
     logger?: AbstractLogger
   ): Promise<string> {
     if (

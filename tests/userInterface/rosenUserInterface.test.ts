@@ -3,7 +3,6 @@ import { RosenUserInterface } from "../../src/userInterface/userInterface";
 import tokens from "../assets/test-rosen-loen-tokens.json";
 import { NATIVE_TOKEN, RosenChainToken } from "@rosen-bridge/tokens";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
-import { CardanoRosenSDK, RosenChains } from "../../src";
 import { LoenRosenSDKConfig, testRSNRatioNFT } from "../testConfig";
 import { ERGO_EXPLORER_URL } from "../../src/constants/constants";
 import { CardanoRosenChain } from "../../src/chains/cardano/cardanoChain";
