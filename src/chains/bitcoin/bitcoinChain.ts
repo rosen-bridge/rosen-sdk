@@ -1,15 +1,12 @@
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { staticImplements } from "../../utils/staticImplements";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
-import { IRosenChain } from "../types/chainTypes";
 import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
 import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
-@staticImplements<IRosenChain>()
 export class BitcoinRosenChain {
-  static getBaseNetworkFee(): bigint {
+  static async getBaseNetworkFee(): Promise<bigint> {
     throw new Error("Not Implemented");
   }
 

@@ -31,7 +31,7 @@ import {
 ## Environment Variables
 
 The package comes with default values for Explorer URLs.
-To utilize your preferred explorer urls, you can set it in the a `.env` file like this:
+To utilize your preferred explorer urls, you can set it in the `.env` file like this:
 
 ```
 CARDANO_EXPLORER_API=https://api.koios.rest/api/v1
@@ -71,19 +71,13 @@ constructor(
 )
 ```
 
-to utilize this class, you can instantiate it following these steps:
+to utilize this class, you can instantiate it by following these steps:
 
 1. Retrieve the latest tokens from rosen-bridge
 
 ```bash
-npx @rosen-bridge/cli download-assets --include-prereleases --chain-type loen --out some/download/path
+npx @rosen-bridge/cli download-assets --chain-type public-launch --out some/download/path
 ```
-
-or download it from this link: https://github.com/rosen-bridge/contract/releases
-
-In our contracts repository releases, there are two types of files: those with names ending in “loen” and those ending in “public-launch”. The “public-launch” files represent the actual bridge. The “loen” files are for specific testing use cases.
-
-Please download the appropriate files for your project, ensuring you select the latest prerelease version rather than a stable release. This will ensure you have the most up-to-date features and improvements.
 
 2. Instantiate RosenUserInterface class
 

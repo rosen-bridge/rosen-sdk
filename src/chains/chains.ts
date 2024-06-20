@@ -23,14 +23,16 @@ export class RosenChains {
    * @returns The base network fee as a bigint.
    * @throws ChainNotSupportedException if the blockchain network is not supported.
    */
-  static getBaseNetworkFee(chain: keyof typeof Networks): bigint {
+  static async getBaseNetworkFee(
+    chain: keyof typeof Networks
+  ): Promise<bigint> {
     switch (chain) {
       case Networks.ergo:
         return ErgoRosenChain.getBaseNetworkFee();
       case Networks.cardano:
         return CardanoRosenChain.getBaseNetworkFee();
       case Networks.bitcoin:
-        return BitcoinRosenChain.getBaseNetworkFee();
+        return await BitcoinRosenChain.getBaseNetworkFee();
       default:
         throw new ChainNotSupportedException();
     }

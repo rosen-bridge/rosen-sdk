@@ -1,19 +1,17 @@
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { staticImplements } from "../../utils/staticImplements";
 import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
 import { CardanoRosenSDK } from "./cardanoSDK";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
-import { IRosenChain } from "../types/chainTypes";
 import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
 const CARDANO_BASE_NETWORK_FEE: bigint = 3400000n;
 
-@staticImplements<IRosenChain>()
 export class CardanoRosenChain {
-  static getBaseNetworkFee(): bigint {
+  static async getBaseNetworkFee(): Promise<bigint> {
     return CARDANO_BASE_NETWORK_FEE;
   }
+
   static async generateUnsignedBridgeTx(
     token: RosenChainToken,
     toChain: string,
@@ -38,7 +36,6 @@ export class CardanoRosenChain {
       networkFee,
       utxoIterator as Iterator<CardanoUtxo, undefined>,
       lockAddress,
-      -1,
       logger
     );
   }

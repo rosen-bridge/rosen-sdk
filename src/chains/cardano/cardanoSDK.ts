@@ -10,37 +10,31 @@ import { AssetBalanceMath } from "../../utils/assetBalanceMath";
 import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { RosenChainToken } from "@rosen-bridge/tokens";
 import cardanoKoiosClientFactory from "@rosen-clients/cardano-koios";
-import { staticImplements } from "../../utils/staticImplements";
 import {
   InsufficientAssetsException,
   InvalidArgumentException,
 } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
-import { IRosenSDK } from "../types/chainTypes";
 import { CardanoProtocolParams } from "./types/cardanoTypes";
 import { CARDANO_EXPLORER_URL } from "../../constants/constants";
 
-@staticImplements<IRosenSDK>()
 export class CardanoRosenSDK {
   /**
    * generates metadata for lock transaction
    * @param toChain
    * @param toAddress
-   * @param fromAddress
+   * @param fromAddress fromAddress should be in bech32
    * @param networkFee
    * @param bridgeFee
    */
   public static async generateLockAuxiliaryData(
     toChain: string,
     toAddress: string,
-    fromAddressHex: string,
+    fromAddress: string,
     networkFee: string,
     bridgeFee: string
   ): Promise<string> {
-    // converts hex address to bech32 address
-    const fromAddress = wasm.Address.from_hex(fromAddressHex).to_bech32();
-
     // generate metadata json
     const metadataJson = {
       to: toChain,
@@ -81,11 +75,26 @@ export class CardanoRosenSDK {
     return aux.to_hex();
   }
 
+  /**
+   *
+   * @param token Token to be bridged
+   * @param toChain Chain the token has to be bridged to
+   * @param toAddress destination address of the chain
+   * @param changeAddress the cardano address in bech32
+   * @param amount the amount of tokens to be bridged
+   * @param bridgeFee the bridge fee
+   * @param networkFee the network fee
+   * @param utxoIterator the utxo boxes of the address
+   * @param lockAddress the rosen bridge lock address
+   * @param height height of the blockchain
+   * @param logger logger
+   * @returns
+   */
   public static async generateLockTransaction(
     token: RosenChainToken,
     toChain: string,
     toAddress: string,
-    changeAddressHex: string,
+    changeAddress: string,
     amount: bigint,
     bridgeFee: bigint,
     networkFee: bigint,
@@ -93,7 +102,6 @@ export class CardanoRosenSDK {
       | AsyncIterator<CardanoUtxo, undefined>
       | Iterator<CardanoUtxo, undefined>,
     lockAddress: string = LOCK_ADDRESSES.cardano,
-    height: number = -1,
     logger?: AbstractLogger
   ): Promise<string> {
     if (
@@ -107,7 +115,7 @@ export class CardanoRosenSDK {
     const auxiliaryDataHex = await this.generateLockAuxiliaryData(
       toChain,
       toAddress,
-      changeAddressHex,
+      changeAddress,
       networkFee.toString(),
       bridgeFee.toString()
     );
@@ -116,7 +124,7 @@ export class CardanoRosenSDK {
     const protocolParams = await this.getCardanoProtocolParams();
 
     return await this.generateCardanoLockTransaction(
-      changeAddressHex,
+      changeAddress,
       lockAddress,
       utxoIterator,
       policyIdHex,
@@ -132,7 +140,7 @@ export class CardanoRosenSDK {
    * @param protocolParams The Cardano protocol params
    * @param utxoIterator an Iterator object that is used to fetch input utxos
    * @param lockAddress
-   * @param changeAddress
+   * @param changeAddress this address has to be in bech32 format
    * @param policyIdHex transferring asset policy ID (empty string in case of ADA transfer)
    * @param assetNameHex transferring asset name in hex
    * @param amount
@@ -140,7 +148,7 @@ export class CardanoRosenSDK {
    * @returns hex representation of the unsigned tx
    */
   public static async generateCardanoLockTransaction(
-    changeAddressHex: string,
+    changeAddress: string,
     lockAddress: string,
     utxoIterator:
       | AsyncIterator<CardanoUtxo, undefined>
@@ -159,9 +167,6 @@ export class CardanoRosenSDK {
         "[Generate Lock Transaction] UtxoIterator does not have ErgoBoxProxy"
       );
     }
-
-    // converts hex address to bech32 address
-    const changeAddress = wasm.Address.from_hex(changeAddressHex).to_bech32();
 
     const auxiliaryData = wasm.AuxiliaryData.from_hex(auxiliaryDataHex);
     const txBuilder = wasm.TransactionBuilder.new(

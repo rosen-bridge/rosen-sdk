@@ -1,22 +1,20 @@
 import { ErgoBoxCandidate } from "ergo-lib-wasm-nodejs";
 import * as wasm from "ergo-lib-wasm-nodejs";
 import { fee, minBoxValue } from "./consts";
-import { AssetBalance, CoveringBoxes } from "../../types/utxoTypes";
+import { AssetBalance } from "../../types/utxoTypes";
 import { SDKNetwork } from "../../utils/sdkNetwork";
 import { BoxInfoExtractor } from "../../utils/boxInfo";
 import { AssetBalanceMath } from "../../utils/assetBalanceMath";
 import { RosenChainToken } from "@rosen-bridge/tokens";
-import { staticImplements } from "../../utils/staticImplements";
 import {
   InsufficientAssetsException,
   InvalidArgumentException,
 } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
 import { LOCK_ADDRESSES } from "../../utils/lockAddresses";
-import { IRosenSDK } from "../types/chainTypes";
 import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
+import { selectErgoBoxes } from "@rosen-bridge/ergo-box-selection";
 
-@staticImplements<IRosenSDK>()
 export class ErgoRosenSDK {
   /**
    * Creates a lock box with Rosen Tx Structure
@@ -165,7 +163,7 @@ export class ErgoRosenSDK {
     });
 
     // get input boxes
-    const inputs = await this.getCoveringBoxes(
+    const inputs = await selectErgoBoxes(
       requiredAssets,
       [],
       new Map(),
@@ -239,86 +237,5 @@ export class ErgoRosenSDK {
       );
     });
     return changeBox.build();
-  }
-
-  /**
-   * select useful boxes for an address until required assets are satisfied
-   * @param requiredAssets the required assets
-   * @param forbiddenBoxIds the id of forbidden boxes
-   * @param trackMap the mapping of a box id to it's next box
-   * @param boxIterator an iterator with boxes
-   * @returns an object containing the selected boxes with a boolean showing if requirements covered or not
-   */
-  private static async getCoveringBoxes(
-    requiredAssets: AssetBalance,
-    forbiddenBoxIds: Array<string>,
-    trackMap: Map<string, ErgoBoxProxy | undefined>,
-    boxIterator:
-      | Iterator<ErgoBoxProxy, undefined>
-      | AsyncIterator<ErgoBoxProxy, undefined>
-  ): Promise<CoveringBoxes> {
-    let uncoveredNativeToken = requiredAssets.nativeToken;
-    const uncoveredTokens = requiredAssets.tokens.filter(
-      (info) => info.value > 0n
-    );
-
-    const isRequirementRemaining = () => {
-      return uncoveredTokens.length > 0 || uncoveredNativeToken > 0n;
-    };
-
-    const result: Array<ErgoBoxProxy> = [];
-
-    // get boxes until requirements are satisfied
-    while (isRequirementRemaining()) {
-      const iteratorResponse = await boxIterator.next();
-
-      // end process if there are no more boxes
-      if (iteratorResponse.done) break;
-
-      let trackedBox: ErgoBoxProxy | undefined = iteratorResponse.value;
-      let boxInfo = BoxInfoExtractor.getBoxInfo(trackedBox);
-
-      // track boxes
-      let skipBox = false;
-      while (trackMap.has(boxInfo.id)) {
-        trackedBox = trackMap.get(boxInfo.id);
-        if (!trackedBox) {
-          skipBox = true;
-          break;
-        }
-        boxInfo = BoxInfoExtractor.getBoxInfo(trackedBox);
-      }
-
-      // if tracked to no box or forbidden box, skip it
-      if (skipBox || forbiddenBoxIds.includes(boxInfo.id)) {
-        continue;
-      }
-
-      // check and add if box assets are useful to requirements
-      let isUseful = false;
-      boxInfo.assets.tokens.forEach((boxToken) => {
-        const tokenIndex = uncoveredTokens.findIndex(
-          (requiredToken) => requiredToken.id === boxToken.id
-        );
-        if (tokenIndex !== -1) {
-          isUseful = true;
-          const token = uncoveredTokens[tokenIndex];
-          if (token.value > boxToken.value) token.value -= boxToken.value;
-          else uncoveredTokens.splice(tokenIndex, 1);
-        }
-      });
-      if (isUseful || uncoveredNativeToken > 0n) {
-        uncoveredNativeToken -=
-          uncoveredNativeToken >= boxInfo.assets.nativeToken
-            ? boxInfo.assets.nativeToken
-            : uncoveredNativeToken;
-        result.push(trackedBox!);
-      }
-    }
-
-    return {
-      covered: !isRequirementRemaining(),
-      boxes: result,
-    };
   }
 }

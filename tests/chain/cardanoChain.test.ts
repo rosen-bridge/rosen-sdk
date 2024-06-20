@@ -7,7 +7,7 @@ import { CardanoRosenSDK, RosenUserInterface } from "../../src";
 import { LoenRosenSDKConfig, testRSNRatioNFT } from "../testConfig";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
 import { ERGO_EXPLORER_URL } from "../../src/constants/constants";
-import { blockFrostRosenData, fromAddressCardanoHex } from "./mockData";
+import { blockFrostRosenData } from "./mockData";
 import {
   CardanoAsset,
   CardanoUtxo,
@@ -161,7 +161,7 @@ describe("Cardano Chain", () => {
       cardanoToken,
       "ergo",
       blockFrostRosenData.validAdaLock.toAddress,
-      fromAddressCardanoHex,
+      blockFrostRosenData.validAdaLock.fromAddress,
       BigInt(blockFrostRosenData.validAdaLock.amount),
       BigInt(blockFrostRosenData.validAdaLock.bridgeFee),
       BigInt(blockFrostRosenData.validAdaLock.networkFee),
@@ -210,7 +210,7 @@ describe("Cardano Chain", () => {
       cardanoToken,
       "ergo",
       blockFrostRosenData.validTokenLock.toAddress,
-      fromAddressCardanoHex,
+      blockFrostRosenData.validTokenLock.fromAddress,
       BigInt(blockFrostRosenData.validTokenLock.amount),
       BigInt(blockFrostRosenData.validTokenLock.bridgeFee),
       BigInt(blockFrostRosenData.validTokenLock.networkFee),
@@ -261,7 +261,7 @@ describe("Cardano Chain", () => {
           cardanoToken,
           "ergo",
           blockFrostRosenData.validTokenLock.toAddress,
-          fromAddressCardanoHex,
+          blockFrostRosenData.validTokenLock.fromAddress,
           BigInt(blockFrostRosenData.validTokenLock.amount),
           BigInt(blockFrostRosenData.validTokenLock.bridgeFee),
           BigInt(blockFrostRosenData.validTokenLock.networkFee),
