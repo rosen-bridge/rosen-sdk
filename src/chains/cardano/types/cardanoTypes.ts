@@ -21,3 +21,5 @@ export interface CardanoProtocolParams {
   max_tx_size: number;
   coins_per_utxo_size: string;
 }
+
+export const ADA_POLICY_ID = "";

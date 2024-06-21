@@ -1,5 +1,4 @@
 import * as wasm from "@emurgo/cardano-serialization-lib-nodejs";
-import { ADA_POLICY_ID } from "./types";
 import {
   AssetBalance,
   CardanoUtxo,
@@ -15,7 +14,7 @@ import {
   InvalidArgumentException,
 } from "../../errors";
 import { AbstractLogger } from "@rosen-bridge/abstract-logger";
-import { CardanoProtocolParams } from "./types/cardanoTypes";
+import { ADA_POLICY_ID, CardanoProtocolParams } from "./types/cardanoTypes";
 import { CARDANO_EXPLORER_URL } from "../../constants/constants";
 
 export class CardanoRosenSDK {
