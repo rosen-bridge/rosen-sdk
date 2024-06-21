@@ -64,7 +64,8 @@ export class RosenChains {
     networkFee: bigint,
     utxoIterator:
       | AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined>
-      | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>
+      | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
+    lockAdress: string
   ): Promise<string | UnsignedTransaction> {
     switch (fromChain) {
       case Networks.ergo:
@@ -76,7 +77,8 @@ export class RosenChains {
           amount,
           bridgeFee,
           networkFee,
-          utxoIterator
+          utxoIterator,
+          lockAdress
         );
       case Networks.cardano:
         return await CardanoRosenChain.generateUnsignedBridgeTx(
@@ -87,7 +89,8 @@ export class RosenChains {
           amount,
           bridgeFee,
           networkFee,
-          utxoIterator
+          utxoIterator,
+          lockAdress
         );
       case Networks.cardano:
         return await BitcoinRosenChain.generateUnsignedBridgeTx(
@@ -98,7 +101,8 @@ export class RosenChains {
           amount,
           bridgeFee,
           networkFee,
-          utxoIterator
+          utxoIterator,
+          lockAdress
         );
       default:
         throw new ChainNotSupportedException();
