@@ -28,9 +28,9 @@ export class RosenChains {
   ): Promise<bigint> {
     switch (chain) {
       case Networks.ergo:
-        return ErgoRosenChain.getBaseNetworkFee();
+        return await ErgoRosenChain.getBaseNetworkFee();
       case Networks.cardano:
-        return CardanoRosenChain.getBaseNetworkFee();
+        return await CardanoRosenChain.getBaseNetworkFee();
       case Networks.bitcoin:
         return await BitcoinRosenChain.getBaseNetworkFee();
       default:
