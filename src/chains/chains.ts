@@ -1,58 +1,108 @@
+import { RosenChainToken } from "@rosen-bridge/tokens";
 import { Networks } from "../constants/constants";
 import { ChainNotSupportedException } from "../errors";
 import { BitcoinRosenChain } from "./bitcoin/bitcoinChain";
 import { CardanoRosenChain } from "./cardano/cardanoChain";
 import { ErgoRosenChain } from "./ergo/ergoChain";
+import { CardanoUtxo } from "@rosen-bridge/cardano-utxo-selection";
+import { UnsignedTransaction } from "ergo-lib-wasm-nodejs";
+import { ErgoBoxProxy } from "@rosen-ui/wallet-api";
 
+/**
+ * RosenChains
+ *
+ * This class provides methods to interact with different blockchain networks supported by Rosen.
+ * It acts as a simplified and organized way for SDK users to retrieve the required elements for
+ * bridging.
+ */
 export class RosenChains {
-  static getBaseNetworkFee(chain: keyof typeof Networks): bigint {
+  /**
+   * Gets the base network fee for a given blockchain network.
+   *
+   * @param chain - The name of the blockchain network.
+   * @returns The base network fee as a bigint.
+   * @throws ChainNotSupportedException if the blockchain network is not supported.
+   */
+  static async getBaseNetworkFee(
+    chain: keyof typeof Networks
+  ): Promise<bigint> {
     switch (chain) {
       case Networks.ergo:
-        return new ErgoRosenChain().getBaseNetworkFee();
+        return await ErgoRosenChain.getBaseNetworkFee();
       case Networks.cardano:
-        return new CardanoRosenChain().getBaseNetworkFee();
+        return await CardanoRosenChain.getBaseNetworkFee();
       case Networks.bitcoin:
-        return new BitcoinRosenChain().getBaseNetworkFee();
+        return await BitcoinRosenChain.getBaseNetworkFee();
       default:
         throw new ChainNotSupportedException();
     }
   }
 
-  static getLockTransaction(
+  /**
+   * Generates an unsigned bridge transaction for transferring tokens from one blockchain network to another.
+   *
+   * @param fromChain - The source blockchain network.
+   * @param toChain - The destination blockchain network.
+   * @param toAddress - The address on the destination blockchain to receive the tokens.
+   * @param changeAddress - The address to receive the change on the source blockchain.
+   * @param token - The token to be transferred.
+   * @param amount - The amount of the token to be transferred.
+   * @param bridgeFee - The fee for using the bridge.
+   * @param networkFee - The network fee for the transaction.
+   * @param utxoIterator - An iterator over UTXOs (unspent transaction outputs) from the source blockchain.
+   * @returns A promise that resolves to a string or an UnsignedErgoTxProxy representing the unsigned transaction.
+   * @throws ChainNotSupportedException if the source blockchain network is not supported.
+   */
+  static async generateUnsignedBridgeTx(
     fromChain: keyof typeof Networks,
     toChain: keyof typeof Networks,
     toAddress: string,
     changeAddress: string,
-    tokenId: string,
-    amount: bigint
-  ): Promise<string> {
+    token: RosenChainToken,
+    amount: bigint,
+    bridgeFee: bigint,
+    networkFee: bigint,
+    utxoIterator:
+      | AsyncIterator<CardanoUtxo | ErgoBoxProxy, undefined>
+      | Iterator<CardanoUtxo | ErgoBoxProxy, undefined>,
+    lockAdress: string
+  ): Promise<string | UnsignedTransaction> {
     switch (fromChain) {
-      case "ergo":
-        new ErgoRosenChain().generateUnsignedTx(
-          fromChain,
+      case Networks.ergo:
+        return await ErgoRosenChain.generateUnsignedBridgeTx(
+          token,
           toChain,
           toAddress,
           changeAddress,
-          tokenId,
-          amount
+          amount,
+          bridgeFee,
+          networkFee,
+          utxoIterator,
+          lockAdress
         );
-      case "cardano":
-        new CardanoRosenChain().generateUnsignedTx(
-          fromChain,
+      case Networks.cardano:
+        return await CardanoRosenChain.generateUnsignedBridgeTx(
+          token,
           toChain,
           toAddress,
           changeAddress,
-          tokenId,
-          amount
+          amount,
+          bridgeFee,
+          networkFee,
+          utxoIterator,
+          lockAdress
         );
-      case "bitcoin":
-        new BitcoinRosenChain().generateUnsignedTx(
-          fromChain,
+      case Networks.cardano:
+        return await BitcoinRosenChain.generateUnsignedBridgeTx(
+          token,
           toChain,
           toAddress,
           changeAddress,
-          tokenId,
-          amount
+          amount,
+          bridgeFee,
+          networkFee,
+          utxoIterator,
+          lockAdress
         );
       default:
         throw new ChainNotSupportedException();

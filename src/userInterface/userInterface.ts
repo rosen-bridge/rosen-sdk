@@ -66,7 +66,7 @@ export interface IRosenUserInterface {
     chain: string,
     tokenId: string,
     targetChain: string
-  ) => RosenChainToken | null;
+  ) => RosenChainToken;
 
   /**
    * calculates the minimum allowed transfer for a token based
@@ -483,7 +483,7 @@ export class RosenUserInterface implements IRosenUserInterface {
     chain: keyof typeof Networks
   ): Promise<number> {
     if (height === -1) {
-      return await this.network.GetHeight(chain);
+      return await this.network.getHeight(chain);
     } else {
       return height;
     }
@@ -493,7 +493,7 @@ export class RosenUserInterface implements IRosenUserInterface {
     const explorerUrl =
       this.networkUrl !== ""
         ? this.networkUrl
-        : this.network.GetExplorerUrl("ergo");
+        : this.network.getExplorerUrl("ergo");
 
     const minimumFee = new MinimumFeeBox(
       tokenId,

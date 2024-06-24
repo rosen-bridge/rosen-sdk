@@ -1,11 +1,11 @@
-import { it, assert, describe } from "vitest";
-import { RosenUserInterface } from "../src/userInterface/userInterface";
-import tokens from "./test-rosen-loen-tokens.json";
+import { it, assert, describe, expect } from "vitest";
+import { RosenUserInterface } from "../../src/userInterface/userInterface";
+import tokens from "../assets/test-rosen-loen-tokens.json";
 import { NATIVE_TOKEN, RosenChainToken } from "@rosen-bridge/tokens";
 import { ErgoNetworkType } from "@rosen-bridge/minimum-fee";
-import { RosenChains } from "../src";
-import { LoenRosenSDKConfig, testRSNRatioNFT } from "./testConfig";
-import { ERGO_EXPLORER_URL } from "../src/constants/constants";
+import { LoenRosenSDKConfig, testRSNRatioNFT } from "../testConfig";
+import { ERGO_EXPLORER_URL } from "../../src/constants/constants";
+import { CardanoRosenChain } from "../../src/chains/cardano/cardanoChain";
 
 const EIP4 = "EIP-004";
 const CIP26 = "CIP26";
@@ -294,7 +294,7 @@ describe("rosen user interface", () => {
       wrappedAdaTokenId,
       "cardano",
       10408366,
-      RosenChains.getBaseNetworkFee("cardano")
+      await CardanoRosenChain.getBaseNetworkFee()
     );
 
     assert.equal(convertFeeToAssetUnit, 850000000000n);

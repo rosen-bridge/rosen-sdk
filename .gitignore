@@ -10,6 +10,7 @@ node_modules
 dist
 *.local
 
+.vscode
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -19,3 +20,5 @@ coverage
 yarn.lock
 *.sqlite
 *.tsbuildinfo
+
+.env
