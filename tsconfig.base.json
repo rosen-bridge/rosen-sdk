@@ -1,20 +1,18 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "allowJs": false,
     "declaration": true,
     "declarationMap": true,
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
     "inlineSourceMap": true,
     "inlineSources": true,
+    "isolatedModules": false,
     "module": "esnext",
     "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false,
     "target": "esnext"
   }
 }
