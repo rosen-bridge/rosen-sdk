@@ -7,7 +7,7 @@
 
 ## Introduction
 
-Abstract interface for rosen chain sdks
+Abstract interface for rosen chain SDKs
 
 ## Installation
 

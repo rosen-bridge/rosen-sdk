@@ -1,7 +1,7 @@
 {
   "name": "@rosen-bridge/sdk-abstract",
   "version": "0.0.0",
-  "description": "Abstract interface for rosen chain sdks",
+  "description": "Abstract interface for rosen chain SDKs",
   "repository": "git+https://github.com/rosen-bridge/rosen-sdk.git",
   "license": "GPL-3.0",
   "author": "Rosen Team",
