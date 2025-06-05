@@ -1,1 +1,1 @@
-export { default as AbstractRosenSDK } from './abstractRosenSDK';
+export { default as AbstractRosenChainSDK } from './abstractRosenChainSDK';

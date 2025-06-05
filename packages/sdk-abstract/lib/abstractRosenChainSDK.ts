@@ -1,7 +1,7 @@
 import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
 import { RosenChainToken } from '@rosen-bridge/tokens';
 
-abstract class AbstractRosenSDK<TxType, UTXOType> {
+abstract class AbstractRosenChainSDK<TxType, UTXOType> {
   protected constructor(protected logger?: AbstractLogger) {
     this.logger = logger || new DummyLogger();
   }
@@ -23,4 +23,4 @@ abstract class AbstractRosenSDK<TxType, UTXOType> {
   ) => Promise<TxType>;
 }
 
-export default AbstractRosenSDK;
+export default AbstractRosenChainSDK;
