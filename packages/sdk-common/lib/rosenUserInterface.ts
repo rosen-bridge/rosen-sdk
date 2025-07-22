@@ -17,6 +17,7 @@ import {
   ImpossibleBehaviorException,
   TokenNotFoundException,
 } from './errors';
+import { RosenFees } from './types';
 
 class RosenUserInterface {
   private static instance: RosenUserInterface;
@@ -252,7 +253,7 @@ class RosenUserInterface {
     height: number,
     actualAmount: bigint,
     actualRecommendedBaseNetworkFee: bigint = 0n,
-  ): Promise<{ bridgeFee: bigint; networkFee: bigint }> => {
+  ): Promise<RosenFees> => {
     this.logger.debug(
       `Calculating fees for transfer: tokenId=${tokenId}, fromChain=${fromChain}, toChain=${toChain}, height=${height}, amount=${actualAmount}, recommendedBaseNetworkFee=${actualRecommendedBaseNetworkFee}`,
     );

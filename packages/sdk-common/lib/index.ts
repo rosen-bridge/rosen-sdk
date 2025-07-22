@@ -6,4 +6,4 @@ export {
   FeeRetrievalFailureException,
   ImpossibleBehaviorException,
 } from './errors';
-export type { RosenFees } from '../types';
+export type { RosenFees } from './types';
