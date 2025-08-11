@@ -5,8 +5,10 @@ export class TokenNotFoundException extends Error {
 }
 
 export class ChainNotSupportedException extends Error {
-  constructor(tokenId: string) {
-    super(`Chain not supported for token with ID [${tokenId}]`);
+  constructor(tokenId: string, chain: string) {
+    super(
+      `Corresponding set of token with ID [${tokenId}] has no member on chain [${chain}]`,
+    );
   }
 }
 

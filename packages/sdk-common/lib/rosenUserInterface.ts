@@ -7,6 +7,7 @@ import {
 import {
   ChainMinimumFee,
   ErgoNetworkType,
+  FEE_RATIO_DIVISOR,
   MinimumFeeBox,
 } from '@rosen-bridge/minimum-fee';
 import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
@@ -14,7 +15,6 @@ import { NETWORKS } from './constants';
 import {
   ChainNotSupportedException,
   FeeRetrievalFailureException,
-  ImpossibleBehaviorException,
   TokenNotFoundException,
 } from './errors';
 import { RosenFees } from './types';
@@ -112,7 +112,7 @@ class RosenUserInterface {
     tokenId: string,
   ): Array<string> => {
     this.logger.debug(
-      `Getting available chains for tokenId ${tokenId} on chain ${chain}`,
+      `Getting available chains for tokenId [${tokenId}] on chain [${chain}]`,
     );
     const results = this.tokensMap.search(chain, { tokenId: tokenId });
     if (results.length === 0) {
@@ -127,8 +127,6 @@ class RosenUserInterface {
    * @param tokenId Token id on the source chain
    * @param toChain Target chain name
    * @returns Mapping of chain names to RosenChainToken details
-   * @throws TokenNotFoundException if the token is not found on the source chain
-   * @throws ChainNotSupportedException if the token is not supported on the target chain
    */
   private getTokenDetails = (
     fromChain: string,
@@ -136,7 +134,7 @@ class RosenUserInterface {
     toChain: string,
   ): Record<string, RosenChainToken> => {
     this.logger.debug(
-      `Looking up tokenId ${tokenId} on chain ${fromChain} for target chain ${toChain}`,
+      `Looking up tokenId [${tokenId}] on chain [${fromChain}] for target chain [${toChain}]`,
     );
     const tokensInChain = this.tokensMap.search(fromChain, {
       tokenId: tokenId,
@@ -144,13 +142,13 @@ class RosenUserInterface {
     if (tokensInChain.length === 0) {
       throw new TokenNotFoundException(fromChain, tokenId);
     }
-    const chains = tokensInChain[0];
+    const tokenSet = tokensInChain[0];
     try {
-      this.tokensMap.getID(chains, toChain);
+      this.tokensMap.getID(tokenSet, toChain);
     } catch {
-      throw new ChainNotSupportedException(tokenId);
+      throw new ChainNotSupportedException(tokenId, toChain);
     }
-    return chains;
+    return tokenSet;
   };
 
   /**
@@ -166,22 +164,21 @@ class RosenUserInterface {
     toChain: string,
   ): RosenChainToken => {
     this.logger.debug(
-      `Getting token details for tokenId ${tokenId} from ${fromChain} to ${toChain}`,
+      `Getting token details for tokenId [${tokenId}] from [${fromChain}] to [${toChain}]`,
     );
     const chains = this.getTokenDetails(fromChain, tokenId, toChain);
     return chains[toChain];
   };
 
   /**
-   * Retrieves the MinimumFeeBox instance for a given token id.
+   * Retrieves the MinimumFeeBox instance for a token id.
    * @param tokenId Token id on Ergo chain
    * @returns MinimumFeeBox instance for the token
-   * @throws FeeRetrievalFailureException if the minimum fee box cannot be fetched
    */
   private getMinimumFeeBox = async (
     tokenId: string,
   ): Promise<MinimumFeeBox> => {
-    this.logger.debug(`Fetching minimum fee box for tokenId ${tokenId}`);
+    this.logger.debug(`Fetching minimum fee box for tokenId [${tokenId}]`);
     const minimumFee = new MinimumFeeBox(
       tokenId,
       this.minimumFeeNFT,
@@ -200,7 +197,7 @@ class RosenUserInterface {
 
   /**
    * calculates the minimum allowed transfer for a token based
-   * on minimum bridge fee and network fee on a specific height
+   * on bridging chains, minimum bridge fee and network fee on a specific height
    * @param fromChain
    * @param height blockchain height of fromChain
    * @param tokenId token id on fromChain
@@ -214,7 +211,7 @@ class RosenUserInterface {
     height: number,
   ): Promise<bigint> => {
     this.logger.debug(
-      `Calculating minimum transfer amount for tokenId ${tokenId} from ${fromChain} to ${toChain} at height ${height}`,
+      `Calculating minimum transfer amount for tokenId [${tokenId}] from [${fromChain}] to [${toChain}] at height [${height}]`,
     );
     const tokenChains = this.getTokenDetails(fromChain, tokenId, toChain);
     const ergoTokenId = this.tokensMap.getID(tokenChains, NETWORKS.ergo);
@@ -224,20 +221,22 @@ class RosenUserInterface {
 
     const minimumFees: bigint =
       BigInt(fees.bridgeFee) + BigInt(fees.networkFee);
-    const networkFeeRatio: bigint =
-      fees.networkFee / (1n - fees.feeRatio) +
-      (fees.networkFee % (1n - fees.feeRatio) ? 1n : 0n);
 
-    const fee = minimumFees > networkFeeRatio ? minimumFees : networkFeeRatio;
-    const result = this.tokensMap.unwrapAmount(tokenId, fee, toChain).amount;
+    const feeRatioComplement = FEE_RATIO_DIVISOR - fees.feeRatio;
+    const otherMinTransfer: bigint =
+      (fees.networkFee * FEE_RATIO_DIVISOR) / feeRatioComplement +
+      ((fees.networkFee * FEE_RATIO_DIVISOR) % feeRatioComplement ? 1n : 0n);
+
+    const fee = minimumFees > otherMinTransfer ? minimumFees : otherMinTransfer;
+    const result = this.tokensMap.unwrapAmount(tokenId, fee, fromChain).amount;
     this.logger.debug(
-      `Minimum transfer amount for tokenId ${tokenId} from ${fromChain} to ${toChain}: ${result}`,
+      `Minimum transfer amount for tokenId [${tokenId}] from [${fromChain}] to [${toChain}]: [${result}]`,
     );
     return result;
   };
 
   /**
-   * gets list of chains that supports a token
+   * calculates the bridge fee and network fee for a token transfer
    * @param fromChain
    * @param height blockchain height of fromChain
    * @param tokenId token id on fromChain
@@ -255,7 +254,7 @@ class RosenUserInterface {
     actualRecommendedBaseNetworkFee: bigint = 0n,
   ): Promise<RosenFees> => {
     this.logger.debug(
-      `Calculating fees for transfer: tokenId=${tokenId}, fromChain=${fromChain}, toChain=${toChain}, height=${height}, amount=${actualAmount}, recommendedBaseNetworkFee=${actualRecommendedBaseNetworkFee}`,
+      `Calculating fees for transfer: tokenId=[${tokenId}], fromChain=[${fromChain}], toChain=[${toChain}], height=[${height}], amount=[${actualAmount}], recommendedBaseNetworkFee=[${actualRecommendedBaseNetworkFee}]`,
     );
     const wrappedAmount = this.tokensMap.wrapAmount(
       tokenId,
@@ -316,7 +315,7 @@ class RosenUserInterface {
     ).amount;
 
     this.logger.debug(
-      `Calculated fees for tokenId ${tokenId} from ${fromChain} to ${toChain}: bridgeFee=${unwrappedBridgeFee}, networkFee=${unwrappedNetworkFee}`,
+      `Calculated fees for tokenId [${tokenId}] from [${fromChain}] to [${toChain}]: bridgeFee=[${unwrappedBridgeFee}], networkFee=[${unwrappedNetworkFee}]`,
     );
     return {
       bridgeFee: unwrappedBridgeFee,
@@ -329,7 +328,7 @@ class RosenUserInterface {
    * @param tokenId
    * @param toChain
    * @param fromChain
-   * @param height blockchain height of toChain
+   * @param height blockchain height of fromChain
    * @param actualBaseNetworkFee base network fee in toChain native token unit
    * @returns the network fee in asset unit
    */
@@ -341,7 +340,7 @@ class RosenUserInterface {
     actualBaseNetworkFee: bigint,
   ): Promise<bigint> => {
     this.logger.debug(
-      `Converting base network fee to asset unit: tokenId=${tokenId}, fromChain=${fromChain}, toChain=${toChain}, height=${height}, actualBaseNetworkFee=${actualBaseNetworkFee}`,
+      `Converting base network fee to asset unit: tokenId=[${tokenId}], fromChain=[${fromChain}], toChain=[${toChain}], height=[${height}], actualBaseNetworkFee=[${actualBaseNetworkFee}]`,
     );
     const wrapedBaseNetworkFee = this.tokensMap.wrapAmount(
       tokenId,
@@ -356,7 +355,7 @@ class RosenUserInterface {
     });
 
     if (nativeTokens.length <= 0) {
-      throw new Error('Native token not found');
+      throw new Error(`No Native token is found for chain [${toChain}]`);
     }
 
     const nativeToken = nativeTokens[0];
@@ -366,40 +365,31 @@ class RosenUserInterface {
       NETWORKS.ergo,
     );
 
-    const minimumFeeForAssetToken = await this.getMinimumFeeBox(tokenIdOnErgo);
-    const minimumFeeForNativeChainToken =
+    const minimumFeeForGivenAsset = await this.getMinimumFeeBox(tokenIdOnErgo);
+    const minimumFeeForChainNativeToken =
       await this.getMinimumFeeBox(nativeTokenIdOnErgo);
 
-    const assetTokenFeesInfo: ChainMinimumFee = minimumFeeForAssetToken.getFee(
-      toChain,
+    const assetTokenFeesInfo: ChainMinimumFee = minimumFeeForGivenAsset.getFee(
+      fromChain,
       height,
       toChain,
     );
     const nativeTokenFeesInfo: ChainMinimumFee =
-      minimumFeeForNativeChainToken.getFee(toChain, height, toChain);
+      minimumFeeForChainNativeToken.getFee(fromChain, height, toChain);
 
     const nativeRsnRatio = nativeTokenFeesInfo.rsnRatio;
     const nativeRsnDivisor = nativeTokenFeesInfo.rsnRatioDivisor;
-    const nativeDecimals =
-      this.tokensMap.getSignificantDecimals(nativeTokenIdOnErgo);
     const assetRsnRatio = assetTokenFeesInfo.rsnRatio;
     const assetRsnDivisor = assetTokenFeesInfo.rsnRatioDivisor;
-    const assetDecimals = this.tokensMap.getSignificantDecimals(tokenIdOnErgo);
-    if (nativeDecimals === undefined || assetDecimals === undefined)
-      throw new ImpossibleBehaviorException(
-        `token decimals can't be undefined`,
-      );
     const result = this.calculateFeeToAssetUnitNetworkFee(
       nativeRsnRatio,
       nativeRsnDivisor,
-      nativeDecimals,
       assetRsnRatio,
       assetRsnDivisor,
-      assetDecimals,
       wrapedBaseNetworkFee,
     );
     this.logger.debug(
-      `Converted base network fee to asset unit: result=${result}`,
+      `Converted actual base network fee [${actualBaseNetworkFee}] to asset unit with tokenId [${tokenId}]: result=[${result}]`,
     );
     return result;
   };
@@ -408,34 +398,26 @@ class RosenUserInterface {
    * Calculates the network fee in asset units based on ratios and decimals.
    * @param nativeRsnRatio RSN ratio for the native token
    * @param nativeRsnDivisor RSN ratio divisor for the native token
-   * @param nativeDecimals Number of decimals for the native token
    * @param assetRsnRatio RSN ratio for the asset token
    * @param assetRsnDivisor RSN ratio divisor for the asset token
-   * @param assetDecimals Number of decimals for the asset token
    * @param baseNetworkFee Base network fee in native token units
    * @returns Network fee in asset token units
    */
   private calculateFeeToAssetUnitNetworkFee = (
     nativeRsnRatio: bigint,
     nativeRsnDivisor: bigint,
-    nativeDecimals: number,
     assetRsnRatio: bigint,
     assetRsnDivisor: bigint,
-    assetDecimals: number,
     baseNetworkFee: bigint,
   ): bigint => {
     this.logger.debug(
-      `Calculating fee to asset unit: nativeRsnRatio=${nativeRsnRatio}, nativeRsnDivisor=${nativeRsnDivisor}, nativeDecimals=${nativeDecimals}, assetRsnRatio=${assetRsnRatio}, assetRsnDivisor=${assetRsnDivisor}, assetDecimals=${assetDecimals}, baseNetworkFee=${baseNetworkFee}`,
+      `Calculating fee to asset unit: nativeRsnRatio=[${nativeRsnRatio}], nativeRsnDivisor=[${nativeRsnDivisor}], assetRsnRatio=[${assetRsnRatio}], assetRsnDivisor=[${assetRsnDivisor}], baseNetworkFee=[${baseNetworkFee}]`,
     );
-    const nativePoweredDecimal: bigint = BigInt(Math.pow(10, nativeDecimals));
-    const assetPoweredDecimal: bigint = BigInt(Math.pow(10, assetDecimals));
     const result =
-      (baseNetworkFee *
-        assetPoweredDecimal *
-        nativeRsnRatio *
-        assetRsnDivisor) /
-      (assetRsnRatio * nativePoweredDecimal * nativeRsnDivisor);
-    this.logger.debug(`Calculated fee to asset unit: result=${result}`);
+      (baseNetworkFee * nativeRsnRatio * assetRsnDivisor) /
+      (assetRsnRatio * nativeRsnDivisor);
+
+    this.logger.debug(`Calculated fee to asset unit: result=[${result}]`);
     return result;
   };
 }

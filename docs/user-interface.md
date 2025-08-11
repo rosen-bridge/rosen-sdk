@@ -53,7 +53,7 @@ Implementing a base class that contains the common functions. It gets the requir
 
 ```ts
 export class RosenUserInterface {
-  tokenMap: TokenMap;
+  tokensMap: TokenMap;
   minimumFeeNFT: string;
   minimumFeeAddress: string;
   // these two variables are used to generate Ergo client in order to fetch minimum-fee boxes from the blockchain
@@ -100,7 +100,7 @@ public getSupportedChains = (): Array<string> => SUPPORTED_CHAINS;
  * @returns the list of supported tokens
  */
 public getChainSupportedTokens = (chain: string): Array<RosenChainToken> => {
-  return this.tokenMap
+  return this.tokensMap
     .search(chain, {})
     .map(obj => obj[chain])
 }
@@ -226,12 +226,10 @@ public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: stri
 - Convert base network fee to the token unit:
   - $nr$: native-token (ADA) RSN ratio
   - $nrdiv$: native-token (ADA) RSN ratio divisor
-  - $ndec$: native-token (ADA) decimals
   - $ar$: the asset RSN ratio
   - $ardiv$: the asset RSN ratio divisor
-  - $adec$: the asset decimals
     $$
-    nf = (baseNetworkFee * 10^{adec} * nr * ardiv) / (ar * 10^{ndec} * nrdiv)
+    nf = (baseNetworkFee * nr * ardiv) / (ar * nrdiv)
     $$
 
 ```ts
@@ -243,7 +241,7 @@ public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: stri
  * @param baseNetworkFee base network fee in toChain native token unit
  * @returns the network fee in asset unit
  */
-public convertFeeToAssetUnit: (tokenId: string, toChain: string, fromChain: string, height: number, baseNetworkFee: bigint) => bigint;
+public convertFeeToAssetUnit: (tokenId: string, toChain: string, height: number, baseNetworkFee: bigint) => bigint;
 ```
 
 ### Chain-Specific
