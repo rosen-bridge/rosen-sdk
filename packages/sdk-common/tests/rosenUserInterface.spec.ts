@@ -81,7 +81,8 @@ describe(`RosenUserInterface`, () => {
 
   describe(`getTokenDetails`, () => {
     /**
-     * @target getTokenDetails should return all chain mappings for token
+     * @target getTokenDetails should return details when token exists
+     * and is supported on toChain
      * @dependencies
      * - TokenMap
      * @scenario
@@ -90,7 +91,7 @@ describe(`RosenUserInterface`, () => {
      * @expected
      * - it should return mapping object with both ergo and cardano entries
      */
-    it(`should return token chain mapping when token exists and target supported`, () => {
+    it(`should return details when token exists and is supported on toChain`, () => {
       const details = rosenUserInterface['getTokenDetails'](
         'ergo',
         'erg',
