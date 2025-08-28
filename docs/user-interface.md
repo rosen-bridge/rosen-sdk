@@ -1,4 +1,4 @@
-# Rosen SDK Documantation
+# Rosen SDK Documentation
 
 This document states the required functionality in Rosen SDK alongside the suggested structure and implementation details of it.
 
@@ -53,7 +53,7 @@ Implementing a base class that contains the common functions. It gets the requir
 
 ```ts
 export class RosenUserInterface {
-  tokensMap: TokenMap;
+  tokenMap: TokenMap;
   minimumFeeNFT: string;
   minimumFeeAddress: string;
   // these two variables are used to generate Ergo client in order to fetch minimum-fee boxes from the blockchain
@@ -100,7 +100,7 @@ public getSupportedChains = (): Array<string> => SUPPORTED_CHAINS;
  * @returns the list of supported tokens
  */
 public getChainSupportedTokens = (chain: string): Array<RosenChainToken> => {
-  return this.tokensMap
+  return this.tokenMap
     .search(chain, {})
     .map(obj => obj[chain])
 }
@@ -132,13 +132,13 @@ public getAvailableChainsForToken: (chain: string, tokenId: string): Array<strin
 
 ```ts
 /**
- * gets details of an token on a chain
- * @param chain
- * @param tokenId token id on the given chain
- * @param targetChain
+ * gets details of a token on a chain
+ * @param fromChain
+ * @param tokenId Token id on the fromChain
+ * @param toChain
  * @returns the token details
  */
-public getTokenDetailsOnTargetChain: (chain: string, tokenId: string, targetChain: string): RosenChainToken;
+public getTokenDetailsOnTargetChain = (fromChain: string, tokenId: string, toChain: string): RosenChainToken
 ```
 
 #### `getMinimumTransferAmountForToken`
@@ -163,14 +163,14 @@ public getTokenDetailsOnTargetChain: (chain: string, tokenId: string, targetChai
 ```ts
 /**
  * calculates the minimum allowed transfer for a token based
- * on minimum bridge fee and network fee on a specific height
+ * on bridging chains, minimum bridge fee and network fee on a specific height
  * @param fromChain
- * @param height blockchain height of fromChain
  * @param tokenId token id on fromChain
+ * @param height blockchain height of fromChain
  * @param toChain
  * @returns the minimum allowed transfer
  */
-public getMinimumTransferAmountForToken: (fromChain: string, height: number, tokenId: string, toChain: string) => bigint;
+public getMinimumTransferAmountForToken = async (fromChain: keyof typeof NETWORKS, tokenId: string, height: number, toChain: keyof typeof NETWORKS): Promise<bigint>
 ```
 
 #### `getFeeByTransferAmount`
@@ -199,17 +199,17 @@ public getMinimumTransferAmountForToken: (fromChain: string, height: number, tok
     $$
 
 ```ts
-/**
+  /**
  * calculates the bridge fee and network fee for a token transfer
  * @param fromChain
- * @param height blockchain height of fromChain
  * @param tokenId token id on fromChain
+ * @param height blockchain height of fromChain
  * @param toChain
- * @param amount transfer amount
- * @param recommendedNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
+ * @param actualAmount transfer amount
+ * @param actualRecommendedBaseNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
  * @returns the bridge and network fee
  */
-public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: string, toChain: string, amount: bigint, recommendedNetworkFee: bigint): { bridgeFee: bigint, networkFee: bigint };
+public getFeeByTransferAmount = async (fromChain: string, tokenId: string, height: number, toChain: string, actualAmount: bigint, actualRecommendedBaseNetworkFee: bigint = 0n): Promise<RosenFees>
 ```
 
 #### `convertFeeToAssetUnit`
@@ -223,25 +223,26 @@ public getFeeByTransferAmount: (fromChain: string, height: number, tokenId: stri
 - Get the first element of the list
 - Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
 - Get the RSN ratio for the token and the native token using the `@rosen-bridge/minimum-fee` package
-- Convert base network fee to the token unit:
+- Convert fee to the token unit:
   - $nr$: native-token (ADA) RSN ratio
   - $nrdiv$: native-token (ADA) RSN ratio divisor
   - $ar$: the asset RSN ratio
   - $ardiv$: the asset RSN ratio divisor
     $$
-    nf = (baseNetworkFee * nr * ardiv) / (ar * nrdiv)
+    nf = (fee * nr * ardiv) / (ar * nrdiv)
     $$
 
 ```ts
-/**
- * converts base network fee for a chain to the given asset unit
- * @param tokenId
+  /**
+ * converts fee for a chain to the given asset unit
+ * @param fromChain
+ * @param tokenId Token id on the fromChain
+ * @param height blockchain height of fromChain
  * @param toChain
- * @param height blockchain height of toChain
- * @param baseNetworkFee base network fee in toChain native token unit
- * @returns the network fee in asset unit
+ * @param fee fee in toChain native token unit
+ * @returns the fee in asset unit
  */
-public convertFeeToAssetUnit: (tokenId: string, toChain: string, height: number, baseNetworkFee: bigint) => bigint;
+public convertFeeToAssetUnit = async (fromChain: string, tokenId: string, height: number, toChain: string, fee: bigint): Promise<bigint>
 ```
 
 ### Chain-Specific

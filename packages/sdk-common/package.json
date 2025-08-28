@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
   },
-  "license": "GPL-3.0",
+  "license": "MIT",
   "author": "Rosen Team",
   "type": "module",
   "main": "dist/index.js",
@@ -25,18 +25,18 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^20.11.9",
+    "@types/node": "^22.18.0",
     "@vitest/coverage-istanbul": "^3.1.4",
     "tsx": "^4.19.4",
     "typescript": "^5.3.3",
     "vitest": "^3.1.4"
   },
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
-    "@rosen-bridge/abstract-logger": "^2.0.1",
-    "@rosen-bridge/minimum-fee": "^2.2.3",
-    "@rosen-bridge/tokens": "^3.1.1"
+    "@rosen-bridge/abstract-logger": "^2.1.0",
+    "@rosen-bridge/minimum-fee": "^2.3.0",
+    "@rosen-bridge/tokens": "^3.2.0"
   }
 }
