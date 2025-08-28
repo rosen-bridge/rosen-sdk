@@ -102,7 +102,7 @@ describe(`RosenUserInterface`, () => {
     });
 
     /**
-     * @target getTokenDetails should throw TokenNotFoundException when token not found
+     * @target getTokenDetails should throw TokenNotFoundException when token is not found
      * @dependencies
      * - TokenMap
      * @scenario
@@ -122,7 +122,7 @@ describe(`RosenUserInterface`, () => {
     });
 
     /**
-     * @target getTokenDetails should throw ChainNotSupportedException when target chain not supported
+     * @target getTokenDetails should throw ChainNotSupportedException when target chain is not supported
      * @dependencies
      * - TokenMap
      * @scenario
