@@ -172,7 +172,7 @@ describe(`RosenUserInterface`, () => {
 
   describe(`getMinimumTransferAmountForToken`, () => {
     /**
-     * @target getMinimumTransferAmountForToken should return minimum transfer amount with fixed decimals tokens
+     * @target getMinimumTransferAmountForToken should return minimum transfer amount with fixed decimals token
      * @dependencies
      * - getMinimumFeeBox
      * @scenario
@@ -182,7 +182,7 @@ describe(`RosenUserInterface`, () => {
      * @expected
      * - it should return correct value (bridgeFee + networkFee + 1n)
      */
-    it(`should return minimum transfer amount with fixed decimals tokens`, async () => {
+    it(`should return minimum transfer amount with fixed decimals token`, async () => {
       mockGetMinimumFeeBox(rosenUserInterface, [ergToCardanoFeeSample]);
 
       const result = await rosenUserInterface.getMinimumTransferAmountForToken(
@@ -276,7 +276,7 @@ describe(`RosenUserInterface`, () => {
     });
 
     /**
-     * @target getFeeByTransferAmount should calculate fees by transfer amount with fixed decimals tokens correctly
+     * @target getFeeByTransferAmount should calculate fees by transfer amount with fixed decimals token correctly
      * @dependencies
      * - getMinimumFeeBox
      * @scenario
@@ -287,7 +287,7 @@ describe(`RosenUserInterface`, () => {
      * - it should return correct bridgeFee
      * - it should return correct networkFee
      */
-    it(`should calculate fees by transfer amount with fixed decimals tokens correctly`, async () => {
+    it(`should calculate fees by transfer amount with fixed decimals token correctly`, async () => {
       mockGetMinimumFeeBox(rosenUserInterface, [
         ergToErgoFeeSample,
         ergToErgoFeeSample,
@@ -364,7 +364,7 @@ describe(`RosenUserInterface`, () => {
 
   describe(`convertFeeToAssetUnit`, () => {
     /**
-     * @target convertFeeToAssetUnit should convert fee to asset unit with fixed decimals tokens correctly
+     * @target convertFeeToAssetUnit should convert fee to asset unit with fixed decimals token correctly
      * @dependencies
      * - getMinimumFeeBox
      * @scenario
@@ -374,7 +374,7 @@ describe(`RosenUserInterface`, () => {
      * @expected
      * - it should return correct value
      */
-    it(`should convert fee to asset unit with fixed decimals tokens correctly`, async () => {
+    it(`should convert fee to asset unit with fixed decimals token correctly`, async () => {
       mockGetMinimumFeeBox(rosenUserInterface, [
         rsnFeeSample,
         ergToCardanoFeeSample,
