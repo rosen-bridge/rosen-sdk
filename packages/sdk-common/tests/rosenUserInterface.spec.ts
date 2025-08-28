@@ -27,7 +27,7 @@ describe(`RosenUserInterface`, () => {
     await RosenUserInterface.initialize(
       tokenMap,
       'min-fee-nft-test',
-      'explorer' as ErgoNetworkType,
+      ErgoNetworkType.explorer,
       'https://explorer.com',
       new DummyLogger(),
     );
