@@ -157,7 +157,7 @@ public getTokenDetailsOnTargetChain = (fromChain: string, tokenId: string, toCha
   - $p$: fee ratio
 
   $$
-  mt = max(mnf + mbf, mnf / (1-p))
+  mt = max(mnf + mbf + 1, (mnf + 1) / (1-p))
   $$
 
 ```ts
