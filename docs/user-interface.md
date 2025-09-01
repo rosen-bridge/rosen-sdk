@@ -43,7 +43,7 @@ There is a core package that implements common functions. It also re-exports the
 
 As almost all of the common functions need the list of supported tokens which is available in the `tokens.json` file, implementing common functions in a class facilitates interacting with them.
 
-## Implmentation Details
+## Implementation Details
 
 ### Common
 
@@ -62,7 +62,7 @@ export class RosenUserInterface {
 
   // get and init above variables in constructor
   constructor (
-    tokens: RosenTokens,
+    tokenMap: TokenMap,
     minimumFeeNFT: string,
     minimumFeeAddress: string,
     ergoNetworkType: ErgoNetworkType,
@@ -99,7 +99,7 @@ public getSupportedChains = (): Array<string> => SUPPORTED_CHAINS;
  * @param chain
  * @returns the list of supported tokens
  */
-public getChainSupportedTokens = (chain: string): Array<RosenChainToken> => {
+public getChainSupportedTokens = (chain: NETWORKS): Array<RosenChainToken> => {
   return this.tokenMap
     .search(chain, {})
     .map(obj => obj[chain])
@@ -119,7 +119,7 @@ public getChainSupportedTokens = (chain: string): Array<RosenChainToken> => {
  * @param tokenId token id on the given chain
  * @returns the list of chains that support
  */
-public getAvailableChainsForToken: (chain: string, tokenId: string): Array<string>;
+public getAvailableChainsForToken: (chain: NETWORKS, tokenId: string): Array<string>;
 ```
 
 #### `getTokenDetailsOnTargetChain`
@@ -138,7 +138,7 @@ public getAvailableChainsForToken: (chain: string, tokenId: string): Array<strin
  * @param toChain
  * @returns the token details
  */
-public getTokenDetailsOnTargetChain = (fromChain: string, tokenId: string, toChain: string): RosenChainToken
+public getTokenDetailsOnTargetChain = (fromChain: NETWORKS, tokenId: string, toChain: NETWORKS): RosenChainToken
 ```
 
 #### `getMinimumTransferAmountForToken`
@@ -170,7 +170,7 @@ public getTokenDetailsOnTargetChain = (fromChain: string, tokenId: string, toCha
  * @param toChain
  * @returns the minimum allowed transfer
  */
-public getMinimumTransferAmountForToken = async (fromChain: keyof typeof NETWORKS, tokenId: string, height: number, toChain: keyof typeof NETWORKS): Promise<bigint>
+public getMinimumTransferAmountForToken = async (fromChain: NETWORKS, tokenId: string, height: number, toChain: NETWORKS): Promise<bigint>
 ```
 
 #### `getFeeByTransferAmount`
@@ -209,7 +209,7 @@ public getMinimumTransferAmountForToken = async (fromChain: keyof typeof NETWORK
  * @param actualRecommendedBaseNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
  * @returns the bridge and network fee
  */
-public getFeeByTransferAmount = async (fromChain: string, tokenId: string, height: number, toChain: string, actualAmount: bigint, actualRecommendedBaseNetworkFee: bigint = 0n): Promise<RosenFees>
+public getFeeByTransferAmount = async (fromChain: NETWORKS, tokenId: string, height: number, toChain: NETWORKS, actualAmount: bigint, actualRecommendedBaseNetworkFee: bigint = 0n): Promise<RosenFees>
 ```
 
 #### `convertFeeToAssetUnit`
@@ -242,7 +242,7 @@ public getFeeByTransferAmount = async (fromChain: string, tokenId: string, heigh
  * @param fee fee in toChain native token unit
  * @returns the fee in asset unit
  */
-public convertFeeToAssetUnit = async (fromChain: string, tokenId: string, height: number, toChain: string, fee: bigint): Promise<bigint>
+public convertFeeToAssetUnit = async (fromChain: NETWORKS, tokenId: string, height: number, toChain: NETWORKS, fee: bigint): Promise<bigint>
 ```
 
 ### Chain-Specific

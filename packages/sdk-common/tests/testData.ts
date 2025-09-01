@@ -1,7 +1,7 @@
 import { RosenTokens } from '@rosen-bridge/tokens';
 import { ChainMinimumFee } from '@rosen-bridge/minimum-fee';
 
-export const tokenMap: RosenTokens = [
+export const rosenTokens: RosenTokens = [
   {
     doge: {
       tokenId: 'doge',
@@ -439,6 +439,15 @@ export const rsnFeeSample: ChainMinimumFee = {
 export const ethToErgoFeeSample: ChainMinimumFee = {
   bridgeFee: 142858n,
   networkFee: 114286n,
+  rsnRatio: 350000n,
+  rsnRatioDivisor: 1000000n,
+  feeRatio: 100n,
+  feeRatioDivisor: 10000n,
+};
+
+export const ethToErgoManualFeeSample: ChainMinimumFee = {
+  bridgeFee: 142858n,
+  networkFee: 114286000n,
   rsnRatio: 350000n,
   rsnRatioDivisor: 1000000n,
   feeRatio: 100n,

@@ -39,8 +39,9 @@ Initialize the singleton with your token config and minimum fee NFT parameters.
 ```typescript
 import { RosenUserInterface } from '@rosen-bridge/sdk-common';
 import { DummyLogger } from '@rosen-bridge/abstract-logger';
+import { TokenMap } from '@rosen-bridge/tokens';
 
-const tokens = [
+const rosenTokens = [
   {
     ergo: {
       tokenId: 'erg',
@@ -65,15 +66,16 @@ const tokens = [
   },
 ];
 
-await RosenUserInterface.initialize(
-  tokens, // RosenTokens
+const tokenMap = new TokenMap();
+await tokenMap.updateConfigByJson(rosenTokens);
+
+const sdkInterface = new RosenUserInterface(
+  tokenMap, // TokenMap
   'minimumFeeNFT-box-nft', // Minimum fee NFT id
   'explorer', // Ergo network type: 'explorer' | 'node'
   'https://explorer.ergoplatform.com', // Node/explorer API base URL used by minimum-fee reader
   new DummyLogger(), // Optional logger
 );
-
-const sdkInterface = RosenUserInterface.getInstance();
 ```
 
 ### Query chains and tokens

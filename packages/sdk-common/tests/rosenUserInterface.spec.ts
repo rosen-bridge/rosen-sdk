@@ -1,37 +1,38 @@
 import { DummyLogger } from '@rosen-bridge/abstract-logger';
 import { ErgoNetworkType } from '@rosen-bridge/minimum-fee';
-import { TokenNotFoundException, ChainNotSupportedException } from '../lib';
+import { ChainNotSupportedException, TokenNotFoundException } from '../lib';
 import RosenUserInterface from '../lib/rosenUserInterface';
 import {
-  tokenMap,
-  testChains,
   ergToCardanoFeeSample,
+  ergToErgoFeeSample,
   ethToErgoFeeSample,
+  ethToErgoManualFeeSample,
   ethToEthereumFeeSample,
   expectedErgTokenSet,
+  rosenTokens,
   rsnFeeSample,
-  ergToErgoFeeSample,
+  testChains,
 } from './testData';
 import { mockGetMinimumFeeBox, resetMocks } from './mocked/minimumFee.mock';
+import { TokenMap } from '@rosen-bridge/tokens';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
 
 describe(`RosenUserInterface`, () => {
   let rosenUserInterface: RosenUserInterface;
 
   beforeEach(async () => {
-    // Reset static instance and mocks
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (RosenUserInterface as any).instance = undefined;
+    // Reset mocks
     resetMocks();
-
+    const tokenMap = new TokenMap();
+    await tokenMap.updateConfigByJson(rosenTokens);
     // Initialize RosenUserInterface with test data
-    await RosenUserInterface.initialize(
+    rosenUserInterface = new RosenUserInterface(
       tokenMap,
       'min-fee-nft-test',
       ErgoNetworkType.explorer,
       'https://explorer.com',
       new DummyLogger(),
     );
-    rosenUserInterface = RosenUserInterface.getInstance();
   });
 
   describe(`getAvailableChainsForToken`, () => {
@@ -50,7 +51,7 @@ describe(`RosenUserInterface`, () => {
       // call getAvailableChainsForToken with non-existent token
       expect(() => {
         rosenUserInterface.getAvailableChainsForToken(
-          'ergo',
+          NETWORKS.ERGO,
           'non-existent-token',
         );
       }).toThrow(TokenNotFoundException);
@@ -70,7 +71,7 @@ describe(`RosenUserInterface`, () => {
     it(`should return available chains when token is found`, () => {
       // call getAvailableChainsForToken with existing token
       const result = rosenUserInterface.getAvailableChainsForToken(
-        'ergo',
+        NETWORKS.ERGO,
         'erg',
       );
 
@@ -93,9 +94,9 @@ describe(`RosenUserInterface`, () => {
      */
     it(`should return details when token exists and is supported on toChain`, () => {
       const details = rosenUserInterface['getTokenDetails'](
-        'ergo',
+        NETWORKS.ERGO,
         'erg',
-        'cardano',
+        NETWORKS.CARDANO,
       );
 
       expect(details).deep.equal(expectedErgTokenSet);
@@ -114,9 +115,9 @@ describe(`RosenUserInterface`, () => {
     it(`should throw TokenNotFoundException when token is not found`, () => {
       expect(() => {
         rosenUserInterface['getTokenDetails'](
-          'ergo',
+          NETWORKS.ERGO,
           'non-existent-token',
-          'cardano',
+          NETWORKS.CARDANO,
         );
       }).toThrow(TokenNotFoundException);
     });
@@ -133,7 +134,11 @@ describe(`RosenUserInterface`, () => {
      */
     it(`should throw ChainNotSupportedException when target chain is not supported`, () => {
       expect(() => {
-        rosenUserInterface['getTokenDetails']('ergo', 'erg', 'bitcoin');
+        rosenUserInterface['getTokenDetails'](
+          NETWORKS.ERGO,
+          'erg',
+          NETWORKS.BITCOIN,
+        );
       }).toThrow(ChainNotSupportedException);
     });
   });
@@ -186,10 +191,10 @@ describe(`RosenUserInterface`, () => {
       mockGetMinimumFeeBox(rosenUserInterface, [ergToCardanoFeeSample]);
 
       const result = await rosenUserInterface.getMinimumTransferAmountForToken(
-        'ergo',
+        NETWORKS.ERGO,
         'erg',
         1509000,
-        'cardano',
+        NETWORKS.CARDANO,
       );
 
       expect(result).toEqual(750000001n);
@@ -210,10 +215,10 @@ describe(`RosenUserInterface`, () => {
       mockGetMinimumFeeBox(rosenUserInterface, [ethToEthereumFeeSample]);
 
       const result = await rosenUserInterface.getMinimumTransferAmountForToken(
-        'ergo',
+        NETWORKS.ERGO,
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1',
         1599000,
-        'ethereum',
+        NETWORKS.ETHEREUM,
       );
       expect(result).toEqual(1142859n);
     });
@@ -233,13 +238,37 @@ describe(`RosenUserInterface`, () => {
       mockGetMinimumFeeBox(rosenUserInterface, [ethToErgoFeeSample]);
 
       const result = await rosenUserInterface.getMinimumTransferAmountForToken(
-        'ethereum',
+        NETWORKS.ETHEREUM,
         'eth',
         23159000,
-        'ergo',
+        NETWORKS.ERGO,
       );
 
       expect(result).toEqual(257145000000000n);
+    });
+
+    /**
+     * @target getMinimumTransferAmountForToken should return min transfer amount correctly when the network fee is significantly higher than the minimum bridge fee
+     * @dependencies
+     * - getMinimumFeeBox
+     * @scenario
+     * - mock getMinimumFeeBox to return fixed ChainMinimumFee
+     * - call getMinimumTransferAmountForToken for eth from ethereum to ergo with very large network fee
+     * - check returned minimum transfer amount
+     * @expected
+     * - it should return correct value
+     */
+    it(`should return min transfer amount correctly when the network fee is significantly higher than the minimum bridge fee`, async () => {
+      mockGetMinimumFeeBox(rosenUserInterface, [ethToErgoManualFeeSample]);
+
+      const result = await rosenUserInterface.getMinimumTransferAmountForToken(
+        NETWORKS.ETHEREUM,
+        'eth',
+        23159000,
+        NETWORKS.ERGO,
+      );
+
+      expect(result).toEqual(115440406000000000n);
     });
   });
 
@@ -264,10 +293,10 @@ describe(`RosenUserInterface`, () => {
       ]);
 
       const result = await rosenUserInterface.getFeeByTransferAmount(
-        'cardano',
+        NETWORKS.CARDANO,
         '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e455247',
         12311000,
-        'ergo',
+        NETWORKS.ERGO,
         5000000000000n,
       );
 
@@ -295,10 +324,10 @@ describe(`RosenUserInterface`, () => {
       ]);
 
       const result = await rosenUserInterface.getFeeByTransferAmount(
-        'cardano',
+        NETWORKS.CARDANO,
         '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e455247',
         12311000,
-        'ergo',
+        NETWORKS.ERGO,
         5000000000000n,
         400000000n,
       );
@@ -323,10 +352,10 @@ describe(`RosenUserInterface`, () => {
       mockGetMinimumFeeBox(rosenUserInterface, [ethToEthereumFeeSample]);
 
       const result = await rosenUserInterface.getFeeByTransferAmount(
-        'ergo',
+        NETWORKS.ERGO,
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1',
         1599000,
-        'ethereum',
+        NETWORKS.ETHEREUM,
         300000000n,
       );
 
@@ -350,10 +379,10 @@ describe(`RosenUserInterface`, () => {
       mockGetMinimumFeeBox(rosenUserInterface, [ethToErgoFeeSample]);
 
       const result = await rosenUserInterface.getFeeByTransferAmount(
-        'ethereum',
+        NETWORKS.ETHEREUM,
         'eth',
         23232769,
-        'ergo',
+        NETWORKS.ERGO,
         300000000000000000n,
       );
 
@@ -381,10 +410,10 @@ describe(`RosenUserInterface`, () => {
       ]);
 
       const result = await rosenUserInterface.convertFeeToAssetUnit(
-        'cardano',
+        NETWORKS.CARDANO,
         '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e52534e',
         12311000,
-        'ergo',
+        NETWORKS.ERGO,
         200000000n, // Current base network fee in Rosen Pandora
       );
       expect(result).toEqual(40000n);
@@ -408,10 +437,10 @@ describe(`RosenUserInterface`, () => {
       ]);
 
       const result = await rosenUserInterface.convertFeeToAssetUnit(
-        'ergo',
+        NETWORKS.ERGO,
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1',
         1599000,
-        'ethereum',
+        NETWORKS.ETHEREUM,
         1000000000000000n, // Current base network fee in Rosen Pandora
       );
       expect(result).toEqual(1000000n);
@@ -435,10 +464,10 @@ describe(`RosenUserInterface`, () => {
       ]);
 
       const result = await rosenUserInterface.convertFeeToAssetUnit(
-        'ethereum',
+        NETWORKS.ETHEREUM,
         'eth',
         23232769,
-        'ergo',
+        NETWORKS.ERGO,
         200000000n, // Current base network fee in Rosen Pandora
       );
 

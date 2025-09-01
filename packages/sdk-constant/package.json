@@ -1,0 +1,37 @@
+{
+  "name": "@rosen-bridge/sdk-constant",
+  "version": "0.0.0",
+  "description": "common constant between packages",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
+  },
+  "license": "MIT",
+  "author": "Rosen Team",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "lint": "eslint --fix . && npm run prettify",
+    "prettify": "prettier --write . --ignore-path ./.gitignore",
+    "release": "npm run build && npm publish --access public",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}
