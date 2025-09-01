@@ -179,10 +179,9 @@ class RosenUserInterface {
 
     const minimumFees: bigint =
       BigInt(fees.bridgeFee) + BigInt(fees.networkFee) + 1n;
-    const feeRatioComplement = FEE_RATIO_DIVISOR - fees.feeRatio;
     const otherMinTransfer: bigint = bigIntCeil(
       (fees.networkFee + 1n) * FEE_RATIO_DIVISOR,
-      feeRatioComplement,
+      FEE_RATIO_DIVISOR - fees.feeRatio,
     );
     const fee = minimumFees > otherMinTransfer ? minimumFees : otherMinTransfer;
     const result = this.tokenMap.unwrapAmount(tokenId, fee, fromChain).amount;
