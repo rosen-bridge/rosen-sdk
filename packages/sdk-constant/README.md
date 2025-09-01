@@ -7,7 +7,7 @@
 
 ## Introduction
 
-common constant between packages
+A Typescript package containing shared constants and utilities of Rosen SDK packages.
 
 ## Installation
 
