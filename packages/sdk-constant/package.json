@@ -1,7 +1,7 @@
 {
-  "name": "@rosen-bridge/sdk-abstract",
+  "name": "@rosen-bridge/sdk-constant",
   "version": "0.0.0",
-  "description": "Abstract interface for rosen chain SDKs",
+  "description": "A Typescript package containing shared constants and utilities of Rosen SDK packages",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
@@ -28,9 +28,5 @@
   },
   "engines": {
     "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "@rosen-bridge/abstract-logger": "^2.0.1",
-    "@rosen-bridge/tokens": "^3.1.0"
   }
 }
