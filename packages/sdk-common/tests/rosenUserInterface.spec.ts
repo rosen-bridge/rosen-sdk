@@ -197,7 +197,7 @@ describe(`RosenUserInterface`, () => {
         NETWORKS.CARDANO,
       );
 
-      expect(result).toEqual(750000001n);
+      expect(result).toEqual(750_000_001n);
     });
 
     /**
@@ -220,7 +220,7 @@ describe(`RosenUserInterface`, () => {
         1599000,
         NETWORKS.ETHEREUM,
       );
-      expect(result).toEqual(1142859n);
+      expect(result).toEqual(1_142_859n);
     });
 
     /**
@@ -244,7 +244,7 @@ describe(`RosenUserInterface`, () => {
         NETWORKS.ERGO,
       );
 
-      expect(result).toEqual(257145000000000n);
+      expect(result).toEqual(257_145_000_000_000n);
     });
 
     /**
@@ -268,7 +268,7 @@ describe(`RosenUserInterface`, () => {
         NETWORKS.ERGO,
       );
 
-      expect(result).toEqual(115440406000000000n);
+      expect(result).toEqual(115_440_406_000_000_000n);
     });
   });
 
@@ -297,11 +297,11 @@ describe(`RosenUserInterface`, () => {
         '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e455247',
         12311000,
         NETWORKS.ERGO,
-        5000000000000n,
+        5_000_000_000_000n,
       );
 
-      expect(result.bridgeFee).toEqual(50000000000n);
-      expect(result.networkFee).toEqual(200000000n);
+      expect(result.bridgeFee).toEqual(50_000_000_000n);
+      expect(result.networkFee).toEqual(200_000_000n);
     });
 
     /**
@@ -328,12 +328,12 @@ describe(`RosenUserInterface`, () => {
         '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e455247',
         12311000,
         NETWORKS.ERGO,
-        5000000000000n,
-        400000000n,
+        5_000_000_000_000n,
+        400_000_000n,
       );
 
-      expect(result.bridgeFee).toEqual(50000000000n);
-      expect(result.networkFee).toEqual(400000000n);
+      expect(result.bridgeFee).toEqual(50_000_000_000n);
+      expect(result.networkFee).toEqual(400_000_000n);
     });
 
     /**
@@ -356,11 +356,11 @@ describe(`RosenUserInterface`, () => {
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1',
         1599000,
         NETWORKS.ETHEREUM,
-        300000000n,
+        300_000_000n,
       );
 
-      expect(result.bridgeFee).toEqual(3000000n);
-      expect(result.networkFee).toEqual(1000000n);
+      expect(result.bridgeFee).toEqual(3_000_000n);
+      expect(result.networkFee).toEqual(1_000_000n);
     });
 
     /**
@@ -383,11 +383,11 @@ describe(`RosenUserInterface`, () => {
         'eth',
         23232769,
         NETWORKS.ERGO,
-        300000000000000000n,
+        300_000_000_000_000_000n,
       );
 
-      expect(result.bridgeFee).toEqual(3000000000000000n);
-      expect(result.networkFee).toEqual(114286000000000n);
+      expect(result.bridgeFee).toEqual(3_000_000_000_000_000n);
+      expect(result.networkFee).toEqual(114_286_000_000_000n);
     });
   });
 
@@ -414,9 +414,9 @@ describe(`RosenUserInterface`, () => {
         '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e52534e',
         12311000,
         NETWORKS.ERGO,
-        200000000n, // Current base network fee in Rosen Pandora
+        200_000_000n, // Current base network fee in Rosen Pandora
       );
-      expect(result).toEqual(40000n);
+      expect(result).toEqual(40_000n);
     });
 
     /**
@@ -441,9 +441,9 @@ describe(`RosenUserInterface`, () => {
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1',
         1599000,
         NETWORKS.ETHEREUM,
-        1000000000000000n, // Current base network fee in Rosen Pandora
+        1_000_000_000_000_000n, // Current base network fee in Rosen Pandora
       );
-      expect(result).toEqual(1000000n);
+      expect(result).toEqual(1_000_000n);
     });
 
     /**
@@ -468,10 +468,10 @@ describe(`RosenUserInterface`, () => {
         'eth',
         23232769,
         NETWORKS.ERGO,
-        200000000n, // Current base network fee in Rosen Pandora
+        200_000_000n, // Current base network fee in Rosen Pandora
       );
 
-      expect(result).toEqual(114286000000000n);
+      expect(result).toEqual(114_286_000_000_000n);
     });
   });
 });

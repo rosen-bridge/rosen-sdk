@@ -2,7 +2,6 @@ import { NATIVE_TOKEN, RosenChainToken, TokenMap } from '@rosen-bridge/tokens';
 import {
   ChainMinimumFee,
   ErgoNetworkType,
-  FEE_RATIO_DIVISOR,
   MinimumFeeBox,
 } from '@rosen-bridge/minimum-fee';
 import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
@@ -180,8 +179,8 @@ class RosenUserInterface {
     const minimumFees: bigint =
       BigInt(fees.bridgeFee) + BigInt(fees.networkFee) + 1n;
     const otherMinTransfer: bigint = bigIntCeil(
-      (fees.networkFee + 1n) * FEE_RATIO_DIVISOR,
-      FEE_RATIO_DIVISOR - fees.feeRatio,
+      (fees.networkFee + 1n) * fees.feeRatioDivisor,
+      fees.feeRatioDivisor - fees.feeRatio,
     );
     const fee = minimumFees > otherMinTransfer ? minimumFees : otherMinTransfer;
     const result = this.tokenMap.unwrapAmount(tokenId, fee, fromChain).amount;
