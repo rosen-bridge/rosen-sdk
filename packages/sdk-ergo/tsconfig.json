@@ -5,5 +5,5 @@
     "types": ["node", "vitest/globals"]
   },
   "include": ["tests", "lib", "vitest.config.ts"],
-  "references": [{ "path": "../sdk-constant" }]
+  "references": [{ "path": "../sdk-abstract" }, { "path": "../sdk-constant" }]
 }

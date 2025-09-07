@@ -5,7 +5,7 @@ This document states the chain-specific functions of Rosen SDK on the Ergo chain
 ## Contents
 
 - [Transaction Structure](#transaction-structure)
-- [Implmentation Details](#implmentation-details)
+- [Implementation Details](#implmentation-details)
   - [getBaseNetworkFee](#getbasenetworkfee)
   - [generateLockAuxiliaryData](#generatelockauxiliarydata)
   - [generateLockTransaction](#generatelocktransaction)
@@ -42,7 +42,7 @@ which represents:
 
 If the lock box contains a token that is supported in the target chain, the transaction is recognized as a token transfer, otherwise it is recognized as an ERG transfer. Note that if extracting data from R4 fails or the transferring asset is not supported on the target chain, the lock transaction is not valid and is considered a donation.
 
-## Implmentation Details
+## Implementation Details
 
 Alongside two chain-specific functions of Rosen SDK, another function is also suggested for Ergo. The implementation details of each one are described here.
 
@@ -63,29 +63,28 @@ export const getBaseNetworkFee = (): bigint => 1300000n;
 This function creates the lock box with the format specified in the [Transaction Structure section](#transaction-structure). A version of this function is available at [`@rosen-bridge/ui` GitHub](https://github.com/rosen-bridge/ui/blob/1c0b08f5407e929f5680aa01a316e2dc88ef1408/apps/rosen/app/_networks/ergo/transaction/utils.ts#L32).
 
 ```ts
-/**
+  /**
  * creates lock box candidate
- * @param lockAddress
  * @param height
  * @param tokenId
- * @param amount
+ * @param unwrappedAmount
  * @param toChain
  * @param toAddress
  * @param fromAddress
  * @param bridgeFee
  * @param networkFee
+ * @return ErgoBoxCandidate
  */
-export const createLockBox: (
-  lockAddress: string,
+createLockBox = (
   height: number,
   tokenId: string,
-  amount: bigint,
+  unwrappedAmount: bigint,
   toChain: string,
   toAddress: string,
   fromAddress: string,
   bridgeFee: bigint,
-  networkFee: bigint
-) => ErgoBoxCandidate;
+  networkFee: bigint,
+): wasm.ErgoBoxCandidate
 ```
 
 ### `generateLockTransaction`
@@ -99,28 +98,28 @@ A simple version of this function is available at [`@rosen-bridge/ui` GitHub](ht
 ```ts
 /**
  * generates an unsigned lock transaction on Ergo
- * @param changeAddress
- * @param utxoIterator
- * @param lockAddress
+ * @param tokenId
  * @param toChain
  * @param toAddress
- * @param tokenId
- * @param amount
+ * @param fromAddress
+ * @param unwrappedAmount
  * @param bridgeFee
  * @param networkFee
- * @returns
+ * @param utxoIterator
+ * @param networkHeight
+ * @returns UnsignedGenerateTxProxy
  */
 export const generateUnsignedTx = async (
-  changeAddress: string,
-  lockAddress: string,
-  utxoIterator:
-    | AsyncIterator<ErgoBoxProxy, undefined>
-    | Iterator<ErgoBoxProxy, undefined>,
-  toChain: string,
-  toAddress: string,
-  tokenId: string,
-  amount: bigint,
-  bridgeFee: bigint,
-  networkFee: bigint,
-): Promise<UnsignedErgoTxProxy>
+    tokenId: string,
+    toChain: NETWORKS,
+    toAddress: string,
+    fromChainChangeAddress: string,
+    unwrappedAmount: bigint,
+    bridgeFee: bigint,
+    networkFee: bigint,
+    utxoIterator:
+      | AsyncIterator<wasm.ErgoBox, undefined>
+      | Iterator<wasm.ErgoBox, undefined>,
+    networkHeight: number,
+): Promise<UnsignedGenerateTxProxy>
 ```
