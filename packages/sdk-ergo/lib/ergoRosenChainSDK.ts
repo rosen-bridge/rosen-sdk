@@ -21,7 +21,7 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     protected tokenMap: TokenMap,
     lockAddress: string,
     protected minBoxValue: bigint = MIN_BOX_VALUE,
-    protected ergoChainTxFee: bigint = FEE,
+    protected txFee: bigint = FEE,
     protected logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
@@ -38,8 +38,8 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
    * @param toAddress
    * @param fromAddress
    * @param unwrappedAmount
-   * @param bridgeFee
-   * @param networkFee
+   * @param wrappedBridgeFee
+   * @param wrappedNetworkFee
    * @param utxoIterator
    * @param networkHeight
    * @return UnsignedGenerateTxProxy
@@ -50,8 +50,8 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     toAddress: string,
     fromAddress: string,
     unwrappedAmount: bigint,
-    bridgeFee: bigint,
-    networkFee: bigint,
+    wrappedBridgeFee: bigint,
+    wrappedNetworkFee: bigint,
     utxoIterator:
       | AsyncIterator<wasm.ErgoBox, undefined>
       | Iterator<wasm.ErgoBox, undefined>,
@@ -83,7 +83,7 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     const selector = new ErgoBoxSelection(this.logger);
 
     // get input boxes
-    const inputs = await selector.getCoveringBoxes(
+    const selectedBoxes = await selector.getCoveringBoxes(
       lockAssets,
       [],
       new Map(),

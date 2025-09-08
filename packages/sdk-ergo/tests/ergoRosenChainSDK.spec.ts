@@ -26,15 +26,17 @@ describe(`ErgoRosenChainSDK`, () => {
      * @dependencies
      * @scenario
      * - call generateLockTransaction for RSN-Pandora from ergo to cardano
+     * - check returned value
      * @expected
-     * - should exist 3 outputs on unsinged transaction
+     * - the returned unsinged transaction should have 3 outputs
      * - boxId of each inputsSigmaBytes in UnsignedGenerateTxProxy should be equal to unsignedTxProxy inputs' boxId
-     * - ergoTree of lockBox should be equal to proper ergoLockAddress
-     * - the value of lockBox should be equal MIN_BOX_VALUE in case of token bridging
-     * - should exist exactly one asset in lock box with correct id and amount
-     * - should fill R4 register in lockBox correctly
-     * - ergoTree of changeBox should be equal to proper fromAddress with correct value and assets
-     * - feeBox should have correct value
+     * - ergoTree of lock box should be equal to proper ergoLockAddress
+     * - the value of lock box should be equal MIN_BOX_VALUE
+     * - lock box should have exactly one token with correct id and amount
+     * - lock box R4 should contain serialized bridge data
+     * - ergoTree of changeBox should be equal to proper fromAddress
+     * - change box value and tokens should be as expected
+     * - fee box value should be as expected
      */
     it(`should generate lock transaction correctly with token bridging`, async () => {
       const ergoRosenChainSDK = new ErgoRosenChainSDK(

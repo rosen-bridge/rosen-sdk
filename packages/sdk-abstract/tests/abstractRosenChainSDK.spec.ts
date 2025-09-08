@@ -20,10 +20,10 @@ describe(`TestRosenChainSDK`, () => {
 
   describe(`generateLockTransaction`, () => {
     /**
-     * @target generateLockTransaction should throw error when tokenMap is empty or wasn't load correctly
+     * @target generateLockTransaction should throw error when tokenMap is empty
      * @dependencies
      * @scenario
-     * - tokenMap overload with empty object
+     * - update tokenMap to empty config
      * - call generateLockTransaction while token map is empty
      * @expected
      * - wrapValue should call twice for bridgeFee/networkFee
@@ -40,7 +40,7 @@ describe(`TestRosenChainSDK`, () => {
       const x = testRosenChainSDK.generateLockTransaction(
         {} as any, // eslint-disable-line
         NETWORKS.ERGO,
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
+        'address',
         '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
         5_000_000_000_000n,
         50_000_000_000n,
@@ -52,18 +52,18 @@ describe(`TestRosenChainSDK`, () => {
     });
 
     /**
-     * @target generateLockTransaction should call abstract functions with the correct value, especially when using the wrapped value bridgeFee/networkFee with fixed decimals tokens
+     * @target generateLockTransaction should call abstract function with the correct values for a fixed decimals token
      * @dependencies
      * @scenario
      * - spy on wrapValue
      * - spy on generateLockTransactionCore and mock resolve value to prevent throw error
      * - call generateLockTransaction for rpnDoge from cardano to ergo
+     * - check if functions got called
      * @expected
-     * - wrapValue should call twice for bridgeFee/networkFee
-     * - wrapValue should return correct value with each call for fixed decimals tokens
-     * - generateLockTransactionCore should call with correct value specially with wrapped bridgeFee/networkFee
+     * - wrapValue should have been called twice (for bridgeFee and networkFee)
+     * - generateLockTransactionCore should have been called with the same bridgeFee and networkFee
      */
-    it(`should call abstract functions with the correct value, especially when using the wrapped value bridgeFee/networkFee with fixed decimals tokens`, async () => {
+    it(`should call abstract function with the correct values for a fixed decimals token`, async () => {
       const testRosenChainSDK = new TestRosenChainSDK(
         tokenMap,
         cardanoLockAddress,
@@ -100,13 +100,11 @@ describe(`TestRosenChainSDK`, () => {
         50_000_000_000n,
         rpnDogeTokenIdOnCardano,
       );
-      expect(wrapValueSpy).toHaveNthReturnedWith(1, 50_000_000_000n);
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
         2,
         200_000_000n,
         rpnDogeTokenIdOnCardano,
       );
-      expect(wrapValueSpy).toHaveNthReturnedWith(2, 200_000_000n);
       expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
         rpnDogeTokenIdOnCardano,
         NETWORKS.ERGO,

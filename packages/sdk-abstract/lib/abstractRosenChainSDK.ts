@@ -29,7 +29,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
    * @param toChain
    * @param toAddress
    * @param fromAddress
-   * @param amount
+   * @param unwrappedAmount
    * @param unwrappedBridgeFee
    * @param unwrappedNetworkFee
    * @param utxoIterator
@@ -40,7 +40,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
     toChain: NETWORKS,
     toAddress: string,
     fromAddress: string,
-    amount: bigint,
+    unwrappedAmount: bigint,
     unwrappedBridgeFee: bigint,
     unwrappedNetworkFee: bigint,
     utxoIterator:
@@ -71,9 +71,9 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
     toChain: NETWORKS,
     toAddress: string,
     fromAddress: string,
-    amount: bigint,
-    bridgeFee: bigint,
-    networkFee: bigint,
+    unwrappedAmount: bigint,
+    wrappedBridgeFee: bigint,
+    wrappedNetworkFee: bigint,
     utxoIterator:
       | AsyncIterator<UTXOType, undefined>
       | Iterator<UTXOType, undefined>,

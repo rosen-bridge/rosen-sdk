@@ -113,7 +113,7 @@ export const generateUnsignedTx = async (
     tokenId: string,
     toChain: NETWORKS,
     toAddress: string,
-    fromChainChangeAddress: string,
+    fromAddress: string,
     unwrappedAmount: bigint,
     bridgeFee: bigint,
     networkFee: bigint,
