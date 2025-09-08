@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@rosen-bridge/abstract-logger": "^2.0.1",
-    "@rosen-bridge/tokens": "^3.2.0",
-    "@rosen-bridge/sdk-constant": "^0.0.0"
+    "@rosen-bridge/sdk-constant": "^0.0.0",
+    "@rosen-bridge/tokens": "^3.2.0"
   }
 }

@@ -1,6 +1,7 @@
 import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
 import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { EmptyTokenMapException } from './errors';
 
 abstract class AbstractRosenChainSDK<TxType, UTXOType> {
   abstract CHAIN: NETWORKS;
@@ -49,7 +50,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
     networkHeight: number,
   ): Promise<TxType> => {
     if (this.tokenMap.getConfig().length == 0) {
-      throw new Error('Token map is empty');
+      throw new EmptyTokenMapException();
     }
     const wrappedBridgeFee = this.wrapValue(unwrappedBridgeFee, tokenId);
     const wrappedNetworkFee = this.wrapValue(unwrappedNetworkFee, tokenId);
@@ -58,7 +59,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
       toChain,
       toAddress,
       fromAddress,
-      amount,
+      unwrappedAmount,
       wrappedBridgeFee,
       wrappedNetworkFee,
       utxoIterator,

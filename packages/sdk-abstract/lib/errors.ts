@@ -3,3 +3,9 @@ export class InsufficientAssetsException extends Error {
     super(`Insufficient assets in selected inputs ${message}`);
   }
 }
+
+export class EmptyTokenMapException extends Error {
+  constructor() {
+    super(`Token map is empty`);
+  }
+}

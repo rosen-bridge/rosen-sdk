@@ -1,34 +1,7 @@
-export interface TokenInfo {
-  id: string;
-  value: bigint;
-}
-
-export interface AssetBalance {
-  nativeToken: bigint;
-  tokens: Array<TokenInfo>;
-}
-
-export interface BoxInfo {
-  id: string;
-  assets: AssetBalance;
-}
-
-export interface CoveringBoxes {
-  covered: boolean;
-  boxes: Array<ErgoBoxProxy>;
-}
-
 export type BoxId = HexString;
 export type TxId = HexString;
 export type HexString = string;
 export type TokenId = HexString;
-export type NErg = bigint;
-export type Base58String = string;
-export type Address = Base58String;
-export type Paging = {
-  offset: number;
-  limit: number;
-};
 
 export type ErgoBoxProxy = {
   readonly boxId: BoxId;

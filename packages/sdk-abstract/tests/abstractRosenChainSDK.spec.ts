@@ -8,12 +8,11 @@ import {
 import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import TestRosenChainSDK from './testRosenChainSDK';
+import { EmptyTokenMapException } from '../lib';
 
 describe(`TestRosenChainSDK`, () => {
   let tokenMap: TokenMap;
   beforeEach(async () => {
-    // Reset mocks
-    vi.resetAllMocks();
     tokenMap = new TokenMap();
     await tokenMap.updateConfigByJson(rosenTokens);
   });
@@ -26,11 +25,9 @@ describe(`TestRosenChainSDK`, () => {
      * - update tokenMap to empty config
      * - call generateLockTransaction while token map is empty
      * @expected
-     * - wrapValue should call twice for bridgeFee/networkFee
-     * - wrapValue should return correct value with each call for fixed decimals tokens
-     * - generateLockTransactionCore should call with correct value specially with wrapped bridgeFee/networkFee
+     * - throw error EmptyTokenMapException
      */
-    it(`should throw error when tokenMap is empty or wasn't load correctly`, async () => {
+    it(`should throw error when tokenMap is empty`, async () => {
       await tokenMap.updateConfigByJson([]);
       const testRosenChainSDK = new TestRosenChainSDK(
         tokenMap,
@@ -40,19 +37,19 @@ describe(`TestRosenChainSDK`, () => {
       const x = testRosenChainSDK.generateLockTransaction(
         {} as any, // eslint-disable-line
         NETWORKS.ERGO,
-        'address',
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
+        'to_address',
+        'from_address',
         5_000_000_000_000n,
         50_000_000_000n,
         200_000_000n,
         [].values(),
         12311000,
       );
-      await expect(x).rejects.toThrow('Token map is empty');
+      await expect(x).rejects.toThrow(EmptyTokenMapException);
     });
 
     /**
-     * @target generateLockTransaction should call abstract function with the correct values for a fixed decimals token
+     * @target generateLockTransaction should have been called abstract function with the correct values for a fixed decimals token
      * @dependencies
      * @scenario
      * - spy on wrapValue
@@ -63,7 +60,7 @@ describe(`TestRosenChainSDK`, () => {
      * - wrapValue should have been called twice (for bridgeFee and networkFee)
      * - generateLockTransactionCore should have been called with the same bridgeFee and networkFee
      */
-    it(`should call abstract function with the correct values for a fixed decimals token`, async () => {
+    it(`should have been called abstract function with the correct values for a fixed decimals token`, async () => {
       const testRosenChainSDK = new TestRosenChainSDK(
         tokenMap,
         cardanoLockAddress,
@@ -86,8 +83,8 @@ describe(`TestRosenChainSDK`, () => {
       await testRosenChainSDK.generateLockTransaction(
         rpnDogeTokenIdOnCardano,
         NETWORKS.ERGO,
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
+        'to_address',
+        'from_address',
         5_000_000_000_000n,
         50_000_000_000n,
         200_000_000n,
@@ -108,8 +105,8 @@ describe(`TestRosenChainSDK`, () => {
       expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
         rpnDogeTokenIdOnCardano,
         NETWORKS.ERGO,
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
+        'to_address',
+        'from_address',
         5_000_000_000_000n,
         50_000_000_000n,
         200_000_000n,
@@ -119,18 +116,18 @@ describe(`TestRosenChainSDK`, () => {
     });
 
     /**
-     * @target generateLockTransaction should call abstract functions with the correct value, especially when using the wrapped value bridgeFee/networkFee with insignificant toChain decimal correctly
+     * @target generateLockTransaction should have been called abstract function with the correct values for a multi decimals token with insignificant decimals on toChain
      * @dependencies
      * @scenario
      * - spy on wrapValue
      * - spy on generateLockTransactionCore and mock resolve value to prevent throw error
      * - call generateLockTransaction for rpnETH from ergo to ethereum
      * @expected
-     * - wrapValue should call twice for bridgeFee/networkFee
+     * - wrapValue should have been called twice for bridgeFee/networkFee
      * - wrapValue should return correct value with each call for bridgeFee/networkFee with insignificant toChain decimal
-     * - generateLockTransactionCore should call with correct value specially with wrapped bridgeFee/networkFee
+     * - generateLockTransactionCore should have been called with correct value specially with wrapped bridgeFee/networkFee
      */
-    it(`should call abstract functions with the correct value, especially when using the wrapped value bridgeFee/networkFee with insignificant toChain decimal correctly`, async () => {
+    it(`should have been called abstract function with the correct values for a multi decimals token with insignificant decimals on toChain`, async () => {
       const testRosenChainSDK = new TestRosenChainSDK(
         tokenMap,
         ergoLockAddress,
@@ -152,8 +149,8 @@ describe(`TestRosenChainSDK`, () => {
       await testRosenChainSDK.generateLockTransaction(
         rpnETHTokenIdOnErgo,
         NETWORKS.ETHEREUM,
-        '0xFBC0dcd6c3518cB529bC1B585dB992A7d40005fa',
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
+        'to_address',
+        'from_address',
         300_000_000n,
         3_000_000n,
         1_000_000n,
@@ -166,18 +163,16 @@ describe(`TestRosenChainSDK`, () => {
         3_000_000n,
         rpnETHTokenIdOnErgo,
       );
-      expect(wrapValueSpy).toHaveNthReturnedWith(1, 3_000_000n);
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
         2,
         1_000_000n,
         rpnETHTokenIdOnErgo,
       );
-      expect(wrapValueSpy).toHaveNthReturnedWith(2, 1_000_000n);
       expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
         rpnETHTokenIdOnErgo,
         NETWORKS.ETHEREUM,
-        '0xFBC0dcd6c3518cB529bC1B585dB992A7d40005fa',
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
+        'to_address',
+        'from_address',
         300_000_000n,
         3_000_000n,
         1_000_000n,
@@ -187,18 +182,18 @@ describe(`TestRosenChainSDK`, () => {
     });
 
     /**
-     * @target generateLockTransaction should call abstract functions with the correct value, especially when using the wrapped value bridgeFee/networkFee with insignificant toChain decimal correctly
+     * @target generateLockTransaction should have been called abstract functions with the correct value, for a wrapped value bridgeFee/networkFee with insignificant toChain decimal correctly
      * @dependencies
      * @scenario
      * - spy on wrapValue
      * - spy on generateLockTransactionCore and mock resolve value to prevent throw error
      * - call generateLockTransaction for eth from ethereum to ergo
      * @expected
-     * - wrapValue should call twice for bridgeFee/networkFee
+     * - wrapValue should have been called twice for bridgeFee/networkFee
      * - wrapValue should return correct value with each call for bridgeFee/networkFee with insignificant fromChain decimal
-     * - generateLockTransactionCore should call with correct value specially with wrapped bridgeFee/networkFee
+     * - generateLockTransactionCore should have been called with correct value specially with wrapped bridgeFee/networkFee
      */
-    it(`should call abstract functions with the correct value, especially when using the wrapped value bridgeFee/networkFee with insignificant fromChain decimal correctly`, async () => {
+    it(`should have been called abstract functions with the correct value, for a wrapped value bridgeFee/networkFee with insignificant fromChain decimal correctly`, async () => {
       const testRosenChainSDK = new TestRosenChainSDK(
         tokenMap,
         ethereumLockAddress,
@@ -219,8 +214,8 @@ describe(`TestRosenChainSDK`, () => {
       await testRosenChainSDK.generateLockTransaction(
         ethTokenIdOnEthereum,
         NETWORKS.ERGO,
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
-        '0xFBC0dcd6c3518cB529bC1B585dB992A7d40005fa',
+        'to_address',
+        'from_address',
         300_000_000_000_000_000n,
         3_000_000_000_000_000n,
         114_286_000_000_000n,
@@ -233,18 +228,16 @@ describe(`TestRosenChainSDK`, () => {
         3_000_000_000_000_000n,
         ethTokenIdOnEthereum,
       );
-      expect(wrapValueSpy).toHaveNthReturnedWith(1, 3_000_000n);
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
         2,
         114_286_000_000_000n,
         ethTokenIdOnEthereum,
       );
-      expect(wrapValueSpy).toHaveNthReturnedWith(2, 114_286n);
       expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
         ethTokenIdOnEthereum,
         NETWORKS.ERGO,
-        '9g4Kek6iWspXPAURU3zxT4RGoKvFdvqgxgkANisNFbvDwK1KoxW',
-        '0xFBC0dcd6c3518cB529bC1B585dB992A7d40005fa',
+        'to_address',
+        'from_address',
         300_000_000_000_000_000n,
         3000_000n,
         114_286n,

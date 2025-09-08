@@ -1,6 +1,9 @@
 import { AbstractLogger } from '@rosen-bridge/abstract-logger';
 import { TokenMap } from '@rosen-bridge/tokens';
-import { AbstractRosenChainSDK } from '@rosen-bridge/sdk-abstract';
+import {
+  AbstractRosenChainSDK,
+  InsufficientAssetsException,
+} from '@rosen-bridge/sdk-abstract';
 import * as wasm from 'ergo-lib-wasm-nodejs';
 import {
   AssetBalance,
@@ -9,7 +12,6 @@ import {
 import { FEE, MIN_BOX_VALUE } from './constants';
 import { NATIVE_TOKEN_IDS, NETWORKS } from '@rosen-bridge/sdk-constant';
 import { UnsignedErgoTxProxy, UnsignedGenerateTxProxy } from './types';
-import { InsufficientAssetsException } from './errors';
 
 class ErgoRosenChainSDK extends AbstractRosenChainSDK<
   UnsignedGenerateTxProxy,
@@ -27,6 +29,10 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     super(tokenMap, lockAddress, logger);
   }
 
+  /**
+   * calculates the network fee on Ergo in nano-Erg unit
+   * @returns the base network fee
+   */
   getBaseNetworkFee = async (): Promise<bigint> => {
     return 1300000n;
   };
@@ -76,8 +82,8 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
       toChain,
       toAddress,
       fromAddress,
-      bridgeFee,
-      networkFee,
+      wrappedBridgeFee,
+      wrappedNetworkFee,
     );
 
     const selector = new ErgoBoxSelection(this.logger);
@@ -90,26 +96,26 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
       utxoIterator,
       this.minBoxValue,
       undefined,
-      () => this.ergoChainTxFee,
+      () => this.txFee,
     );
-    if (!inputs.covered) throw new InsufficientAssetsException();
+    if (!selectedBoxes.covered) throw new InsufficientAssetsException();
 
     // add input boxes to transaction
     const unsignedInputs = new wasm.UnsignedInputs();
-    inputs.boxes.forEach((box) => {
+    selectedBoxes.boxes.forEach((box) => {
       unsignedInputs.add(wasm.UnsignedInput.from_box_id(box.box_id()));
     });
 
     const feeBox = wasm.ErgoBoxCandidate.new_miner_fee_box(
       wasm.BoxValue.from_i64(
-        wasm.I64.from_str(inputs.additionalAssets.fee.toString()),
+        wasm.I64.from_str(selectedBoxes.additionalAssets.fee.toString()),
       ),
       networkHeight,
     );
 
     const txOutputs = new wasm.ErgoBoxCandidates(lockBox);
 
-    inputs.additionalAssets.list.forEach((item) => {
+    selectedBoxes.additionalAssets.list.forEach((item) => {
       txOutputs.add(this.createChangeBox(fromAddress, networkHeight, item));
     });
 
@@ -123,12 +129,12 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
 
     const unsignedTxProxy = this.unsignedTransactionToProxy(
       unsignedTx,
-      inputs.boxes,
+      selectedBoxes.boxes,
     );
-    const inputsSigmaBytes = inputs.boxes.map((box) =>
+    const inputsSigmaBytes = selectedBoxes.boxes.map((box) =>
       Buffer.from(box.sigma_serialize_bytes()).toString('hex'),
     );
-    const dataInputsSigmaBytes = ['']; // The Rosen lock transaction doesn’t require dataInputs.
+    const dataInputsSigmaBytes: string[] = []; // The Rosen lock transaction doesn’t require dataInputs
 
     return {
       unsignedTxProxy,

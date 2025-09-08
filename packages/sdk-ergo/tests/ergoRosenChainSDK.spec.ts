@@ -8,14 +8,12 @@ import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import { ErgoRosenChainSDK } from '../lib';
 import { Address, Constant, ErgoBox } from 'ergo-lib-wasm-nodejs';
-import { FEE, MIN_BOX_VALUE } from '../lib/constants';
-import { InsufficientAssetsException } from '../lib/errors';
+import { FEE, MIN_BOX_VALUE } from '../lib';
+import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 
 describe(`ErgoRosenChainSDK`, () => {
   let tokenMap: TokenMap;
   beforeEach(async () => {
-    // Reset mocks
-    vi.resetAllMocks();
     tokenMap = new TokenMap();
     await tokenMap.updateConfigByJson(rosenTokens);
   });
