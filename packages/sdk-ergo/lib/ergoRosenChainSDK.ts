@@ -103,7 +103,11 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     // add input boxes to transaction
     const unsignedInputs = new wasm.UnsignedInputs();
     selectedBoxes.boxes.forEach((box) => {
-      unsignedInputs.add(wasm.UnsignedInput.from_box_id(box.box_id()));
+      unsignedInputs.add(
+        wasm.UnsignedInput.from_box_id(
+          wasm.BoxId.from_str(box.box_id().to_str()),
+        ),
+      );
     });
 
     const feeBox = wasm.ErgoBoxCandidate.new_miner_fee_box(
