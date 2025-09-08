@@ -96,30 +96,30 @@ The function should use only a portion of UTxOs that covers the required assets.
 A simple version of this function is available at [`@rosen-bridge/ui` GitHub](https://github.com/rosen-bridge/ui/blob/1c0b08f5407e929f5680aa01a316e2dc88ef1408/apps/rosen/app/_networks/ergo/transaction/generateTx.ts#L32).
 
 ```ts
-/**
+  /**
  * generates an unsigned lock transaction on Ergo
  * @param tokenId
  * @param toChain
  * @param toAddress
  * @param fromAddress
  * @param unwrappedAmount
- * @param bridgeFee
- * @param networkFee
+ * @param wrappedBridgeFee
+ * @param wrappedNetworkFee
  * @param utxoIterator
  * @param networkHeight
- * @returns UnsignedGenerateTxProxy
+ * @return UnsignedGenerateTxProxy
  */
-export const generateUnsignedTx = async (
-    tokenId: string,
-    toChain: NETWORKS,
-    toAddress: string,
-    fromAddress: string,
-    unwrappedAmount: bigint,
-    bridgeFee: bigint,
-    networkFee: bigint,
-    utxoIterator:
-      | AsyncIterator<wasm.ErgoBox, undefined>
-      | Iterator<wasm.ErgoBox, undefined>,
-    networkHeight: number,
+generateLockTransactionCore = async (
+        tokenId: string,
+        toChain: NETWORKS,
+        toAddress: string,
+        fromAddress: string,
+        unwrappedAmount: bigint,
+        wrappedBridgeFee: bigint,
+        wrappedNetworkFee: bigint,
+        utxoIterator:
+                | AsyncIterator<wasm.ErgoBox, undefined>
+                | Iterator<wasm.ErgoBox, undefined>,
+        networkHeight: number,
 ): Promise<UnsignedGenerateTxProxy>
 ```
