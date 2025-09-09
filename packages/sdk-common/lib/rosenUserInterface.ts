@@ -197,7 +197,7 @@ class RosenUserInterface {
    * @param height blockchain height of fromChain
    * @param toChain
    * @param actualAmount transfer amount
-   * @param actualRecommendedBaseNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
+   * @param actualRecommendedBaseNetworkFee the current network fee on toChain
    * @returns the bridge and network fee
    */
   public getFeeByTransferAmount = async (

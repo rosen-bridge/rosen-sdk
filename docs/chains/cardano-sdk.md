@@ -6,7 +6,7 @@ This document states the chain-specific functions of Rosen SDK on the Cardano ch
 
 - [Transaction Structure](#transaction-structure)
 - [Implmentation Details](#implmentation-details)
-  - [getBaseNetworkFee](#getbasenetworkfee)
+
   - [generateLockAuxiliaryData](#generatelockauxiliarydata)
   - [generateLockTransaction](#generatelocktransaction)
 
@@ -47,18 +47,6 @@ Note that if metadata is malformed or the transferring asset is not supported on
 
 Alongside two chain-specific functions of Rosen SDK, another function is also suggested for Cardano. The implementation details of each one are described here.
 
-### `getBaseNetworkFee`
-
-The network fee on Cardano is fixed and 3.4 ADA. Therefore this function returns 3400000 (Lovelace unit).
-
-```ts
-/**
- * calculates the network fee on Cardano in lovelace unit
- * @returns the base network fee
- */
-export const getBaseNetworkFee = (): bigint => 3400000n;
-```
-
 ### `generateLockAuxiliaryData`
 
 As mentioned before, the Rosen data is written in the transaction metadata field. This function generates the metadata in the `AuxiliaryData` format of the `@emurgo/cardano-serialization-lib` and returns the hex representation of it. Although this function is not necessary, it facilitates the `generateLockTransaction` function and makes it more modular.
@@ -80,7 +68,7 @@ export const generateLockAuxiliaryData: (
   toAddress: string,
   fromAddress: string,
   networkFee: string,
-  bridgeFee: string
+  bridgeFee: string,
 ) => Promise<string>;
 ```
 

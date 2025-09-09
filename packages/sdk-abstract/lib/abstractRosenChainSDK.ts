@@ -22,8 +22,6 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
     return this.tokenMap.wrapAmount(tokenId, unwrappedValue, this.CHAIN).amount;
   };
 
-  abstract getBaseNetworkFee: () => Promise<bigint>;
-
   /**
    * generates an unsigned lock transaction on CHAIN
    * @param tokenId

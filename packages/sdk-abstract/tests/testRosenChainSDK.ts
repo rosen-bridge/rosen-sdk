@@ -18,8 +18,6 @@ class TestRosenChainSDK extends AbstractRosenChainSDK<never, never> {
     throw Error('Not implemented');
   };
 
-  getBaseNetworkFee = this.notImplemented;
-
   protected generateLockTransactionCore = this.notImplemented;
 }
 

@@ -30,14 +30,6 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
   }
 
   /**
-   * calculates the network fee on Ergo in nano-Erg unit
-   * @returns the base network fee
-   */
-  getBaseNetworkFee = async (): Promise<bigint> => {
-    return 1300000n;
-  };
-
-  /**
    * generates an unsigned lock transaction on Ergo
    * @param tokenId
    * @param toChain

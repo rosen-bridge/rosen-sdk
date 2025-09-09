@@ -32,8 +32,7 @@ This document states the required functionality in Rosen SDK alongside the sugge
   6. `getFeeByTransferAmount`: returns bridge fee and network fee for a transfer request
   7. `convertFeeToAssetUnit`: converts base network fee for a chain to the asset unit
 - Chain-Specific:
-  1. `getBaseNetworkFee`: returns network fee in native-token unit
-  2. `generateLockTransaction`: returns an unsigned transaction for a transfer request
+  1`generateLockTransaction`: returns an unsigned transaction for a transfer request
 
 ## Suggested Structure
 
@@ -206,7 +205,7 @@ public getMinimumTransferAmountForToken = async (fromChain: NETWORKS, tokenId: s
  * @param height blockchain height of fromChain
  * @param toChain
  * @param actualAmount transfer amount
- * @param actualRecommendedBaseNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
+ * @param actualRecommendedBaseNetworkFee the current network fee on toChain
  * @returns the bridge and network fee
  */
 public getFeeByTransferAmount = async (fromChain: NETWORKS, tokenId: string, height: number, toChain: NETWORKS, actualAmount: bigint, actualRecommendedBaseNetworkFee: bigint = 0n): Promise<RosenFees>

@@ -6,7 +6,6 @@ This document states the chain-specific functions of Rosen SDK on the Ergo chain
 
 - [Transaction Structure](#transaction-structure)
 - [Implementation Details](#implmentation-details)
-  - [getBaseNetworkFee](#getbasenetworkfee)
   - [generateLockAuxiliaryData](#generatelockauxiliarydata)
   - [generateLockTransaction](#generatelocktransaction)
 
@@ -45,18 +44,6 @@ If the lock box contains a token that is supported in the target chain, the tran
 ## Implementation Details
 
 Alongside two chain-specific functions of Rosen SDK, another function is also suggested for Ergo. The implementation details of each one are described here.
-
-### `getBaseNetworkFee`
-
-The network fee on Ergo is fixed and 0.0013 ERG. Therefore this function returns 1300000 (nano-Erg unit).
-
-```ts
-/**
- * calculates the network fee on Ergo in nano-Erg unit
- * @returns the base network fee
- */
-export const getBaseNetworkFee = (): bigint => 1300000n;
-```
 
 ### `createLockBox`
 
