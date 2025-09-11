@@ -45,7 +45,7 @@ Note that if metadata is malformed or the transferring asset is not supported on
 
 ## Implmentation Details
 
-Alongside two chain-specific functions of Rosen SDK, another function is also suggested for Cardano. The implementation details of each one are described here.
+Alongside the `generateLockTransaction`, another function is also suggested for Cardano. The implementation details of each one are described here.
 
 ### `generateLockAuxiliaryData`
 
