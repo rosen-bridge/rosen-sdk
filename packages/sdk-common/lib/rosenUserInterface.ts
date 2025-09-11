@@ -197,7 +197,6 @@ class RosenUserInterface {
    * @param height blockchain height of fromChain
    * @param toChain
    * @param actualAmount transfer amount
-   * @param actualRecommendedBaseNetworkFee the current network fee on toChain
    * @returns the bridge and network fee
    */
   public getFeeByTransferAmount = async (
@@ -206,10 +205,9 @@ class RosenUserInterface {
     height: number,
     toChain: NETWORKS,
     actualAmount: bigint,
-    actualRecommendedBaseNetworkFee: bigint = 0n,
   ): Promise<RosenFees> => {
     this.logger.debug(
-      `Calculating fees for transfer: tokenId=[${tokenId}], fromChain=[${fromChain}], toChain=[${toChain}], height=[${height}], amount=[${actualAmount}], recommendedBaseNetworkFee=[${actualRecommendedBaseNetworkFee}]`,
+      `Calculating fees for transfer: tokenId=[${tokenId}], fromChain=[${fromChain}], toChain=[${toChain}], height=[${height}], amount=[${actualAmount}]`,
     );
     const wrappedAmount = this.tokenMap.wrapAmount(
       tokenId,
@@ -228,41 +226,6 @@ class RosenUserInterface {
     const bridgeFee =
       fees.bridgeFee > variableBridgeFee ? fees.bridgeFee : variableBridgeFee;
 
-    let wrappedRecommendedNetworkFee: bigint = 0n;
-
-    if (actualRecommendedBaseNetworkFee > 0n) {
-      const wrappedRecommendedBaseNetworkFee = this.tokenMap.wrapAmount(
-        tokenId,
-        actualRecommendedBaseNetworkFee,
-        fromChain,
-      ).amount;
-
-      const unwrappedRecommendedBaseNetworkFee = this.tokenMap.unwrapAmount(
-        tokenId,
-        wrappedRecommendedBaseNetworkFee,
-        fromChain,
-      ).amount;
-
-      const unwrappedRecommendedNetworkFee = await this.convertFeeToAssetUnit(
-        fromChain,
-        tokenId,
-        height,
-        toChain,
-        unwrappedRecommendedBaseNetworkFee,
-      );
-
-      wrappedRecommendedNetworkFee = this.tokenMap.wrapAmount(
-        tokenId,
-        unwrappedRecommendedNetworkFee,
-        fromChain,
-      ).amount;
-    }
-
-    const networkFeeToReturn =
-      wrappedRecommendedNetworkFee > fees.networkFee
-        ? wrappedRecommendedNetworkFee
-        : fees.networkFee;
-
     const unwrappedBridgeFee = this.tokenMap.unwrapAmount(
       tokenId,
       bridgeFee,
@@ -271,7 +234,7 @@ class RosenUserInterface {
 
     const unwrappedNetworkFee = this.tokenMap.unwrapAmount(
       tokenId,
-      networkFeeToReturn,
+      fees.networkFee,
       fromChain,
     ).amount;
 
