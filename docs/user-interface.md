@@ -30,10 +30,9 @@ This document states the required functionality in Rosen SDK alongside the sugge
   4. `getTokenDetailsOnTargetChain`: returns details of an asset on the given chain (such as name, decimals, id, ...)
   5. `getMinimumTransferAmountForToken`: returns the minimum allowed transfer for an asset
   6. `getFeeByTransferAmount`: returns bridge fee and network fee for a transfer request
-  7. `convertFeeToAssetUnit`: converts base network fee for a chain to the asset unit
+  7. `convertFeeToAssetUnit`: converts fee for a chain to the asset unit
 - Chain-Specific:
-  1. `getBaseNetworkFee`: returns network fee in native-token unit
-  2. `generateLockTransaction`: returns an unsigned transaction for a transfer request
+  1`generateLockTransaction`: returns an unsigned transaction for a transfer request
 
 ## Suggested Structure
 
@@ -181,7 +180,7 @@ public getMinimumTransferAmountForToken = async (fromChain: NETWORKS, tokenId: s
   - If the target chain is not on the list of its keys, throw an error
 - Get the corresponding token ID on the Ergo network using this object and the `getID` function of the token map
 - Get the minimum bridge fee, network fee and fee ratio for the token using the `@rosen-bridge/minimum-fee` package
-- Convert recommendedNetworkFee to the asset unit using the `convertFeeToAssetUnit` function
+- Convert network fee to the asset unit using the `convertFeeToAssetUnit` function
 - Calculate bridge fee:
 
   - $mbf$: minimum bridge fee
@@ -189,13 +188,6 @@ public getMinimumTransferAmountForToken = async (fromChain: NETWORKS, tokenId: s
   - $frd$: fee ratio divisor
     $$
     bf = max(mbf, fr * amount / frd)
-    $$
-
-- Calculate network fee:
-  - $mnf$: minimum network fee
-  - $rnfau$: recommended network fee in asset unit
-    $$
-    nf = max(mnf, rnfau)
     $$
 
 ```ts
@@ -206,10 +198,9 @@ public getMinimumTransferAmountForToken = async (fromChain: NETWORKS, tokenId: s
  * @param height blockchain height of fromChain
  * @param toChain
  * @param actualAmount transfer amount
- * @param actualRecommendedBaseNetworkFee the current network fee on toChain (it is highly recommended to fetch this value from `getBaseNetworkFee` function of toChain)
  * @returns the bridge and network fee
  */
-public getFeeByTransferAmount = async (fromChain: NETWORKS, tokenId: string, height: number, toChain: NETWORKS, actualAmount: bigint, actualRecommendedBaseNetworkFee: bigint = 0n): Promise<RosenFees>
+public getFeeByTransferAmount = async (fromChain: NETWORKS, tokenId: string, height: number, toChain: NETWORKS, actualAmount: bigint): Promise<RosenFees>
 ```
 
 #### `convertFeeToAssetUnit`

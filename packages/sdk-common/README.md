@@ -130,11 +130,10 @@ const { bridgeFee, networkFee } = await sdkInterface.getFeeByTransferAmount(
   'cardano', // toChain
   1234567, // height on fromChain
   1000000000n, // actualAmount in asset unit (ERG in this example)
-  200000n, // optional: recommended base network fee on toChain native unit
 );
 ```
 
-- Convert a base network fee from target chain native unit into a token’s asset unit:
+- Convert fee from target chain native unit into a token’s asset unit:
 
 ```typescript
 const feeInAssetUnit = await sdkInterface.convertFeeToAssetUnit(
@@ -142,7 +141,7 @@ const feeInAssetUnit = await sdkInterface.convertFeeToAssetUnit(
   'cardano', // toChain
   'ergo', // fromChain
   1234567, // height on toChain
-  200000n, // base network fee in toChain native unit
+  200000n, // fee in toChain native unit
 );
 ```
 
