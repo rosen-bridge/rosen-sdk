@@ -149,7 +149,7 @@ describe(`RosenUserInterface`, () => {
      * @dependencies
      * @scenario
      * - set ADA RSN ratio/divisor and ERG RSN ratio/divisor
-     * - set base network fee to 4 ADA (assuming 6 decimals => 4_000_000)
+     * - set network fee to 4 ADA (assuming 6 decimals => 4_000_000)
      * - call private calculateFeeToAssetUnitNetworkFee
      * - check returned value
      * @expected
@@ -274,37 +274,6 @@ describe(`RosenUserInterface`, () => {
 
   describe(`getFeeByTransferAmount`, () => {
     /**
-     * @target getFeeByTransferAmount should calculate fees by transfer amount without base network fee correctly
-     * @dependencies
-     * - getMinimumFeeBox
-     * @scenario
-     * - mock getMinimumFeeBox to return fixed ChainMinimumFee
-     * - call getFeeByTransferAmount for rpnERG from cardano to ergo
-     * - check returned fees amount
-     * @expected
-     * - it should return correct bridgeFee
-     * - it should return correct networkFee
-     */
-    it(`should calculate fees by transfer amount without base network fee correctly`, async () => {
-      mockGetMinimumFeeBox(rosenUserInterface, [
-        ergToErgoFeeSample,
-        ergToErgoFeeSample,
-        ergToErgoFeeSample,
-      ]);
-
-      const result = await rosenUserInterface.getFeeByTransferAmount(
-        NETWORKS.CARDANO,
-        '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e455247',
-        12311000,
-        NETWORKS.ERGO,
-        5_000_000_000_000n,
-      );
-
-      expect(result.bridgeFee).toEqual(50_000_000_000n);
-      expect(result.networkFee).toEqual(200_000_000n);
-    });
-
-    /**
      * @target getFeeByTransferAmount should calculate fees by transfer amount with fixed decimals token correctly
      * @dependencies
      * - getMinimumFeeBox
@@ -329,11 +298,10 @@ describe(`RosenUserInterface`, () => {
         12311000,
         NETWORKS.ERGO,
         5_000_000_000_000n,
-        400_000_000n,
       );
 
       expect(result.bridgeFee).toEqual(50_000_000_000n);
-      expect(result.networkFee).toEqual(400_000_000n);
+      expect(result.networkFee).toEqual(200_000_000n);
     });
 
     /**
