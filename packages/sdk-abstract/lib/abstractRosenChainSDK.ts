@@ -3,7 +3,7 @@ import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import { EmptyTokenMapException } from './errors';
 
-abstract class AbstractRosenChainSDK<TxType, UTXOType> {
+abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {
   abstract CHAIN: NETWORKS;
   protected constructor(
     protected tokenMap: TokenMap,
@@ -32,7 +32,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
    * @param unwrappedBridgeFee
    * @param unwrappedNetworkFee
    * @param utxoIterator
-   * @param networkHeight
+   * @param extra
    */
   generateLockTransaction = async (
     tokenId: string,
@@ -45,7 +45,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
     utxoIterator:
       | AsyncIterator<UTXOType, undefined>
       | Iterator<UTXOType, undefined>,
-    networkHeight: number,
+    ...extra: Array<NetworkParams>
   ): Promise<TxType> => {
     if (this.tokenMap.getConfig().length == 0) {
       throw new EmptyTokenMapException();
@@ -61,7 +61,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
       wrappedBridgeFee,
       wrappedNetworkFee,
       utxoIterator,
-      networkHeight,
+      ...extra,
     );
   };
 
@@ -76,7 +76,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType> {
     utxoIterator:
       | AsyncIterator<UTXOType, undefined>
       | Iterator<UTXOType, undefined>,
-    networkHeight: number,
+    ...extra: Array<NetworkParams>
   ) => Promise<TxType>;
 }
 

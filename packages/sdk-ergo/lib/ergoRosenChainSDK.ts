@@ -11,11 +11,16 @@ import {
 } from '@rosen-bridge/ergo-box-selection';
 import { FEE, MIN_BOX_VALUE } from './constants';
 import { NATIVE_TOKEN_IDS, NETWORKS } from '@rosen-bridge/sdk-constant';
-import { UnsignedErgoTxProxy, UnsignedGenerateTxProxy } from './types';
+import {
+  NetworkParams,
+  UnsignedErgoTxProxy,
+  UnsignedGenerateTxProxy,
+} from './types';
 
 class ErgoRosenChainSDK extends AbstractRosenChainSDK<
   UnsignedGenerateTxProxy,
-  wasm.ErgoBox
+  wasm.ErgoBox,
+  NetworkParams
 > {
   CHAIN = NETWORKS.ERGO;
 
@@ -39,7 +44,7 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
    * @param wrappedBridgeFee
    * @param wrappedNetworkFee
    * @param utxoIterator
-   * @param networkHeight
+   * @param networkParams
    * @return UnsignedGenerateTxProxy
    */
   protected generateLockTransactionCore = async (
@@ -53,7 +58,7 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     utxoIterator:
       | AsyncIterator<wasm.ErgoBox, undefined>
       | Iterator<wasm.ErgoBox, undefined>,
-    networkHeight: number,
+    networkParams: NetworkParams,
   ): Promise<UnsignedGenerateTxProxy> => {
     // generate lock box
     const lockAssets: AssetBalance = {
@@ -68,7 +73,7 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
     }
 
     const lockBox = this.createLockBox(
-      networkHeight,
+      networkParams.networkHeight,
       tokenId,
       unwrappedAmount,
       toChain,
@@ -90,7 +95,8 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
       undefined,
       () => this.txFee,
     );
-    if (!selectedBoxes.covered) throw new InsufficientAssetsException();
+    if (!selectedBoxes.covered)
+      throw new InsufficientAssetsException(selectedBoxes.uncoveredAssets);
 
     // add input boxes to transaction
     const unsignedInputs = new wasm.UnsignedInputs();
@@ -106,13 +112,15 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
       wasm.BoxValue.from_i64(
         wasm.I64.from_str(selectedBoxes.additionalAssets.fee.toString()),
       ),
-      networkHeight,
+      networkParams.networkHeight,
     );
 
     const txOutputs = new wasm.ErgoBoxCandidates(lockBox);
 
     selectedBoxes.additionalAssets.list.forEach((item) => {
-      txOutputs.add(this.createChangeBox(fromAddress, networkHeight, item));
+      txOutputs.add(
+        this.createChangeBox(fromAddress, networkParams.networkHeight, item),
+      );
     });
 
     txOutputs.add(feeBox);

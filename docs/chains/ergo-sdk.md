@@ -93,7 +93,7 @@ A simple version of this function is available at [`@rosen-bridge/ui` GitHub](ht
  * @param wrappedBridgeFee
  * @param wrappedNetworkFee
  * @param utxoIterator
- * @param networkHeight
+ * @param networkParams
  * @return UnsignedGenerateTxProxy
  */
 generateLockTransactionCore = async (
@@ -107,6 +107,6 @@ generateLockTransactionCore = async (
         utxoIterator:
                 | AsyncIterator<wasm.ErgoBox, undefined>
                 | Iterator<wasm.ErgoBox, undefined>,
-        networkHeight: number,
+        networkParams: NetworkParams,
 ): Promise<UnsignedGenerateTxProxy>
 ```

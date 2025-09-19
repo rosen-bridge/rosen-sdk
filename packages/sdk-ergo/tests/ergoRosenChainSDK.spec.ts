@@ -1,3 +1,4 @@
+import { ErgoRosenChainSDK, FEE, MIN_BOX_VALUE } from '../lib';
 import {
   desireChangeBoxAsset,
   ergoBoxes,
@@ -6,9 +7,7 @@ import {
 } from './testData';
 import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
-import { ErgoRosenChainSDK } from '../lib';
 import { Address, Constant, ErgoBox } from 'ergo-lib-wasm-nodejs';
-import { FEE, MIN_BOX_VALUE } from '../lib';
 import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 
 describe(`ErgoRosenChainSDK`, () => {
@@ -55,7 +54,9 @@ describe(`ErgoRosenChainSDK`, () => {
         50_000_000n,
         24_150n,
         ergoBoxes.values(),
-        1599000,
+        {
+          networkHeight: 1599000,
+        },
       );
 
       const lockBox = unsignedTx.unsignedTxProxy.outputs[0];
@@ -132,7 +133,7 @@ describe(`ErgoRosenChainSDK`, () => {
         3_000_000n,
         1_000_000n,
         ergoBoxes.values(),
-        1599000,
+        { networkHeight: 1599000 },
       );
 
       const lockBox = unsignedTx.unsignedTxProxy.outputs[0];
@@ -199,7 +200,7 @@ describe(`ErgoRosenChainSDK`, () => {
         3_000_000n,
         1_000_000n,
         ergoBoxes.values(),
-        1599000,
+        { networkHeight: 1599000 },
       );
 
       await expect(unsignedTx).rejects.toThrow(InsufficientAssetsException);
