@@ -8,6 +8,11 @@ import JsonBigInt from '@rosen-bridge/json-bigint';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CardanoMetadata = Record<string, string | Record<string, any>>;
 
+/**
+ * Parse a GeneralTransactionMetadata object into a CardanoMetadata object.
+ * @param {GeneralTransactionMetadata} metadata - The metadata to be parsed.
+ * @returns {CardanoMetadata} - A JSON object with the same keys as the metadata, but with values parsed from JSON strings into JsonBigInt objects.
+ */
 export const parseMetadata = (
   metadata: GeneralTransactionMetadata,
 ): CardanoMetadata => {
