@@ -347,6 +347,32 @@ class CardanoRosenChainSDK extends AbstractRosenChainSDK<
       assets: assets,
     };
   };
+
+  /**
+   * sets witness set into unsigned transaction
+   * @param transactionHex
+   * @param witnessSetHex
+   * @returns hex representation of the signed transaction
+   */
+  static setTxWitnessSet = async (
+    transactionHex: string,
+    witnessSetHex: string,
+  ): Promise<string> => {
+    const witnessSet = wasm.TransactionWitnessSet.new();
+    const tx = wasm.Transaction.from_hex(transactionHex);
+    const vKeys = wasm.TransactionWitnessSet.from_bytes(
+      Buffer.from(witnessSetHex, 'hex'),
+    ).vkeys();
+    if (vKeys) witnessSet.set_vkeys(vKeys);
+
+    const signedTx = wasm.Transaction.new(
+      tx.body(),
+      witnessSet,
+      tx.auxiliary_data(),
+    );
+
+    return signedTx.to_hex();
+  };
 }
 
 export default CardanoRosenChainSDK;
