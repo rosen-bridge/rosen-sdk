@@ -112,16 +112,8 @@ class CardanoRosenChainSDK extends AbstractRosenChainSDK<
     );
     txBuilder.add_output(lockBox);
 
-    let inputAssets: AssetBalance = {
-      nativeToken: 0n,
-      tokens: [],
-    };
     const txInputs = wasm.TxInputsBuilder.new();
     selectedBoxes.boxes.forEach((utxo) => {
-      inputAssets = this.sumAssetBalance(
-        inputAssets,
-        selector.getBoxInfo(utxo).assets,
-      );
       const inputMultiAsset = wasm.MultiAsset.new();
       utxo.assets.forEach((token) => {
         inputMultiAsset.set_asset(

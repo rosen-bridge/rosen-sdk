@@ -33,7 +33,7 @@ describe(`CardanoRosenChainSDK`, () => {
      * @dependencies
      * - TokenMap
      * @scenario
-     * - instantiate CardanoRosenChainSDK with tokenMap and cardanoLockAddress
+     * - initialize CardanoRosenChainSDK with tokenMap and cardanoLockAddress
      * - set ADA token id, fromAddress, toAddress, and bridgeAmount
      * - call generateLockTransaction for ADA from Cardano to Ergo
      * - parse the unsigned transaction
@@ -51,7 +51,7 @@ describe(`CardanoRosenChainSDK`, () => {
      * - lockBox value should match bridgeAmount
      * - lockBox should have zero assets
      * - auxiliary data should match axillaryDataErgBridge
-     * - fee should be <= ESTIMATED_MAX_FEE
+     * - fee should be less than ESTIMATED_MAX_FEE
      * - address of change boxes should be equal to proper fromAddress
      * - change boxes should have correct value, and assets
      */
@@ -84,12 +84,12 @@ describe(`CardanoRosenChainSDK`, () => {
       // parse the unsigned transaction
       const unsignedTx = wasm.Transaction.from_hex(unsignedHexTx);
       const unsignedTxBody = unsignedTx.body();
-      // extract lockBox and feeValue
-      const lockBox = unsignedTxBody.outputs().get(0);
-      const feeValue = BigInt(unsignedTxBody.fee().to_js_value());
       // check number of outputs
       expect(unsignedTxBody.outputs().len()).toEqual(3);
+      // extract tx fee
+      const feeValue = BigInt(unsignedTxBody.fee().to_js_value());
       // check lockBox address and value
+      const lockBox = unsignedTxBody.outputs().get(0);
       expect(lockBox.address().to_bech32()).toEqual(cardanoLockAddress);
       expect(BigInt(lockBox.amount().coin().to_js_value())).toEqual(
         bridgeAmount,
