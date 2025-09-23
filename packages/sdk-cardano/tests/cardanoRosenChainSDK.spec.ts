@@ -11,23 +11,24 @@ import {
   protocolParameters,
   cardanoUtxos2,
   axillaryDataRSNBridge,
+  deserializedTransactionUnspentOutput,
+  serializedTransactionUnspentOutput,
 } from './testData';
 import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 import * as wasm from '@emurgo/cardano-serialization-lib-nodejs';
 import { parseMetadata } from './utils';
-import { expect } from 'vitest';
 import { CardanoAsset } from '@rosen-bridge/cardano-utxo-selection';
 
 describe(`CardanoRosenChainSDK`, () => {
-  let tokenMap: TokenMap;
-  beforeEach(async () => {
-    tokenMap = new TokenMap();
-    await tokenMap.updateConfigByJson(rosenTokens);
-  });
-
   describe(`generateLockTransaction`, () => {
+    let tokenMap: TokenMap;
+    beforeEach(async () => {
+      tokenMap = new TokenMap();
+      await tokenMap.updateConfigByJson(rosenTokens);
+    });
+
     /**
      * @target generateLockTransaction should generate lock transaction correctly with ADA bridging
      * @dependencies
@@ -297,6 +298,24 @@ describe(`CardanoRosenChainSDK`, () => {
       );
       // expect the call to throw InsufficientAssetsException
       await expect(unsignedHexTx).rejects.toThrow(InsufficientAssetsException);
+    });
+  });
+
+  describe(`walletUtxoToCardanoUtxo`, () => {
+    /**
+     * @target walletUtxoToCardanoUtxo should convert hex serialized TransactionUnspentOutput to CardanoUtxo correctly
+     * @scenario
+     * - call walletUtxoToCardanoUtxo with a hex serialized TransactionUnspentOutput
+     * - compare the result with the expected deserialized CardanoUtxo object
+     * @expected
+     * - returned CardanoUtxo should deeply equal the expected deserializedTransactionUnspentOutput
+     */
+    it(`should converts hex serialized of TransactionUnspentOutput to CardanoUtxo correctly`, async () => {
+      const utxo = CardanoRosenChainSDK.walletUtxoToCardanoUtxo(
+        serializedTransactionUnspentOutput,
+      );
+      console.log(utxo);
+      expect(utxo).deep.equal(deserializedTransactionUnspentOutput);
     });
   });
 });

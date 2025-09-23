@@ -12,7 +12,6 @@ import {
   CardanoAsset,
   CardanoBoxSelection,
   AssetBalance,
-  TokenInfo,
   CardanoUtxo,
 } from '@rosen-bridge/cardano-utxo-selection';
 
@@ -279,32 +278,6 @@ class CardanoRosenChainSDK extends AbstractRosenChainSDK<
   };
 
   /**
-   * sums two AssetBalance
-   *
-   * IT DOESN'T MATTER WHETHER THESE VALUES ARE WRAPPED OR UNWRAPPED;
-   * WHAT TRULY MATTERS IS THE CONTEXT IN WHICH THIS FUNCTION IS USED.
-   *
-   * @param a first AssetBalance object
-   * @param b second AssetBalance object
-   * @returns aggregated AssetBalance
-   */
-  sumAssetBalance = (a: AssetBalance, b: AssetBalance): AssetBalance => {
-    const nativeToken = a.nativeToken + b.nativeToken;
-    const tokens: Array<TokenInfo> = [];
-
-    [...a.tokens, ...b.tokens].forEach((token) => {
-      const targetToken = tokens.find((item) => item.id === token.id);
-      if (targetToken) targetToken.value += token.value;
-      else tokens.push(structuredClone(token));
-    });
-
-    return {
-      nativeToken,
-      tokens,
-    };
-  };
-
-  /**
    * converts utxo type from wallet type to CardanoUtxo
    *
    * THIS FUNCTION WORKS WITH UNWRAPPED VALUES
@@ -337,6 +310,7 @@ class CardanoRosenChainSDK extends AbstractRosenChainSDK<
       index: utxo.input().index(),
       value: BigInt(utxo.output().amount().coin().to_str()),
       assets: assets,
+      address: utxo.output().address().to_bech32(),
     };
   };
 

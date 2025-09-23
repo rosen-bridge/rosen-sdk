@@ -252,3 +252,26 @@ export const protocolParameters = {
   max_tx_size: 16384,
   coins_per_utxo_size: '4310',
 };
+
+export const serializedTransactionUnspentOutput =
+  '82825820f3217b21ebc8b47276a50c5aa1a7d65f5be16c2424518f848da140fff783244100825839011b2eff6f19da9c786a5be52986e4fa888754f48fdc82639073e4b9827cba6224d854f00de94428ff0024e297ad5ab773a19ed6fac80c40de821a0016e360a1581c57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fba24672706e52534e1927104972706e4575636c6964192710';
+
+export const deserializedTransactionUnspentOutput: CardanoUtxo = {
+  txId: 'f3217b21ebc8b47276a50c5aa1a7d65f5be16c2424518f848da140fff7832441',
+  index: 0,
+  value: 1500000n,
+  assets: [
+    {
+      policyId: '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb',
+      assetName: '72706e52534e',
+      quantity: 10000n,
+    },
+    {
+      policyId: '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb',
+      assetName: '72706e4575636c6964',
+      quantity: 10000n,
+    },
+  ],
+  address:
+    'addr1qydjalm0r8dfc7r2t0jjnphyl2ygw4853lwgycusw0jtnqnuhf3zfkz57qx7j3pgluqzfc5h44dtwuapnmt04jqvgr0qwd9mqk',
+};
