@@ -1,8 +1,4 @@
-import {
-  CardanoRosenChainSDK,
-  ESTIMATED_MAX_FEE,
-  ESTIMATED_MIN_BOX_VALUE,
-} from '../lib';
+import { CardanoRosenChainSDK } from '../lib';
 import {
   cardanoLockAddress,
   rosenTokens,
@@ -52,7 +48,7 @@ describe(`CardanoRosenChainSDK`, () => {
      * - lockBox value should match bridgeAmount
      * - lockBox should have zero assets
      * - auxiliary data should match axillaryDataErgBridge
-     * - fee should be less than ESTIMATED_MAX_FEE
+     * - fee should be equal to 185125n
      * - address of change boxes should be equal to proper fromAddress
      * - change boxes should have correct value, and assets
      */
@@ -101,7 +97,7 @@ describe(`CardanoRosenChainSDK`, () => {
       const axillaryData = unsignedTx.auxiliary_data()!.metadata()!;
       expect(parseMetadata(axillaryData)).deep.equal(axillaryDataErgBridge);
       // check fee value
-      expect(feeValue).toBeLessThanOrEqual(ESTIMATED_MAX_FEE);
+      expect(feeValue).toEqual(185125n);
       // iterate over change boxes, check addresses, accumulate values and assets
       const changeAssets: CardanoAsset[] = [];
       let changeValue = 0n;
@@ -131,9 +127,7 @@ describe(`CardanoRosenChainSDK`, () => {
         }
       }
       // check total change value and assets
-      expect(changeValue).toEqual(
-        ESTIMATED_MIN_BOX_VALUE * 2n + ESTIMATED_MAX_FEE - feeValue,
-      );
+      expect(changeValue).toEqual(4214875n);
       expect(changeAssets).deep.equal(cardanoUtxos1[0].assets);
     });
 
@@ -157,10 +151,10 @@ describe(`CardanoRosenChainSDK`, () => {
      * @expected
      * - unsigned transaction should have 3 outputs
      * - lockBox address should match cardanoLockAddress
-     * - lockBox value should be <= ESTIMATED_MIN_BOX_VALUE
+     * - lockBox value should be equal to 1060260n
      * - lockBox should have exactly one token with correct id and amount
      * - auxiliary data should match axillaryDataRSNBridge
-     * - fee should be <= ESTIMATED_MAX_FEE
+     * - fee should be equal to 187105n
      * - address of change boxes should be equal to proper fromAddress
      * - change boxes should have correct value, and assets
      */
@@ -201,9 +195,7 @@ describe(`CardanoRosenChainSDK`, () => {
       expect(unsignedTxBody.outputs().len()).toEqual(3);
       // check lockBox address and value
       expect(lockBox.address().to_bech32()).toEqual(cardanoLockAddress);
-      expect(BigInt(lockBox.amount().coin().to_js_value())).toBeLessThanOrEqual(
-        ESTIMATED_MIN_BOX_VALUE,
-      );
+      expect(BigInt(lockBox.amount().coin().to_js_value())).toEqual(1060260n);
       // check lockBox has correct token and amount
       expect(lockBox.amount().multiasset()!.len()).toEqual(1);
       Object.entries(lockBox.amount().multiasset()!.to_js_value()).flatMap(
@@ -218,7 +210,7 @@ describe(`CardanoRosenChainSDK`, () => {
       const axillaryData = unsignedTx.auxiliary_data()!.metadata()!;
       expect(parseMetadata(axillaryData)).deep.equal(axillaryDataRSNBridge);
       // check fee value
-      expect(feeValue).toBeLessThanOrEqual(ESTIMATED_MAX_FEE);
+      expect(feeValue).toEqual(187105n);
       // iterate over change boxes, check addresses, accumulate values and assets
       const changeAssets: CardanoAsset[] = [];
       let changesValue = 0n;
@@ -248,12 +240,7 @@ describe(`CardanoRosenChainSDK`, () => {
         }
       }
       // check total change value and assets
-      expect(changesValue).toEqual(
-        ESTIMATED_MIN_BOX_VALUE * 3n +
-          ESTIMATED_MAX_FEE -
-          feeValue -
-          BigInt(lockBox.amount().coin().to_js_value()),
-      );
+      expect(changesValue).toEqual(5152635n);
       expect(changeAssets).deep.equal([cardanoUtxos2[0].assets[1]]);
     });
 
@@ -314,7 +301,6 @@ describe(`CardanoRosenChainSDK`, () => {
       const utxo = CardanoRosenChainSDK.walletUtxoToCardanoUtxo(
         serializedTransactionUnspentOutput,
       );
-      console.log(utxo);
       expect(utxo).deep.equal(deserializedTransactionUnspentOutput);
     });
   });
