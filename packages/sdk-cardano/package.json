@@ -1,7 +1,7 @@
 {
-  "name": "@rosen-bridge/sdk-ergo",
+  "name": "@rosen-bridge/sdk-cardano",
   "version": "0.0.0",
-  "description": "Ergo chain specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
+  "description": "Cardano chain specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
@@ -25,6 +25,7 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
+    "@rosen-bridge/json-bigint": "^0.2.0",
     "@types/node": "^22.18.0",
     "@vitest/coverage-istanbul": "^3.1.4",
     "typescript": "^5.3.3",
@@ -34,11 +35,11 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
+    "@emurgo/cardano-serialization-lib-nodejs": "^15.0.1",
     "@rosen-bridge/abstract-logger": "^2.0.1",
-    "@rosen-bridge/ergo-box-selection": "^1.2.0",
+    "@rosen-bridge/cardano-utxo-selection": "^2.3.0",
     "@rosen-bridge/sdk-abstract": "^0.0.0",
     "@rosen-bridge/sdk-constant": "^0.0.0",
-    "@rosen-bridge/tokens": "^3.2.0",
-    "ergo-lib-wasm-nodejs": "0.24.1"
+    "@rosen-bridge/tokens": "^3.2.0"
   }
 }

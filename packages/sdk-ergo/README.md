@@ -95,7 +95,9 @@ const unsignedTx = await sdk.generateLockTransaction(
   3_000_000n, // Unwwrapped Bridge fee
   1_000_000n, // Unwwrapped Network fee
   utxoIterator, // Iterator or async iterator of available Ergo UTXOs
-  1599000, // Current network height
+  {
+    networkHeight: 1599000,
+  },
 );
 
 // The result is an object containing the unsigned transaction and related data.

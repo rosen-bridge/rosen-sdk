@@ -43,7 +43,6 @@ describe(`TestRosenChainSDK`, () => {
         50_000_000_000n,
         200_000_000n,
         [].values(),
-        12311000,
       );
       await expect(x).rejects.toThrow(EmptyTokenMapException);
     });
@@ -89,7 +88,6 @@ describe(`TestRosenChainSDK`, () => {
         50_000_000_000n,
         200_000_000n,
         boxIterator,
-        12311000,
       );
 
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
@@ -111,7 +109,6 @@ describe(`TestRosenChainSDK`, () => {
         50_000_000_000n,
         200_000_000n,
         boxIterator,
-        12311000,
       );
     });
 
@@ -155,7 +152,6 @@ describe(`TestRosenChainSDK`, () => {
         3_000_000n,
         1_000_000n,
         boxIterator,
-        1599000,
       );
 
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
@@ -177,7 +173,6 @@ describe(`TestRosenChainSDK`, () => {
         3_000_000n,
         1_000_000n,
         boxIterator,
-        1599000,
       );
     });
 
@@ -220,7 +215,6 @@ describe(`TestRosenChainSDK`, () => {
         3_000_000_000_000_000n,
         114_286_000_000_000n,
         boxIterator,
-        23232769,
       );
 
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
@@ -242,7 +236,6 @@ describe(`TestRosenChainSDK`, () => {
         3000_000n,
         114_286n,
         boxIterator,
-        23232769,
       );
     });
   });

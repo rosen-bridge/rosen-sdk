@@ -1,0 +1,2 @@
+export const ESTIMATED_MAX_FEE = 400_000n;
+export const ESTIMATED_MIN_BOX_VALUE = 2_000_000n;

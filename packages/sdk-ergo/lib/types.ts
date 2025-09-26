@@ -84,3 +84,7 @@ export type UnsignedGenerateTxProxy = {
   readonly inputsSigmaBytes: string[];
   readonly dataInputsSigmaBytes: string[];
 };
+
+export type NetworkParams = {
+  networkHeight: number;
+};

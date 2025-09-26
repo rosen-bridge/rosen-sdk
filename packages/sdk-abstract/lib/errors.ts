@@ -1,6 +1,11 @@
+import { AssetBalance } from '@rosen-bridge/selection-types';
+import JsonBigInt from '@rosen-bridge/json-bigint';
+
 export class InsufficientAssetsException extends Error {
-  constructor(message?: string) {
-    super(`Insufficient assets in selected inputs ${message}`);
+  constructor(assetBalance?: AssetBalance) {
+    super(
+      `Available boxes didn't cover required assets. Uncovered assets: ${assetBalance ? JsonBigInt.stringify(assetBalance) : undefined}`,
+    );
   }
 }
 
