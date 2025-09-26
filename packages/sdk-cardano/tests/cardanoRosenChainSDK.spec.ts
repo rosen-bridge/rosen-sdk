@@ -48,7 +48,7 @@ describe(`CardanoRosenChainSDK`, () => {
      * - lockBox value should match bridgeAmount
      * - lockBox should have zero assets
      * - auxiliary data should match axillaryDataErgBridge
-     * - fee should be equal to 185125n
+     * - fee should be equal to expected value
      * - address of change boxes should be equal to proper fromAddress
      * - change boxes should have correct value, and assets
      */
@@ -151,10 +151,10 @@ describe(`CardanoRosenChainSDK`, () => {
      * @expected
      * - unsigned transaction should have 3 outputs
      * - lockBox address should match cardanoLockAddress
-     * - lockBox value should be equal to 1060260n
+     * - lockBox value should be equal to expected value
      * - lockBox should have exactly one token with correct id and amount
      * - auxiliary data should match axillaryDataRSNBridge
-     * - fee should be equal to 187105n
+     * - fee should be equal to expected value
      * - address of change boxes should be equal to proper fromAddress
      * - change boxes should have correct value, and assets
      */
