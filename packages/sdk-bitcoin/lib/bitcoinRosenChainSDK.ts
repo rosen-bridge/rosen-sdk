@@ -21,7 +21,7 @@ import {
   generateFeeEstimator,
 } from '@rosen-bridge/bitcoin-utxo-selection';
 import { Psbt, address, payments } from 'bitcoinjs-lib';
-import { UnsupportedTokenException } from './errors';
+import { UnsupportedAddress, UnsupportedTokenException } from './errors';
 
 class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
   UnsignedPsbtData,
@@ -65,9 +65,12 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
       | Iterator<BitcoinUtxo, undefined>,
     networkParams: NetworkParams,
   ): Promise<UnsignedPsbtData> => {
-    if (tokenId !== NATIVE_TOKEN_IDS.bitcoin) {
+    if (tokenId !== NATIVE_TOKEN_IDS.bitcoin)
       throw new UnsupportedTokenException(tokenId);
-    }
+
+    const isValid = fromAddress.toLowerCase().startsWith('bc1q');
+    if (!isValid) throw new UnsupportedAddress();
+
     // generate txBuilder
     const psbt = new Psbt();
 

@@ -3,3 +3,9 @@ export class UnsupportedTokenException extends Error {
     super(`invalid tokenId [${tokenId}] for bitcoin chain`);
   }
 }
+
+export class UnsupportedAddress extends Error {
+  constructor() {
+    super(`The fromAddress is not native SegWit (P2WPKH or P2WSH).`);
+  }
+}

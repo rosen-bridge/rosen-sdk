@@ -11,7 +11,7 @@ import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 import { Psbt } from 'bitcoinjs-lib';
 import { expect } from 'vitest';
 import { parseRosenData } from './utils';
-import { UnsupportedTokenException } from '../lib/errors';
+import { UnsupportedAddress, UnsupportedTokenException } from '../lib/errors';
 import { encodeAddress } from '@rosen-bridge/address-codec';
 
 describe(`BitcoinRosenChainSDK`, () => {
@@ -49,7 +49,7 @@ describe(`BitcoinRosenChainSDK`, () => {
         tokenMap,
         bitcoinLockAddress,
       );
-      // set BTC token id, fromAddress, toAddress, and bridgeAmount
+      // set BTC token id, fromAddress, toEncodedAddress, and bridgeAmount
       const btcTokenIdOnBitcoin = 'btc';
       const fromAddress = 'bc1q2jy0ck7hjwp2m4c02hwph54lxt2cxs30u4670v';
       const toChain = NETWORKS.ERGO;
@@ -94,7 +94,7 @@ describe(`BitcoinRosenChainSDK`, () => {
      * - TokenMap
      * @scenario
      * - Instantiate BitcoinRosenChainSDK with tokenMap and bitcoinLockAddress
-     * - Set an unsupported token id, fromAddress, toAddress, and bridgeAmount
+     * - Set an unsupported token id, fromAddress, toEncodedAddress, and bridgeAmount
      * - Call generateLockTransaction for unsupported token from Bitcoin to Ergo
      * @expected
      * - Should throw UnsupportedTokenException
@@ -105,16 +105,16 @@ describe(`BitcoinRosenChainSDK`, () => {
         tokenMap,
         bitcoinLockAddress,
       );
-      // set BTC token id, fromAddress, toAddress, and bridgeAmount
+      // set BTC token id, fromAddress, toEncodedAddress, and bridgeAmount
       const unknownTokenIdOnBitcoin = 'unknown-token';
       const fromAddress = 'bc1...';
-      const toAddress = '9hBEA...';
+      const toEncodedAddress = 'abc123...';
       const bridgeAmount = 1_500_000n;
       // call generateLockTransaction for BTC from Bitcoin to Ergo
       const unsignedHexTx = bitcoinRosenChainSDK.generateLockTransaction(
         unknownTokenIdOnBitcoin,
         NETWORKS.ERGO,
-        toAddress,
+        toEncodedAddress,
         fromAddress,
         bridgeAmount,
         9551n,
@@ -130,12 +130,54 @@ describe(`BitcoinRosenChainSDK`, () => {
     });
 
     /**
+     * @target generateLockTransaction should throw error in case of using non native-segwit address
+     * @dependencies
+     * - TokenMap
+     * @scenario
+     * - Instantiate BitcoinRosenChainSDK with tokenMap and bitcoinLockAddress
+     * - Set an `unsupported fromAddress`, token id, toEncodedAddress, and bridgeAmount
+     * - Call generateLockTransaction for unsupported fromAddress from Bitcoin to Ergo
+     * @expected
+     * - Should throw UnsupportedAddress
+     */
+    it(`should throw error in case of using non native-segwit address`, async () => {
+      // instantiate BitcoinRosenChainSDK with tokenMap and bitcoinLockAddress
+      const bitcoinRosenChainSDK = new BitcoinRosenChainSDK(
+        tokenMap,
+        bitcoinLockAddress,
+      );
+      // set BTC token id, fromAddress, toEncodedAddress, and bridgeAmount
+      const btcTokenIdOnBitcoin = 'btc';
+      const fromAddress =
+        'bc1ppsey88z8jf7ag40yhfs8t63kcd5u6pwavk2aqzfxhaya7wsykn0s3mfgyq';
+      const toEncodedAddress = '12abc...';
+      const bridgeAmount = 1_500_000n;
+      // call generateLockTransaction for BTC from Bitcoin to Ergo
+      const unsignedHexTx = bitcoinRosenChainSDK.generateLockTransaction(
+        btcTokenIdOnBitcoin,
+        NETWORKS.ERGO,
+        toEncodedAddress,
+        fromAddress,
+        bridgeAmount,
+        9551n,
+        153n,
+        bitcoinUtxos.values(),
+        {
+          feeRatio: 4.968,
+        },
+      );
+
+      // expect the call to throw UnsupportedAddress
+      await expect(unsignedHexTx).rejects.toThrow(UnsupportedAddress);
+    });
+
+    /**
      * @target generateLockTransaction should throw error in case of insufficient assets for bridging
      * @dependencies
      * - TokenMap
      * @scenario
      * - Instantiate BitcoinRosenChainSDK with tokenMap and bitcoinLockAddress
-     * - Set BTC token id, fromAddress, toAddress, and a bridgeAmount greater than available UTXOs
+     * - Set BTC token id, fromAddress, toEncodedAddress, and a bridgeAmount greater than available UTXOs
      * - Call generateLockTransaction for BTC from Bitcoin to Ergo
      * @expected
      * - Should throw InsufficientAssetsException if utxoIterator does not cover the requested amount
@@ -146,16 +188,20 @@ describe(`BitcoinRosenChainSDK`, () => {
         tokenMap,
         bitcoinLockAddress,
       );
-      // set BTC token id, fromAddress, toAddress, and bridgeAmount
+      // set BTC token id, fromAddress, toEncodedAddress, and bridgeAmount
       const btcTokenIdOnBitcoin = 'btc';
       const fromAddress = 'bc1q2jy0ck7hjwp2m4c02hwph54lxt2cxs30u4670v';
-      const toAddress = '9hBEAVZ9MHLf7mwVrvP3nqptdqYVdYGu1byPH8XFzC7KDuzrb8W';
+      const toChain = NETWORKS.ERGO;
+      const toEncodedAddress = encodeAddress(
+        toChain,
+        rosenDataBtcBridge.toAddress,
+      );
       const bridgeAmount = 1_500_000_000n;
       // call generateLockTransaction for BTC from Bitcoin to Ergo
       const unsignedHexTx = bitcoinRosenChainSDK.generateLockTransaction(
         btcTokenIdOnBitcoin,
         NETWORKS.ERGO,
-        toAddress,
+        toEncodedAddress,
         fromAddress,
         bridgeAmount,
         9551n,
