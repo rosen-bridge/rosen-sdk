@@ -5,6 +5,7 @@ import {
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
 import {
+  MINIMUM_NATIVE_TOKEN_AMOUNT,
   SEGWIT_INPUT_WEIGHT_UNIT,
   SEGWIT_OUTPUT_WEIGHT_UNIT,
 } from './constants';
@@ -21,7 +22,7 @@ import {
   generateFeeEstimator,
 } from '@rosen-bridge/bitcoin-utxo-selection';
 import { Psbt, address, payments } from 'bitcoinjs-lib';
-import { UnsupportedAddress, UnsupportedTokenException } from './errors';
+import { UnsupportedSourceAddress, UnsupportedTokenException } from './errors';
 
 class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
   UnsignedPsbtData,
@@ -53,7 +54,7 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
    * @return UnsignedPsbtData
    */
   protected generateLockTransactionCore = async (
-    tokenId: string = NATIVE_TOKEN_IDS.bitcoin,
+    tokenId: string,
     toChain: NETWORKS,
     toEncodedAddress: string,
     fromAddress: string,
@@ -69,7 +70,7 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
       throw new UnsupportedTokenException(tokenId);
 
     const isValid = fromAddress.toLowerCase().startsWith('bc1q');
-    if (!isValid) throw new UnsupportedAddress();
+    if (!isValid) throw new UnsupportedSourceAddress();
 
     // generate txBuilder
     const psbt = new Psbt();
@@ -90,20 +91,23 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
     });
 
     // generate lock box
-    const lockPayment = payments.p2wpkh({
-      address: this.lockAddress,
-    });
+    const lockScript = address.toOutputScript(this.lockAddress);
     psbt.addOutput({
-      script: lockPayment.output!,
+      script: lockScript,
       value: Number(unwrappedAmount),
     });
 
     const minSatoshi = this.getMinimumMeaningfulSatoshi(networkParams.feeRatio);
 
+    const txBaseWeight =
+      42 + // all txs include 40W. P2WPKH txs need additional 2W
+      44 + // OP_RETURN output base weight
+      opReturnData.length * 2; // op_return data weight
+
     // generate fee estimator
     const estimateFee = generateFeeEstimator(
-      1,
-      42, // all txs include 40W. P2WPKH txs need additional 2W
+      0,
+      txBaseWeight,
       SEGWIT_INPUT_WEIGHT_UNIT,
       SEGWIT_OUTPUT_WEIGHT_UNIT,
       networkParams.feeRatio,
@@ -111,7 +115,7 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
     );
 
     const lockAssets: AssetBalance = {
-      nativeToken: unwrappedAmount + minSatoshi,
+      nativeToken: unwrappedAmount,
       tokens: [],
     };
 
@@ -142,20 +146,12 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
       });
     });
 
-    // calculate input boxes assets
-    let remainingBtc =
-      selectedBoxes.boxes.reduce((a, b) => a + b.value, 0n) - unwrappedAmount;
-
-    // create change output
-    const estimatedFee = this.estimateTxFee(
-      psbt.txInputs.length,
-      psbt.txOutputs.length + 1,
-      networkParams.feeRatio,
-    );
-    remainingBtc -= estimatedFee;
-    psbt.addOutput({
-      script: fromAddressScript,
-      value: Number(remainingBtc),
+    // add change box
+    selectedBoxes.additionalAssets.list.forEach((asset) => {
+      psbt.addOutput({
+        script: fromAddressScript,
+        value: Number(asset.nativeToken),
+      });
     });
 
     return {
@@ -199,35 +195,16 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
   /**
    * gets the minimum amount of satoshi for a utxo that can cover
    * additional fee for adding it to a tx
-   * @returns the minimum UNWRAPPED-VALUE amount
+   * Note: it returns the actual value
+   * @returns the minimum amount
    */
   getMinimumMeaningfulSatoshi = (feeRatio: number): bigint => {
     return BigInt(
-      Math.ceil(
-        (feeRatio * SEGWIT_INPUT_WEIGHT_UNIT) / 4, // estimate fee per weight and convert to virtual size
-      ),
-    );
-  };
-
-  /**
-   * estimates required fee for tx based on number of inputs, outputs and current network fee ratio
-   * inputs and outputs required fee are estimated by segwit weight unit
-   * @param inputSize
-   * @param outputSize
-   * @param feeRatio
-   */
-  estimateTxFee = (
-    inputSize: number,
-    outputSize: number,
-    feeRatio: number,
-  ): bigint => {
-    const txBaseWeight = 40 + 2; // all txs include 40W. P2WPKH txs need additional 2W
-    const inputsWeight = inputSize * SEGWIT_INPUT_WEIGHT_UNIT;
-    const outputWeight = outputSize * SEGWIT_OUTPUT_WEIGHT_UNIT;
-    return BigInt(
-      Math.ceil(
-        ((txBaseWeight + inputsWeight + outputWeight) / 4) * // estimate tx weight and convert to virtual size
-          feeRatio,
+      Math.max(
+        Math.ceil(
+          (feeRatio * SEGWIT_INPUT_WEIGHT_UNIT) / 4, // estimate fee per weight and convert to virtual size
+        ),
+        MINIMUM_NATIVE_TOKEN_AMOUNT,
       ),
     );
   };

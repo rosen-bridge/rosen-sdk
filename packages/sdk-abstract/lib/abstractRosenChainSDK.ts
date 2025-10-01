@@ -26,7 +26,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {
    * generates an unsigned lock transaction on CHAIN
    * @param tokenId
    * @param toChain
-   * @param to
+   * @param to destination address (it may be the address itself or an encoding version of it) Please refer to the child chain for exact encoding
    * @param fromAddress
    * @param unwrappedAmount
    * @param unwrappedBridgeFee

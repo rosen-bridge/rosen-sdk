@@ -9,9 +9,11 @@ import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 import { Psbt } from 'bitcoinjs-lib';
-import { expect } from 'vitest';
 import { parseRosenData } from './utils';
-import { UnsupportedAddress, UnsupportedTokenException } from '../lib/errors';
+import {
+  UnsupportedSourceAddress,
+  UnsupportedTokenException,
+} from '../lib/errors';
 import { encodeAddress } from '@rosen-bridge/address-codec';
 
 describe(`BitcoinRosenChainSDK`, () => {
@@ -138,7 +140,7 @@ describe(`BitcoinRosenChainSDK`, () => {
      * - Set an `unsupported fromAddress`, token id, toEncodedAddress, and bridgeAmount
      * - Call generateLockTransaction for unsupported fromAddress from Bitcoin to Ergo
      * @expected
-     * - Should throw UnsupportedAddress
+     * - Should throw UnsupportedSourceAddress
      */
     it(`should throw error in case of using non native-segwit address`, async () => {
       // instantiate BitcoinRosenChainSDK with tokenMap and bitcoinLockAddress
@@ -167,8 +169,8 @@ describe(`BitcoinRosenChainSDK`, () => {
         },
       );
 
-      // expect the call to throw UnsupportedAddress
-      await expect(unsignedHexTx).rejects.toThrow(UnsupportedAddress);
+      // expect the call to throw UnsupportedSourceAddress
+      await expect(unsignedHexTx).rejects.toThrow(UnsupportedSourceAddress);
     });
 
     /**

@@ -99,7 +99,7 @@ const unsignedTx = await sdk.generateLockTransaction(
   1_500_000n, // Amount to bridge (in satoshis)
   9_551n, // Bridge fee (in satoshis)
   153n, // Network fee (in satoshis)
-  utxoIterator, // Iterator or async iterator of available Bitcoin UTXOs
+  utxoIterator, // Iterator or async iterator of available Bitcoin UTxOs
   {
     feeRatio: 4.968, // fee ratio for estimation
   },
@@ -109,7 +109,7 @@ const unsignedTx = await sdk.generateLockTransaction(
 console.log(unsignedTx);
 ```
 
-- `utxoIterator` should yield Bitcoin UTXOs covering the required amount.
+- `utxoIterator` should yield Bitcoin UTxOs covering the required amount.
 - The SDK does not sign transactions; you must sign and submit the transaction using your own wallet or tools.
 
 ### Constants and Types
@@ -123,7 +123,7 @@ The SDK exports several useful constants and types:
 The SDK may throw the following errors:
 
 - `UnsupportedTokenException`: Thrown if the provided token is not supported (only 'btc' is supported).
-- `InsufficientAssetsException`: Thrown if the provided UTXOs do not cover the required amount for the transaction.
+- `InsufficientAssetsException`: Thrown if the provided UTxOs do not cover the required amount for the transaction.
 
 Example:
 
@@ -151,4 +151,4 @@ try {
 **Note:**
 
 - You must provide a realistic token configuration and valid lock address for your environment.
-- Transaction signing is not handled by this SDK; you must provide UTXOs and sign the transaction as appropriate for your application.
+- Transaction signing is not handled by this SDK; you must provide UTxOs and sign the transaction as appropriate for your application.

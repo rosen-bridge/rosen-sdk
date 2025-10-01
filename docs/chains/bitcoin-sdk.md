@@ -36,9 +36,7 @@ The lock transaction on Bitcoin bridges only BTC (the native token). The transac
 
    > **Note:** The OP_RETURN data is not JSON and does not include fromAddress or field names. It is a compact, concatenated hex string.
 
-2. **Locked Assets**: Only BTC is supported. The transfer amount must be sent to the lock address in a single UTXO.
-
-> **Note:** If the OP_RETURN metadata is malformed or the asset is not supported on the target chain, the lock transaction is not valid and is considered a donation.
+2. **Locked Assets**: Only BTC is supported. The transfer amount must be sent to the lock address in a single UTxO.
 
 ## Implementation Details
 
@@ -46,7 +44,7 @@ The lock transaction on Bitcoin bridges only BTC (the native token). The transac
 
 This function generates an unsigned lock transaction on Bitcoin. Only BTC is supported as the asset to bridge.
 
-The function should use only a portion of UTXOs that covers the required BTC. It may need to fetch UTXOs page by page. To this purpose, an Iterator object of the UTXOs is passed to the function. UTXOs are in `BitcoinUtxo` format, which is:
+The function should use only a portion of UTxOs that covers the required BTC. It may need to fetch UTxOs page by page. To this purpose, an Iterator object of the UTxOs is passed to the function. UTxOs are in `BitcoinUtxo` format, which is:
 
 ```ts
 export interface BitcoinUtxo {
