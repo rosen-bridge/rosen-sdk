@@ -79,7 +79,7 @@ The `feeRatio` is required as a `networkParams` to calculate required fee for lo
  * @return UnsignedPsbtData
  */
 protected generateLockTransactionCore = async (
-        tokenId: string = NATIVE_TOKEN_IDS.bitcoin,
+        tokenId: string,
         toChain: NETWORKS,
         toEncodedAddress: string,
         fromAddress: string,
