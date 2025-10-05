@@ -26,7 +26,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {
    * generates an unsigned lock transaction on CHAIN
    * @param tokenId
    * @param toChain
-   * @param toAddress
+   * @param to destination address (it may be the address itself or an encoding version of it) Please refer to the child chain for exact encoding
    * @param fromAddress
    * @param unwrappedAmount
    * @param unwrappedBridgeFee
@@ -37,7 +37,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {
   generateLockTransaction = async (
     tokenId: string,
     toChain: NETWORKS,
-    toAddress: string,
+    to: string,
     fromAddress: string,
     unwrappedAmount: bigint,
     unwrappedBridgeFee: bigint,
@@ -55,7 +55,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {
     return await this.generateLockTransactionCore(
       tokenId,
       toChain,
-      toAddress,
+      to,
       fromAddress,
       unwrappedAmount,
       wrappedBridgeFee,
@@ -68,7 +68,7 @@ abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {
   protected abstract generateLockTransactionCore: (
     tokenId: string,
     toChain: NETWORKS,
-    toAddress: string,
+    to: string,
     fromAddress: string,
     unwrappedAmount: bigint,
     wrappedBridgeFee: bigint,

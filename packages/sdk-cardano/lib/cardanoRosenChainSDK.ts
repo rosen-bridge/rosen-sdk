@@ -43,7 +43,7 @@ class CardanoRosenChainSDK extends AbstractRosenChainSDK<
    * @param wrappedNetworkFee
    * @param utxoIterator
    * @param networkParams
-   * @return UnsignedGenerateTxProxy
+   * @return string
    */
   protected generateLockTransactionCore = async (
     tokenId: string,

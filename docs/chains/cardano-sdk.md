@@ -45,7 +45,7 @@ Note that if metadata is malformed or the transferring asset is not supported on
 
 ## Implementation Details
 
-Alongside the `generateLockTransaction`, another function is also suggested for Cardano. The implementation details of each one are described here.
+Alongside the `generateLockTransactionCore`, another function is also suggested for Cardano. The implementation details of each one are described here.
 
 ### `generateLockAuxiliaryData`
 
@@ -72,7 +72,7 @@ export const generateLockAuxiliaryData: (
 ) => Promise<string>;
 ```
 
-### `generateLockTransaction`
+### `generateLockTransactionCore`
 
 This function generates an unsigned lock transaction.
 
@@ -128,7 +128,7 @@ A simple version of this function is available at [`@rosen-bridge/ui` GitHub](ht
  * @param wrappedNetworkFee
  * @param utxoIterator
  * @param networkParams
- * @return UnsignedGenerateTxProxy
+ * @return string
  */
 generateLockTransactionCore = async (
   tokenId: string,

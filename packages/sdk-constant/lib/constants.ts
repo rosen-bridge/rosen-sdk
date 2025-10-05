@@ -15,3 +15,12 @@ export const NATIVE_TOKEN_IDS = {
   [NETWORKS.BITCOIN]: 'btc',
   [NETWORKS.DOGE]: 'doge',
 };
+
+export const NETWORKS_INDEX = {
+  [NETWORKS.ERGO]: 0,
+  [NETWORKS.CARDANO]: 1,
+  [NETWORKS.BITCOIN]: 2,
+  [NETWORKS.ETHEREUM]: 3,
+  [NETWORKS.BINANCE]: 4,
+  [NETWORKS.DOGE]: 5,
+};

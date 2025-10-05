@@ -6,7 +6,7 @@ This document states the required functionality in Rosen SDK alongside the sugge
 
 - [Required Functionality](#required-functionality)
 - [Suggested Structure](#suggested-structure)
-- [Implmentation Details](#implmentation-details)
+- [Implementation Details](#implementation-details)
   - [Common](#common)
     - [RosenUserInterface](#rosenuserinterface)
     - [getSupportedChains](#getsupportedchains)
