@@ -6,7 +6,7 @@ This document describes the chain-specific functions of Rosen SDK for the Bitcoi
 
 - [Transaction Structure](#transaction-structure)
 - [Implementation Details](#implementation-details)
-  - [generateLockTransaction](#generatelocktransaction)
+  - [generateLockTransaction](#generateLockTransactionCore)
 
 ## Transaction Structure
 
@@ -50,7 +50,6 @@ The function should use only a portion of UTxOs that covers the required BTC. It
 export interface BitcoinUtxo {
   txId: string;
   index: number;
-  address: string;
   value: bigint; // in satoshis
 }
 ```

@@ -87,7 +87,7 @@ describe(`BitcoinRosenChainSDK`, () => {
       expect(parseRosenData(opReturnData)).deep.equal(rosenDataBtcBridge);
       const changeBox = psbt.txOutputs[2];
       expect(changeBox.address).toEqual(fromAddress);
-      expect(changeBox.value).toEqual(1499147);
+      expect(changeBox.value).toEqual(1498993);
     });
 
     /**

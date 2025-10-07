@@ -106,7 +106,7 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
 
     // generate fee estimator
     const estimateFee = generateFeeEstimator(
-      0,
+      1,
       txBaseWeight,
       SEGWIT_INPUT_WEIGHT_UNIT,
       SEGWIT_OUTPUT_WEIGHT_UNIT,
