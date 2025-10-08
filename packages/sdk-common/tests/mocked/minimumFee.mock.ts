@@ -1,4 +1,5 @@
 import { ChainMinimumFee } from '@rosen-bridge/minimum-fee';
+
 import RosenUserInterface from '../../lib/rosenUserInterface';
 
 /**
@@ -9,7 +10,6 @@ export const mockGetMinimumFeeBox = (
   instance: RosenUserInterface,
   fees: ChainMinimumFee[],
 ) => {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   fees.forEach((fee: ChainMinimumFee) => {
     const mockMinimumFeeBox = {
       getFee: vi.fn().mockReturnValue(fee),
@@ -18,7 +18,6 @@ export const mockGetMinimumFeeBox = (
       mockMinimumFeeBox,
     );
   });
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
 /**

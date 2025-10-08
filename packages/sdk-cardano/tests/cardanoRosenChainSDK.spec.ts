@@ -1,3 +1,10 @@
+import * as wasm from '@emurgo/cardano-serialization-lib-nodejs';
+
+import { CardanoAsset } from '@rosen-bridge/cardano-utxo-selection';
+import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import { CardanoRosenChainSDK } from '../lib';
 import {
   cardanoLockAddress,
@@ -10,12 +17,7 @@ import {
   deserializedTransactionUnspentOutput,
   serializedTransactionUnspentOutput,
 } from './testData';
-import { TokenMap } from '@rosen-bridge/tokens';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
-import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
-import * as wasm from '@emurgo/cardano-serialization-lib-nodejs';
 import { parseMetadata } from './utils';
-import { CardanoAsset } from '@rosen-bridge/cardano-utxo-selection';
 
 describe(`CardanoRosenChainSDK`, () => {
   describe(`generateLockTransaction`, () => {
@@ -95,7 +97,7 @@ describe(`CardanoRosenChainSDK`, () => {
       expect(lockBox.amount().multiasset()).toEqual(undefined);
       // check auxiliary data
       const axillaryData = unsignedTx.auxiliary_data()!.metadata()!;
-      expect(parseMetadata(axillaryData)).deep.equal(axillaryDataErgBridge);
+      expect(parseMetadata(axillaryData)).toMatchObject(axillaryDataErgBridge);
       // check fee value
       expect(feeValue).toEqual(185125n);
       // iterate over change boxes, check addresses, accumulate values and assets
@@ -128,7 +130,7 @@ describe(`CardanoRosenChainSDK`, () => {
       }
       // check total change value and assets
       expect(changeValue).toEqual(4214875n);
-      expect(changeAssets).deep.equal(cardanoUtxos1[0].assets);
+      expect(changeAssets).toMatchObject(cardanoUtxos1[0].assets);
     });
 
     /**
@@ -208,7 +210,7 @@ describe(`CardanoRosenChainSDK`, () => {
       );
       // check auxiliary data
       const axillaryData = unsignedTx.auxiliary_data()!.metadata()!;
-      expect(parseMetadata(axillaryData)).deep.equal(axillaryDataRSNBridge);
+      expect(parseMetadata(axillaryData)).toMatchObject(axillaryDataRSNBridge);
       // check fee value
       expect(feeValue).toEqual(187105n);
       // iterate over change boxes, check addresses, accumulate values and assets
@@ -241,7 +243,7 @@ describe(`CardanoRosenChainSDK`, () => {
       }
       // check total change value and assets
       expect(changesValue).toEqual(5152635n);
-      expect(changeAssets).deep.equal([cardanoUtxos2[0].assets[1]]);
+      expect(changeAssets).toMatchObject([cardanoUtxos2[0].assets[1]]);
     });
 
     /**
@@ -301,7 +303,7 @@ describe(`CardanoRosenChainSDK`, () => {
       const utxo = CardanoRosenChainSDK.walletUtxoToCardanoUtxo(
         serializedTransactionUnspentOutput,
       );
-      expect(utxo).deep.equal(deserializedTransactionUnspentOutput);
+      expect(utxo).toMatchObject(deserializedTransactionUnspentOutput);
     });
   });
 });

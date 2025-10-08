@@ -37,8 +37,8 @@ yarn add @rosen-bridge/sdk-common
 Initialize the singleton with your token config and minimum fee NFT parameters.
 
 ```typescript
-import { RosenUserInterface } from '@rosen-bridge/sdk-common';
 import { DummyLogger } from '@rosen-bridge/abstract-logger';
+import { RosenUserInterface } from '@rosen-bridge/sdk-common';
 import { TokenMap } from '@rosen-bridge/tokens';
 
 const rosenTokens = [

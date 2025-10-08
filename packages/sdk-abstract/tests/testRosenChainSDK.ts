@@ -1,7 +1,8 @@
 import { AbstractLogger } from '@rosen-bridge/abstract-logger';
-import { TokenMap } from '@rosen-bridge/tokens';
-import AbstractRosenChainSDK from '../lib/abstractRosenChainSDK';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
+import AbstractRosenChainSDK from '../lib/abstractRosenChainSDK';
 
 class TestRosenChainSDK extends AbstractRosenChainSDK<never, never, never> {
   CHAIN = 'DUMMY_CHAIN' as NETWORKS;

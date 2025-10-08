@@ -37,10 +37,10 @@ yarn add @rosen-bridge/sdk-cardano
 To use the SDK, initialize an instance of `CardanoRosenChainSDK` with your token configuration and lock address:
 
 ```typescript
+import { DummyLogger } from '@rosen-bridge/abstract-logger';
 import { CardanoRosenChainSDK } from '@rosen-bridge/sdk-cardano';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import { TokenMap } from '@rosen-bridge/tokens';
-import { DummyLogger } from '@rosen-bridge/abstract-logger';
 
 const rosenTokens = [
   {

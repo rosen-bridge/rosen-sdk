@@ -1,5 +1,5 @@
-import { NETWORKS_INDEX } from '@rosen-bridge/sdk-constant';
 import { decodeAddress } from '@rosen-bridge/address-codec';
+import { NETWORKS_INDEX } from '@rosen-bridge/sdk-constant';
 
 export type MinimalOnChainRosenData = {
   toChain: string;

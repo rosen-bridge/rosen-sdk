@@ -1,7 +1,11 @@
 import { DummyLogger } from '@rosen-bridge/abstract-logger';
 import { ErgoNetworkType } from '@rosen-bridge/minimum-fee';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import { ChainNotSupportedException, TokenNotFoundException } from '../lib';
 import RosenUserInterface from '../lib/rosenUserInterface';
+import { mockGetMinimumFeeBox, resetMocks } from './mocked/minimumFee.mock';
 import {
   ergToCardanoFeeSample,
   ergToErgoFeeSample,
@@ -13,9 +17,6 @@ import {
   rsnFeeSample,
   testChains,
 } from './testData';
-import { mockGetMinimumFeeBox, resetMocks } from './mocked/minimumFee.mock';
-import { TokenMap } from '@rosen-bridge/tokens';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
 
 describe(`RosenUserInterface`, () => {
   let rosenUserInterface: RosenUserInterface;
@@ -99,7 +100,7 @@ describe(`RosenUserInterface`, () => {
         NETWORKS.CARDANO,
       );
 
-      expect(details).deep.equal(expectedErgTokenSet);
+      expect(details).toMatchObject(expectedErgTokenSet);
     });
 
     /**

@@ -1,5 +1,5 @@
-import { RosenTokens } from '@rosen-bridge/tokens';
 import { ChainMinimumFee } from '@rosen-bridge/minimum-fee';
+import { RosenTokens } from '@rosen-bridge/tokens';
 
 export const rosenTokens: RosenTokens = [
   {

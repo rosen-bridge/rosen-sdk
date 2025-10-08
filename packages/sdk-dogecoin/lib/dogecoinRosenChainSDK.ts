@@ -1,9 +1,23 @@
+import { Psbt, address, payments } from 'bitcoinjs-lib';
+
 import { AbstractLogger } from '@rosen-bridge/abstract-logger';
-import { TokenMap } from '@rosen-bridge/tokens';
+import {
+  AssetBalance,
+  BitcoinBoxSelection,
+  CoveringBoxes,
+  generateFeeEstimator,
+} from '@rosen-bridge/bitcoin-utxo-selection';
 import {
   AbstractRosenChainSDK,
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
+import {
+  NATIVE_TOKEN_IDS,
+  NETWORKS,
+  NETWORKS_INDEX,
+} from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import {
   DOGE_INPUT_SIZE,
   DOGE_NETWORK,
@@ -12,22 +26,10 @@ import {
   MINIMUM_UTXO_VALUE,
 } from './constants';
 import {
-  NATIVE_TOKEN_IDS,
-  NETWORKS,
-  NETWORKS_INDEX,
-} from '@rosen-bridge/sdk-constant';
-import { DogecoinUtxo, NetworkParams, UnsignedPsbtData } from './types';
-import {
-  AssetBalance,
-  BitcoinBoxSelection,
-  CoveringBoxes,
-  generateFeeEstimator,
-} from '@rosen-bridge/bitcoin-utxo-selection';
-import { Psbt, address, payments } from 'bitcoinjs-lib';
-import {
   MissingNonWitnessUtxoError,
   UnsupportedTokenException,
 } from './errors';
+import { DogecoinUtxo, NetworkParams, UnsignedPsbtData } from './types';
 
 class DogecoinRosenChainSDK extends AbstractRosenChainSDK<
   UnsignedPsbtData,

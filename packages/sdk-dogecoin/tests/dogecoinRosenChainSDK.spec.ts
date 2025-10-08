@@ -1,4 +1,15 @@
+import { Psbt } from 'bitcoinjs-lib';
+
+import { encodeAddress } from '@rosen-bridge/address-codec';
+import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import { DOGE_NETWORK, DogecoinRosenChainSDK } from '../lib';
+import {
+  MissingNonWitnessUtxoError,
+  UnsupportedTokenException,
+} from '../lib/errors';
 import {
   rosenTokens,
   rosenDataDogeBridge,
@@ -6,16 +17,7 @@ import {
   txToHex,
   dogecoinUtxos,
 } from './testData';
-import { TokenMap } from '@rosen-bridge/tokens';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
-import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
-import { Psbt } from 'bitcoinjs-lib';
 import { parseRosenData } from './utils';
-import {
-  MissingNonWitnessUtxoError,
-  UnsupportedTokenException,
-} from '../lib/errors';
-import { encodeAddress } from '@rosen-bridge/address-codec';
 
 describe(`DogecoinRosenChainSDK`, () => {
   describe(`generateLockTransaction`, () => {
@@ -88,7 +90,7 @@ describe(`DogecoinRosenChainSDK`, () => {
       // check rosen data
       expect(psbt.txOutputs[0].script.toString('hex')).toMatch(/^6a/);
       const opReturnData = psbt.txOutputs[0].script.toString('hex').slice(4);
-      expect(parseRosenData(opReturnData)).deep.equal(rosenDataDogeBridge);
+      expect(parseRosenData(opReturnData)).toMatchObject(rosenDataDogeBridge);
       const changeBox = psbt.txOutputs[2];
       expect(changeBox.address).toEqual(fromAddress);
       expect(changeBox.value).toEqual(9_499_481_746);

@@ -1,5 +1,5 @@
-import { RosenTokens } from '@rosen-bridge/tokens';
 import { BitcoinUtxo } from '@rosen-bridge/bitcoin-utxo-selection';
+import { RosenTokens } from '@rosen-bridge/tokens';
 
 export const rosenTokens: RosenTokens = [
   {
