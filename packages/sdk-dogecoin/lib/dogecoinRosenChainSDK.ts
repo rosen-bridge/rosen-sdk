@@ -5,31 +5,36 @@ import {
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
 import {
-  MINIMUM_NATIVE_TOKEN_AMOUNT,
-  SEGWIT_INPUT_WEIGHT_UNIT,
-  SEGWIT_OUTPUT_WEIGHT_UNIT,
+  DOGE_INPUT_SIZE,
+  DOGE_NETWORK,
+  DOGE_OUTPUT_SIZE,
+  DOGE_TX_BASE_SIZE,
+  MINIMUM_UTXO_VALUE,
 } from './constants';
 import {
   NATIVE_TOKEN_IDS,
   NETWORKS,
   NETWORKS_INDEX,
 } from '@rosen-bridge/sdk-constant';
-import { NetworkParams, UnsignedPsbtData } from './types';
+import { DogecoinUtxo, NetworkParams, UnsignedPsbtData } from './types';
 import {
   AssetBalance,
   BitcoinBoxSelection,
-  BitcoinUtxo,
+  CoveringBoxes,
   generateFeeEstimator,
 } from '@rosen-bridge/bitcoin-utxo-selection';
 import { Psbt, address, payments } from 'bitcoinjs-lib';
-import { UnsupportedSourceAddress, UnsupportedTokenException } from './errors';
+import {
+  MissingNonWitnessUtxoError,
+  UnsupportedTokenException,
+} from './errors';
 
-class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
+class DogecoinRosenChainSDK extends AbstractRosenChainSDK<
   UnsignedPsbtData,
-  BitcoinUtxo,
+  DogecoinUtxo,
   NetworkParams
 > {
-  CHAIN = NETWORKS.BITCOIN;
+  CHAIN = NETWORKS.DOGE;
 
   constructor(
     protected tokenMap: TokenMap,
@@ -40,8 +45,8 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
   }
 
   /**
-   * generates an unsigned lock transaction on Bitcoin
-   * @param tokenId only btc (native token) is supported
+   * generates an unsigned lock transaction on DogeCoin
+   * @param tokenId only doge (native token) is supported
    * @param toChain
    * @param toEncodedAddress encoded address of the recipient on the target chain (to encoded destination address,
    *                         you can use `encodeAddress` function of package @rosen-bridge/address-codec)
@@ -62,18 +67,15 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
     wrappedBridgeFee: bigint,
     wrappedNetworkFee: bigint,
     utxoIterator:
-      | AsyncIterator<BitcoinUtxo, undefined>
-      | Iterator<BitcoinUtxo, undefined>,
+      | AsyncIterator<DogecoinUtxo, undefined>
+      | Iterator<DogecoinUtxo, undefined>,
     networkParams: NetworkParams,
   ): Promise<UnsignedPsbtData> => {
-    if (tokenId !== NATIVE_TOKEN_IDS.bitcoin)
+    if (tokenId !== NATIVE_TOKEN_IDS.doge)
       throw new UnsupportedTokenException(tokenId);
 
-    const isValid = fromAddress.toLowerCase().startsWith('bc1q');
-    if (!isValid) throw new UnsupportedSourceAddress();
-
     // generate txBuilder
-    const psbt = new Psbt();
+    const psbt = new Psbt({ network: DOGE_NETWORK });
 
     const opReturnData = this.generateOpReturnData(
       toChain,
@@ -84,6 +86,7 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
     // generate OP_RETURN box
     const opReturnPayment = payments.embed({
       data: [Buffer.from(opReturnData, 'hex')],
+      network: DOGE_NETWORK,
     });
     psbt.addOutput({
       script: opReturnPayment.output!,
@@ -91,27 +94,26 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
     });
 
     // generate lock box
-    const lockScript = address.toOutputScript(this.lockAddress);
+    const lockScript = address.toOutputScript(this.lockAddress, DOGE_NETWORK);
     psbt.addOutput({
       script: lockScript,
       value: Number(unwrappedAmount),
     });
 
-    const minSatoshi = this.getMinimumMeaningfulSatoshi(networkParams.feeRatio);
-
-    const txBaseWeight =
-      42 + // all txs include 40W. P2WPKH txs need additional 2W
-      44 + // OP_RETURN output base weight
-      opReturnData.length * 2; // op_return data weight
-
     // generate fee estimator
+    const txBaseWeight =
+      DOGE_TX_BASE_SIZE +
+      2 + // all txs include 40W. P2WPKH txs need additional 2W
+      44 + // OP_RETURN output base weight
+      opReturnData.length * 2; // OP_RETURN output data counts as vSize, so weight = hexString length / 2 * 4
+
     const estimateFee = generateFeeEstimator(
       1,
       txBaseWeight,
-      SEGWIT_INPUT_WEIGHT_UNIT,
-      SEGWIT_OUTPUT_WEIGHT_UNIT,
+      DOGE_INPUT_SIZE,
+      DOGE_OUTPUT_SIZE,
       networkParams.feeRatio,
-      4, // the virtual size matters for fee estimation of native-segwit transactions
+      1, // the virtual size matters for fee estimation of native-segwit transactions
     );
 
     const lockAssets: AssetBalance = {
@@ -120,33 +122,34 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
     };
 
     const selector = new BitcoinBoxSelection();
-    const selectedBoxes = await selector.getCoveringBoxes(
-      lockAssets,
-      [],
-      new Map(),
-      utxoIterator,
-      minSatoshi,
-      undefined,
-      estimateFee,
-    );
+    const selectedBoxes: CoveringBoxes<DogecoinUtxo> =
+      await selector.getCoveringBoxes(
+        lockAssets,
+        [],
+        new Map(),
+        utxoIterator,
+        MINIMUM_UTXO_VALUE,
+        undefined,
+        estimateFee,
+      );
     if (!selectedBoxes.covered) {
       throw new InsufficientAssetsException(selectedBoxes.uncoveredAssets);
     }
 
     // add inputs
-    const fromAddressScript = address.toOutputScript(fromAddress);
     selectedBoxes.boxes.forEach((box) => {
+      if (!networkParams.txToHex[box.txId]) {
+        throw new MissingNonWitnessUtxoError(box.txId, box.index);
+      }
       psbt.addInput({
         hash: box.txId,
         index: box.index,
-        witnessUtxo: {
-          script: fromAddressScript,
-          value: Number(box.value),
-        },
+        nonWitnessUtxo: Buffer.from(networkParams.txToHex[box.txId], 'hex'),
       });
     });
 
     // add change box
+    const fromAddressScript = address.toOutputScript(fromAddress, DOGE_NETWORK);
     selectedBoxes.additionalAssets.list.forEach((asset) => {
       psbt.addOutput({
         script: fromAddressScript,
@@ -191,23 +194,6 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
       toChainHex + bridgeFeeHex + networkFeeHex + addressLengthCode + addressHex
     );
   };
-
-  /**
-   * gets the minimum amount of satoshi for a utxo that can cover
-   * additional fee for adding it to a tx
-   * Note: it returns the actual value
-   * @returns the minimum amount
-   */
-  getMinimumMeaningfulSatoshi = (feeRatio: number): bigint => {
-    return BigInt(
-      Math.max(
-        Math.ceil(
-          (feeRatio * SEGWIT_INPUT_WEIGHT_UNIT) / 4, // estimate fee per weight and convert to virtual size
-        ),
-        MINIMUM_NATIVE_TOKEN_AMOUNT,
-      ),
-    );
-  };
 }
 
-export default BitcoinRosenChainSDK;
+export default DogecoinRosenChainSDK;

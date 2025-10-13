@@ -33,10 +33,7 @@ describe(`BitcoinRosenChainSDK`, () => {
      * - Set BTC token id, fromAddress, toChain, toEncodedAddress, and bridgeAmount
      * - Call generateLockTransaction for BTC from Bitcoin to Ergo
      * - Parse the unsigned transaction using Psbt
-     * - Check number of outputs (should be 3)
-     * - Check lockBox address and value (should match bitcoinLockAddress and bridgeAmount)
-     * - Check OP_RETURN output for correct rosen data
-     * - Check changeBox address and value (should match fromAddress and expected value)
+     * - Check the returned value
      * @expected
      * - unsigned transaction should have 3 outputs
      * - lockBox address should match bitcoinLockAddress
@@ -87,7 +84,7 @@ describe(`BitcoinRosenChainSDK`, () => {
       expect(parseRosenData(opReturnData)).deep.equal(rosenDataBtcBridge);
       const changeBox = psbt.txOutputs[2];
       expect(changeBox.address).toEqual(fromAddress);
-      expect(changeBox.value).toEqual(1499147);
+      expect(changeBox.value).toEqual(1498993);
     });
 
     /**

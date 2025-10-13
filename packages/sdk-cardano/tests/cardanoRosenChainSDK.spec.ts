@@ -35,13 +35,7 @@ describe(`CardanoRosenChainSDK`, () => {
      * - call generateLockTransaction for ADA from Cardano to Ergo
      * - parse the unsigned transaction
      * - extract lockBox and feeValue
-     * - check number of outputs
-     * - check lockBox address and value
-     * - check lockBox has no assets
-     * - check auxiliary data
-     * - check fee value
-     * - iterate over change boxes, check addresses, accumulate values and assets
-     * - check total change value and assets
+     * - Check the returned value
      * @expected
      * - unsigned transaction should have 3 outputs
      * - lockBox address should match cardanoLockAddress
@@ -141,13 +135,7 @@ describe(`CardanoRosenChainSDK`, () => {
      * - call generateLockTransaction for RSN-Pandora from Cardano to Ergo
      * - parse the unsigned transaction
      * - extract lockBox and feeValue
-     * - check number of outputs
-     * - check lockBox address and value
-     * - check lockBox has correct token and amount
-     * - check auxiliary data
-     * - check fee value
-     * - iterate over change boxes, check addresses, accumulate values and assets
-     * - check total change value and assets
+     * - Check the returned value
      * @expected
      * - unsigned transaction should have 3 outputs
      * - lockBox address should match cardanoLockAddress

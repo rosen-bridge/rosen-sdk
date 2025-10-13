@@ -1,6 +1,6 @@
-# Rosen SDK: Bitcoin
+# Rosen SDK: Dogecoin
 
-This document describes the chain-specific functions of Rosen SDK for the Bitcoin chain.
+This document describes the chain-specific functions of Rosen SDK for the Dogecoin chain.
 
 ## Contents
 
@@ -10,7 +10,7 @@ This document describes the chain-specific functions of Rosen SDK for the Bitcoi
 
 ## Transaction Structure
 
-The lock transaction on Bitcoin bridges only BTC (the native token). The transaction should contain the following main components:
+The lock transaction on Dogecoin bridges only Doge (the native token). The transaction should contain the following main components:
 
 1. **OP_RETURN Metadata**: Rosen data for the transfer is written in an OP_RETURN output. The data is a hex-encoded string, not JSON, and is constructed as follows:
 
@@ -36,37 +36,37 @@ The lock transaction on Bitcoin bridges only BTC (the native token). The transac
 
    > **Note:** The OP_RETURN data is not JSON and does not include fromAddress or field names. It is a compact, concatenated hex string.
 
-2. **Locked Assets**: Only BTC is supported. The transfer amount must be sent to the lock address in a single UTxO.
+2. **Locked Assets**: Only Doge is supported. The transfer amount must be sent to the lock address in a single UTxO.
 
 ## Implementation Details
 
 ### `generateLockTransactionCore`
 
-This function generates an unsigned lock transaction on Bitcoin. Only BTC is supported as the asset to bridge.
+This function generates an unsigned lock transaction on Dogecoin. Only Doge is supported as the asset to bridge.
 
-The function should use only a portion of UTxOs that covers the required BTC. It may need to fetch UTxOs page by page. To this purpose, an Iterator object of the UTxOs is passed to the function. UTxOs are in `BitcoinUtxo` format, which is:
+The function should use only a portion of UTxOs that covers the required Doge. It may need to fetch UTxOs page by page. To this purpose, an Iterator object of the UTxOs is passed to the function. UTxOs are in `DogecoinUtxo` format, which is:
 
 ```ts
-export interface BitcoinUtxo {
+export interface DogecoinUtxo {
   txId: string;
   index: number;
-  value: bigint; // in satoshis
+  value: bigint;
 }
 ```
 
 The function should create a transaction with:
 
 - An OP_RETURN output with the Rosen metadata (see above)
-- An output to the lock address with the transfer amount (BTC only)
+- An output to the lock address with the transfer amount (Doge only)
 - Change output(s) as needed
 
 A simplified function signature:
-The `feeRatio` is required as a `networkParams` to calculate required fee for lock transaction. The interface is:
+The `feeRatio` and txToHex are required as a `networkParams` to calculate required fee for lock transaction and nonWitnessUtxo. The interface is:
 
 ```ts
 /**
- * generates an unsigned lock transaction on Bitcoin
- * @param tokenId only btc (native token) is supported
+ * generates an unsigned lock transaction on Dogecoin
+ * @param tokenId only doge (native token) is supported
  * @param toChain
  * @param toEncodedAddress encoded address of the recipient on the target chain (to encoded destination address, you can use `encodeAddress` function of package @rosen-bridge/address-codec)
  * @param fromAddress
@@ -86,8 +86,8 @@ protected generateLockTransactionCore = async (
         wrappedBridgeFee: bigint,
         wrappedNetworkFee: bigint,
         utxoIterator:
-                | AsyncIterator<BitcoinUtxo, undefined>
-                | Iterator<BitcoinUtxo, undefined>,
+                | AsyncIterator<DogecoinUtxo, undefined>
+                | Iterator<DogecoinUtxo, undefined>,
         networkParams: NetworkParams,
 ): Promise<UnsignedPsbtData>
 ```

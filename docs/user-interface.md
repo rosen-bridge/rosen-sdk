@@ -242,12 +242,16 @@ The chain-specific functions are explained in a separate document for each chain
 
 #### Ergo
 
-[**Ergo Specification**](./sdk-ergo.md)
+[**Ergo Specification**](./chains/ergo-sdk.md)
 
 #### Cardano
 
-[**Cardano Specification**](./sdk-cardano.md)
+[**Cardano Specification**](./chains/cardano-sdk.md)
 
 #### Bitcoin
 
-_TBD. link to Bitcoin document_
+[**Bitcoin Specification**](./chains/bitcoin-sdk.md)
+
+#### Dogecoin
+
+[**Dogecoin Specification**](./chains/dogecoin-sdk.md)
