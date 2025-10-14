@@ -27,11 +27,11 @@ class ErgoRosenChainSDK extends AbstractRosenChainSDK<
   CHAIN = NETWORKS.ERGO;
 
   constructor(
-    protected tokenMap: TokenMap,
+    tokenMap: TokenMap,
     lockAddress: string,
     protected minBoxValue: bigint = MIN_BOX_VALUE,
     protected txFee: bigint = FEE,
-    protected logger?: AbstractLogger,
+    logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
   }

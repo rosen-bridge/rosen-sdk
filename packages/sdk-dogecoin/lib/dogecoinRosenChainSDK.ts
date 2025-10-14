@@ -39,9 +39,9 @@ class DogecoinRosenChainSDK extends AbstractRosenChainSDK<
   CHAIN = NETWORKS.DOGE;
 
   constructor(
-    protected tokenMap: TokenMap,
+    tokenMap: TokenMap,
     lockAddress: string,
-    protected logger?: AbstractLogger,
+    logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
   }

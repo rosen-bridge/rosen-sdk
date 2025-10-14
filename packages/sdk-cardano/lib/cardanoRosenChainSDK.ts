@@ -25,11 +25,11 @@ class CardanoRosenChainSDK extends AbstractRosenChainSDK<
   CHAIN = NETWORKS.CARDANO;
 
   constructor(
-    protected tokenMap: TokenMap,
+    tokenMap: TokenMap,
     lockAddress: string,
     protected estimatedMaxFee: bigint = ESTIMATED_MAX_FEE,
     protected estimatedMinBoxValue: bigint = ESTIMATED_MIN_BOX_VALUE,
-    protected logger?: AbstractLogger,
+    logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
   }

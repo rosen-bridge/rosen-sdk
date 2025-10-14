@@ -34,9 +34,9 @@ class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
   CHAIN = NETWORKS.BITCOIN;
 
   constructor(
-    protected tokenMap: TokenMap,
+    tokenMap: TokenMap,
     lockAddress: string,
-    protected logger?: AbstractLogger,
+    logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
   }

@@ -28,15 +28,15 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@rosen-bridge/abstract-logger": "^3.0.0",
-    "@rosen-bridge/bitcoin-utxo-selection": "^2.0.0",
+    "@rosen-bridge/abstract-logger": "^3.0.1",
+    "@rosen-bridge/bitcoin-utxo-selection": "^2.0.1",
     "@rosen-bridge/sdk-abstract": "^0.0.0",
     "@rosen-bridge/sdk-constant": "^0.0.0",
-    "@rosen-bridge/tokens": "^4.0.0",
+    "@rosen-bridge/tokens": "^4.0.1",
     "bitcoinjs-lib": "^6.1.7"
   },
   "devDependencies": {
-    "@rosen-bridge/address-codec": "^1.0.0",
+    "@rosen-bridge/address-codec": "^1.0.1",
     "@vitest/coverage-istanbul": "^3.1.4",
     "tsx": "^4.20.6",
     "vitest": "^3.1.4"

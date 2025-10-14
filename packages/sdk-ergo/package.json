@@ -28,11 +28,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@rosen-bridge/abstract-logger": "^3.0.0",
-    "@rosen-bridge/ergo-box-selection": "^2.0.0",
+    "@rosen-bridge/abstract-logger": "^3.0.1",
+    "@rosen-bridge/ergo-box-selection": "^2.0.1",
     "@rosen-bridge/sdk-abstract": "^0.0.0",
     "@rosen-bridge/sdk-constant": "^0.0.0",
-    "@rosen-bridge/tokens": "^4.0.0",
+    "@rosen-bridge/tokens": "^4.0.1",
     "ergo-lib-wasm-nodejs": "0.24.1"
   },
   "devDependencies": {

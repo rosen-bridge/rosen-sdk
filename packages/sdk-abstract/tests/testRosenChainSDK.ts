@@ -8,9 +8,9 @@ class TestRosenChainSDK extends AbstractRosenChainSDK<never, never, never> {
   CHAIN = 'DUMMY_CHAIN' as NETWORKS;
 
   constructor(
-    protected tokenMap: TokenMap,
-    protected lockAddress: string,
-    protected logger?: AbstractLogger,
+    tokenMap: TokenMap,
+    lockAddress: string,
+    logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
   }
