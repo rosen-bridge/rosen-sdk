@@ -36,7 +36,7 @@ describe(`TestRosenChainSDK`, () => {
         new DummyLogger(),
       );
       const x = testRosenChainSDK.generateLockTransaction(
-        {} as any,
+        {} as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         NETWORKS.ERGO,
         'to_address',
         'from_address',
@@ -72,9 +72,11 @@ describe(`TestRosenChainSDK`, () => {
         '92210c500a405bc2c2b6c9666fe74cb4f2ac26251968e3e779887b63.72706e446f6765';
 
       const wrapValueSpy = vi.spyOn(testRosenChainSDK, 'wrapValue');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const generateLockTransactionCoreSpy = vi
         .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
         .mockResolvedValue({} as any);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
@@ -133,9 +135,11 @@ describe(`TestRosenChainSDK`, () => {
       const rpnETHTokenIdOnErgo =
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1';
       const wrapValueSpy = vi.spyOn(testRosenChainSDK, 'wrapValue');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const generateLockTransactionCoreSpy = vi
         .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
         .mockResolvedValue({} as any);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
@@ -193,9 +197,11 @@ describe(`TestRosenChainSDK`, () => {
       testRosenChainSDK['CHAIN'] = NETWORKS.ETHEREUM;
       const ethTokenIdOnEthereum = 'eth';
       const wrapValueSpy = vi.spyOn(testRosenChainSDK, 'wrapValue');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const generateLockTransactionCoreSpy = vi
         .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
         .mockResolvedValue({} as any);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(

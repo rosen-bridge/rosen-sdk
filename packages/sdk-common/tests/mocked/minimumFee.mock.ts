@@ -14,6 +14,7 @@ export const mockGetMinimumFeeBox = (
     const mockMinimumFeeBox = {
       getFee: vi.fn().mockReturnValue(fee),
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.spyOn(instance as any, 'getMinimumFeeBox').mockResolvedValueOnce(
       mockMinimumFeeBox,
     );
