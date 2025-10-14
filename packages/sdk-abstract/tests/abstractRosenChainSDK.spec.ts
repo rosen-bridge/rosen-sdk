@@ -35,7 +35,7 @@ describe(`TestRosenChainSDK`, () => {
         cardanoLockAddress,
         new DummyLogger(),
       );
-      const x = testRosenChainSDK.generateLockTransaction(
+      const unsignedTx = testRosenChainSDK.generateLockTransaction(
         {} as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         NETWORKS.ERGO,
         'to_address',
@@ -45,7 +45,7 @@ describe(`TestRosenChainSDK`, () => {
         200_000_000n,
         [].values(),
       );
-      await expect(x).rejects.toThrow(EmptyTokenMapException);
+      await expect(unsignedTx).rejects.toThrow(EmptyTokenMapException);
     });
 
     /**
