@@ -1,5 +1,6 @@
-import { RosenTokens } from '@rosen-bridge/tokens';
 import { ErgoBox } from 'ergo-lib-wasm-nodejs';
+
+import { RosenTokens } from '@rosen-bridge/tokens';
 
 export const rosenTokens: RosenTokens = [
   {

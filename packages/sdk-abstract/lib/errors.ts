@@ -1,5 +1,5 @@
-import { AssetBalance } from '@rosen-bridge/selection-types';
 import JsonBigInt from '@rosen-bridge/json-bigint';
+import { AssetBalance } from '@rosen-bridge/selection-types';
 
 export class InsufficientAssetsException extends Error {
   constructor(assetBalance?: AssetBalance) {

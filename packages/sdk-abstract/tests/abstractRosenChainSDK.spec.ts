@@ -1,14 +1,15 @@
 import { DummyLogger } from '@rosen-bridge/abstract-logger';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
+import { EmptyTokenMapException } from '../lib';
 import {
   cardanoLockAddress,
   ergoLockAddress,
   ethereumLockAddress,
   rosenTokens,
 } from './testData';
-import { TokenMap } from '@rosen-bridge/tokens';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import TestRosenChainSDK from './testRosenChainSDK';
-import { EmptyTokenMapException } from '../lib';
 
 describe(`TestRosenChainSDK`, () => {
   let tokenMap: TokenMap;
@@ -34,8 +35,8 @@ describe(`TestRosenChainSDK`, () => {
         cardanoLockAddress,
         new DummyLogger(),
       );
-      const x = testRosenChainSDK.generateLockTransaction(
-        {} as any, // eslint-disable-line
+      const unsignedTx = testRosenChainSDK.generateLockTransaction(
+        {} as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         NETWORKS.ERGO,
         'to_address',
         'from_address',
@@ -44,7 +45,7 @@ describe(`TestRosenChainSDK`, () => {
         200_000_000n,
         [].values(),
       );
-      await expect(x).rejects.toThrow(EmptyTokenMapException);
+      await expect(unsignedTx).rejects.toThrow(EmptyTokenMapException);
     });
 
     /**
@@ -71,12 +72,11 @@ describe(`TestRosenChainSDK`, () => {
         '92210c500a405bc2c2b6c9666fe74cb4f2ac26251968e3e779887b63.72706e446f6765';
 
       const wrapValueSpy = vi.spyOn(testRosenChainSDK, 'wrapValue');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const generateLockTransactionCoreSpy = vi
-        .spyOn(
-          testRosenChainSDK as any, // eslint-disable-line
-          'generateLockTransactionCore',
-        )
-        .mockResolvedValue({} as any); // eslint-disable-line
+        .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
+        .mockResolvedValue({} as any);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
@@ -100,7 +100,7 @@ describe(`TestRosenChainSDK`, () => {
         200_000_000n,
         rpnDogeTokenIdOnCardano,
       );
-      expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
+      expect(generateLockTransactionCoreSpy).toHaveBeenCalledExactlyOnceWith(
         rpnDogeTokenIdOnCardano,
         NETWORKS.ERGO,
         'to_address',
@@ -135,12 +135,11 @@ describe(`TestRosenChainSDK`, () => {
       const rpnETHTokenIdOnErgo =
         '6cf0dd0ebd2c791c2aa8c2a083c16d15fc0e7b609d1dbddb553f319754acfcc1';
       const wrapValueSpy = vi.spyOn(testRosenChainSDK, 'wrapValue');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const generateLockTransactionCoreSpy = vi
-        .spyOn(
-          testRosenChainSDK as any, // eslint-disable-line
-          'generateLockTransactionCore',
-        )
-        .mockResolvedValue({} as any); // eslint-disable-line
+        .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
+        .mockResolvedValue({} as any);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
@@ -164,7 +163,7 @@ describe(`TestRosenChainSDK`, () => {
         1_000_000n,
         rpnETHTokenIdOnErgo,
       );
-      expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
+      expect(generateLockTransactionCoreSpy).toHaveBeenCalledExactlyOnceWith(
         rpnETHTokenIdOnErgo,
         NETWORKS.ETHEREUM,
         'to_address',
@@ -198,12 +197,11 @@ describe(`TestRosenChainSDK`, () => {
       testRosenChainSDK['CHAIN'] = NETWORKS.ETHEREUM;
       const ethTokenIdOnEthereum = 'eth';
       const wrapValueSpy = vi.spyOn(testRosenChainSDK, 'wrapValue');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const generateLockTransactionCoreSpy = vi
-        .spyOn(
-          testRosenChainSDK as any, // eslint-disable-line
-          'generateLockTransactionCore',
-        )
-        .mockResolvedValue({} as any); // eslint-disable-line
+        .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
+        .mockResolvedValue({} as any);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
@@ -227,7 +225,7 @@ describe(`TestRosenChainSDK`, () => {
         114_286_000_000_000n,
         ethTokenIdOnEthereum,
       );
-      expect(generateLockTransactionCoreSpy).toHaveBeenCalledWith(
+      expect(generateLockTransactionCoreSpy).toHaveBeenCalledExactlyOnceWith(
         ethTokenIdOnEthereum,
         NETWORKS.ERGO,
         'to_address',

@@ -37,8 +37,8 @@ yarn add @rosen-bridge/sdk-dogecoin
 To use the SDK, initialize an instance of `DogecoinRosenChainSDK` with your token configuration and lock address:
 
 ```typescript
-import { DogecoinRosenChainSDK } from '@rosen-bridge/sdk-dogecoin';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { DogecoinRosenChainSDK } from '@rosen-bridge/sdk-dogecoin';
 import { TokenMap } from '@rosen-bridge/tokens';
 
 const rosenTokens = [

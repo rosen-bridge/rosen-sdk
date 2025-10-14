@@ -37,10 +37,10 @@ yarn add @rosen-bridge/sdk-ergo
 To use the SDK, initialize an instance of `ErgoRosenChainSDK` with your token configuration and lock address:
 
 ```typescript
-import { ErgoRosenChainSDK } from '@rosen-bridge/sdk-ergo';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
-import { TokenMap } from '@rosen-bridge/tokens';
 import { DummyLogger } from '@rosen-bridge/abstract-logger';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { ErgoRosenChainSDK } from '@rosen-bridge/sdk-ergo';
+import { TokenMap } from '@rosen-bridge/tokens';
 
 const rosenTokens = [
   {

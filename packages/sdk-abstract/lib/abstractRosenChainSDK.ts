@@ -1,6 +1,7 @@
 import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
-import { TokenMap } from '@rosen-bridge/tokens';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import { EmptyTokenMapException } from './errors';
 
 abstract class AbstractRosenChainSDK<TxType, UTXOType, NetworkParams> {

@@ -1,20 +1,22 @@
+import { Psbt } from 'bitcoinjs-lib';
+
+import { encodeAddress } from '@rosen-bridge/address-codec';
+import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import { BitcoinRosenChainSDK } from '../lib';
+import {
+  UnsupportedSourceAddress,
+  UnsupportedTokenException,
+} from '../lib/errors';
 import {
   rosenTokens,
   bitcoinLockAddress,
   bitcoinUtxos,
   rosenDataBtcBridge,
 } from './testData';
-import { TokenMap } from '@rosen-bridge/tokens';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
-import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
-import { Psbt } from 'bitcoinjs-lib';
 import { parseRosenData } from './utils';
-import {
-  UnsupportedSourceAddress,
-  UnsupportedTokenException,
-} from '../lib/errors';
-import { encodeAddress } from '@rosen-bridge/address-codec';
 
 describe(`BitcoinRosenChainSDK`, () => {
   describe(`generateLockTransaction`, () => {
@@ -81,7 +83,7 @@ describe(`BitcoinRosenChainSDK`, () => {
       // check rosen data
       expect(psbt.txOutputs[0].script.toString('hex')).toMatch(/^6a/);
       const opReturnData = psbt.txOutputs[0].script.toString('hex').slice(4);
-      expect(parseRosenData(opReturnData)).deep.equal(rosenDataBtcBridge);
+      expect(parseRosenData(opReturnData)).toMatchObject(rosenDataBtcBridge);
       const changeBox = psbt.txOutputs[2];
       expect(changeBox.address).toEqual(fromAddress);
       expect(changeBox.value).toEqual(1498993);

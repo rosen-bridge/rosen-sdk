@@ -1,10 +1,12 @@
-import { NATIVE_TOKEN, RosenChainToken, TokenMap } from '@rosen-bridge/tokens';
+import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
 import {
   ChainMinimumFee,
   ErgoNetworkType,
   MinimumFeeBox,
 } from '@rosen-bridge/minimum-fee';
-import { AbstractLogger, DummyLogger } from '@rosen-bridge/abstract-logger';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { NATIVE_TOKEN, RosenChainToken, TokenMap } from '@rosen-bridge/tokens';
+
 import {
   ChainNotSupportedException,
   FeeRetrievalFailureException,
@@ -12,7 +14,6 @@ import {
 } from './errors';
 import { RosenFees } from './types';
 import { bigIntCeil } from './utils';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
 
 class RosenUserInterface {
   logger: AbstractLogger;

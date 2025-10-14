@@ -1,3 +1,9 @@
+import { Address, Constant, ErgoBox } from 'ergo-lib-wasm-nodejs';
+
+import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
+import { NETWORKS } from '@rosen-bridge/sdk-constant';
+import { TokenMap } from '@rosen-bridge/tokens';
+
 import { ErgoRosenChainSDK, FEE, MIN_BOX_VALUE } from '../lib';
 import {
   desireChangeBoxAsset,
@@ -5,10 +11,6 @@ import {
   ergoLockAddress,
   rosenTokens,
 } from './testData';
-import { TokenMap } from '@rosen-bridge/tokens';
-import { NETWORKS } from '@rosen-bridge/sdk-constant';
-import { Address, Constant, ErgoBox } from 'ergo-lib-wasm-nodejs';
-import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 
 describe(`ErgoRosenChainSDK`, () => {
   let tokenMap: TokenMap;
@@ -96,7 +98,7 @@ describe(`ErgoRosenChainSDK`, () => {
         Address.from_base58(fromAddress).to_ergo_tree().to_base16_bytes(),
       );
       expect(changeBox.assets.length).toEqual(1);
-      expect(changeBox.assets).deep.equal(desireChangeBoxAsset);
+      expect(changeBox.assets).toMatchObject(desireChangeBoxAsset);
       expect(feeBox.value).toEqual(FEE.toString());
     });
 
@@ -171,7 +173,7 @@ describe(`ErgoRosenChainSDK`, () => {
         Address.from_base58(fromAddress).to_ergo_tree().to_base16_bytes(),
       );
       expect(changeBox.assets.length).toEqual(1);
-      expect(changeBox.assets).deep.equal(desireChangeBoxAsset);
+      expect(changeBox.assets).toMatchObject(desireChangeBoxAsset);
       expect(feeBox.value).toEqual(FEE.toString());
     });
 
