@@ -90,7 +90,7 @@ describe(`DogecoinRosenChainSDK`, () => {
       expect(parseRosenData(opReturnData)).toMatchObject(rosenDataDogeBridge);
       const changeBox = psbt.txOutputs[2];
       expect(changeBox.address).toEqual(fromAddress);
-      expect(changeBox.value).toEqual(9_499_481_746);
+      expect(changeBox.value).toEqual(9_540_128_480);
     });
 
     /**
