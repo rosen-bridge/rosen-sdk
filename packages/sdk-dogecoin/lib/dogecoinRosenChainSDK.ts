@@ -103,19 +103,18 @@ class DogecoinRosenChainSDK extends AbstractRosenChainSDK<
     });
 
     // generate fee estimator
-    const txBaseWeight =
+    const txBaseSize =
       DOGE_TX_BASE_SIZE +
-      2 + // all txs include 40W. P2WPKH txs need additional 2W
-      44 + // OP_RETURN output base weight
-      opReturnData.length * 2; // OP_RETURN output data counts as vSize, so weight = hexString length / 2 * 4
+      11 + // OP_RETURN output size in bytes
+      opReturnData.length / 2; // OP_RETURN size in bytes
 
     const estimateFee = generateFeeEstimator(
       1,
-      txBaseWeight,
+      txBaseSize,
       DOGE_INPUT_SIZE,
       DOGE_OUTPUT_SIZE,
       networkParams.feeRatio,
-      1, // the virtual size matters for fee estimation of native-segwit transactions
+      1, // Doge does not use segwit
     );
 
     const lockAssets: AssetBalance = {
