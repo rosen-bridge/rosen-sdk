@@ -6,7 +6,7 @@ import {
   ErgoBoxSelection,
 } from '@rosen-bridge/ergo-box-selection';
 import {
-  AbstractRosenChainSDK,
+  AbstractRosenUtxoChainSDK,
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
 import { NATIVE_TOKEN_IDS, NETWORKS } from '@rosen-bridge/sdk-constant';
@@ -19,7 +19,7 @@ import {
   UnsignedGenerateTxProxy,
 } from './types';
 
-class ErgoRosenChainSDK extends AbstractRosenChainSDK<
+class ErgoRosenChainSDK extends AbstractRosenUtxoChainSDK<
   UnsignedGenerateTxProxy,
   wasm.ErgoBox,
   NetworkParams

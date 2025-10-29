@@ -8,7 +8,7 @@ import {
   generateFeeEstimator,
 } from '@rosen-bridge/bitcoin-utxo-selection';
 import {
-  AbstractRosenChainSDK,
+  AbstractRosenUtxoChainSDK,
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
 import {
@@ -31,7 +31,7 @@ import {
 } from './errors';
 import { DogecoinUtxo, NetworkParams, UnsignedPsbtData } from './types';
 
-class DogecoinRosenChainSDK extends AbstractRosenChainSDK<
+class DogecoinRosenChainSDK extends AbstractRosenUtxoChainSDK<
   UnsignedPsbtData,
   DogecoinUtxo,
   NetworkParams

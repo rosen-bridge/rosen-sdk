@@ -43,7 +43,6 @@ describe(`TestRosenChainSDK`, () => {
         5_000_000_000_000n,
         50_000_000_000n,
         200_000_000n,
-        [].values(),
       );
       await expect(unsignedTx).rejects.toThrow(EmptyTokenMapException);
     });
@@ -76,8 +75,6 @@ describe(`TestRosenChainSDK`, () => {
       const generateLockTransactionCoreSpy = vi
         .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
         .mockResolvedValue({} as any);
-      /* eslint-enable @typescript-eslint/no-explicit-any */
-      const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
         rpnDogeTokenIdOnCardano,
@@ -87,7 +84,6 @@ describe(`TestRosenChainSDK`, () => {
         5_000_000_000_000n,
         50_000_000_000n,
         200_000_000n,
-        boxIterator,
       );
 
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
@@ -108,7 +104,6 @@ describe(`TestRosenChainSDK`, () => {
         5_000_000_000_000n,
         50_000_000_000n,
         200_000_000n,
-        boxIterator,
       );
     });
 
@@ -139,8 +134,6 @@ describe(`TestRosenChainSDK`, () => {
       const generateLockTransactionCoreSpy = vi
         .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
         .mockResolvedValue({} as any);
-      /* eslint-enable @typescript-eslint/no-explicit-any */
-      const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
         rpnETHTokenIdOnErgo,
@@ -150,7 +143,6 @@ describe(`TestRosenChainSDK`, () => {
         300_000_000n,
         3_000_000n,
         1_000_000n,
-        boxIterator,
       );
 
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
@@ -171,7 +163,6 @@ describe(`TestRosenChainSDK`, () => {
         300_000_000n,
         3_000_000n,
         1_000_000n,
-        boxIterator,
       );
     });
 
@@ -201,8 +192,6 @@ describe(`TestRosenChainSDK`, () => {
       const generateLockTransactionCoreSpy = vi
         .spyOn(testRosenChainSDK as any, 'generateLockTransactionCore')
         .mockResolvedValue({} as any);
-      /* eslint-enable @typescript-eslint/no-explicit-any */
-      const boxIterator = [].values();
 
       await testRosenChainSDK.generateLockTransaction(
         ethTokenIdOnEthereum,
@@ -212,7 +201,6 @@ describe(`TestRosenChainSDK`, () => {
         300_000_000_000_000_000n,
         3_000_000_000_000_000n,
         114_286_000_000_000n,
-        boxIterator,
       );
 
       expect(wrapValueSpy).toHaveBeenNthCalledWith(
@@ -233,7 +221,6 @@ describe(`TestRosenChainSDK`, () => {
         300_000_000_000_000_000n,
         3000_000n,
         114_286n,
-        boxIterator,
       );
     });
   });

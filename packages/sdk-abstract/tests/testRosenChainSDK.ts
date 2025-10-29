@@ -4,7 +4,7 @@ import { TokenMap } from '@rosen-bridge/tokens';
 
 import AbstractRosenChainSDK from '../lib/abstractRosenChainSDK';
 
-class TestRosenChainSDK extends AbstractRosenChainSDK<never, never, never> {
+class TestRosenChainSDK extends AbstractRosenChainSDK<never, never[]> {
   CHAIN = 'DUMMY_CHAIN' as NETWORKS;
 
   constructor(
