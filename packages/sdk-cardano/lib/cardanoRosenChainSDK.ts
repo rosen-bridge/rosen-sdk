@@ -8,7 +8,7 @@ import {
   CardanoUtxo,
 } from '@rosen-bridge/cardano-utxo-selection';
 import {
-  AbstractRosenChainSDK,
+  AbstractRosenUtxoChainSDK,
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
 import { NATIVE_TOKEN_IDS, NETWORKS } from '@rosen-bridge/sdk-constant';
@@ -17,7 +17,7 @@ import { TokenMap } from '@rosen-bridge/tokens';
 import { ESTIMATED_MAX_FEE, ESTIMATED_MIN_BOX_VALUE } from './constants';
 import { CardanoProtocolParams, NetworkParams } from './types';
 
-class CardanoRosenChainSDK extends AbstractRosenChainSDK<
+class CardanoRosenChainSDK extends AbstractRosenUtxoChainSDK<
   string,
   CardanoUtxo,
   NetworkParams

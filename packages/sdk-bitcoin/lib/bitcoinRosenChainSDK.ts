@@ -8,7 +8,7 @@ import {
   generateFeeEstimator,
 } from '@rosen-bridge/bitcoin-utxo-selection';
 import {
-  AbstractRosenChainSDK,
+  AbstractRosenUtxoChainSDK,
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
 import {
@@ -26,7 +26,7 @@ import {
 import { UnsupportedSourceAddress, UnsupportedTokenException } from './errors';
 import { NetworkParams, UnsignedPsbtData } from './types';
 
-class BitcoinRosenChainSDK extends AbstractRosenChainSDK<
+class BitcoinRosenChainSDK extends AbstractRosenUtxoChainSDK<
   UnsignedPsbtData,
   BitcoinUtxo,
   NetworkParams
