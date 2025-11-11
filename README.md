@@ -11,3 +11,4 @@ The RosenChain SDK provides a powerful and flexible way to interact with multipl
 For more information and detailed API documentation, please refer to the official documentation or contact the support team.
 
 ---
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/rosen-bridge/rosen-sdk)
