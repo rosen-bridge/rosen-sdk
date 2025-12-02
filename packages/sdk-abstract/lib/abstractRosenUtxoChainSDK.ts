@@ -12,7 +12,6 @@ abstract class AbstractRosenUtxoChainSDK<
   TxType,
   [UtxoIteratorParams<UTXOType>, NetworkParams]
 > {
-  abstract CHAIN: NETWORKS;
   protected constructor(
     protected tokenMap: TokenMap,
     protected lockAddress: string,

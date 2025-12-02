@@ -11,11 +11,8 @@ import {
   AbstractRosenUtxoChainSDK,
   InsufficientAssetsException,
 } from '@rosen-bridge/sdk-abstract';
-import {
-  NATIVE_TOKEN_IDS,
-  NETWORKS,
-  NETWORKS_INDEX,
-} from '@rosen-bridge/sdk-constant';
+import { NATIVE_TOKEN_IDS, NETWORKS } from '@rosen-bridge/sdk-constant';
+import { generateRosenData } from '@rosen-bridge/sdk-utils';
 import { TokenMap } from '@rosen-bridge/tokens';
 
 import {
@@ -77,7 +74,7 @@ class BitcoinRosenChainSDK extends AbstractRosenUtxoChainSDK<
     // generate txBuilder
     const psbt = new Psbt();
 
-    const opReturnData = this.generateOpReturnData(
+    const opReturnData = generateRosenData(
       toChain,
       toEncodedAddress,
       wrappedNetworkFee,
@@ -163,35 +160,6 @@ class BitcoinRosenChainSDK extends AbstractRosenUtxoChainSDK<
       },
       inputSize: psbt.inputCount,
     };
-  };
-
-  /**
-   * generates metadata for lock transaction
-   * @param toChain
-   * @param addressHex
-   * @param networkFee
-   * @param bridgeFee
-   * @returns
-   */
-  generateOpReturnData = (
-    toChain: NETWORKS,
-    addressHex: string,
-    networkFee: bigint,
-    bridgeFee: bigint,
-  ): string => {
-    const toChainHex = NETWORKS_INDEX[toChain].toString(16).padStart(2, '0');
-    // parse bridgeFee
-    const bridgeFeeHex = bridgeFee.toString(16).padStart(16, '0');
-    // parse networkFee
-    const networkFeeHex = networkFee.toString(16).padStart(16, '0');
-    // parse toAddress
-    const addressLengthCode = (addressHex.length / 2)
-      .toString(16)
-      .padStart(2, '0');
-
-    return (
-      toChainHex + bridgeFeeHex + networkFeeHex + addressLengthCode + addressHex
-    );
   };
 
   /**

@@ -6,6 +6,7 @@
   "exclude": ["tests", "vitest.config.ts"],
   "references": [
     { "path": "../sdk-abstract/tsconfig.build.json" },
-    { "path": "../sdk-constant/tsconfig.build.json" }
+    { "path": "../sdk-constant/tsconfig.build.json" },
+    { "path": "../sdk-utils/tsconfig.build.json" }
   ]
 }
