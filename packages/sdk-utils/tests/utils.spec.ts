@@ -2,8 +2,7 @@ import { encodeAddress } from '@rosen-bridge/address-codec';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 
 import { generateRosenData } from '../lib';
-import { rosenTestDataBridge } from './testData';
-import { parseRosenData } from './utils';
+import { encodedRosenTestData, rosenTestDataBridge } from './testData';
 
 describe(`generateRosenData`, () => {
   /**
@@ -12,6 +11,7 @@ describe(`generateRosenData`, () => {
    * @scenario
    * - encode toChainAddress into hex string
    * @expected
+   * generate rosen data correctly
    */
   it(`should generate rosen data correctly`, async () => {
     const toChain = NETWORKS.ERGO;
@@ -19,7 +19,12 @@ describe(`generateRosenData`, () => {
       toChain,
       rosenTestDataBridge.toAddress,
     );
-    const hex = generateRosenData(toChain, toEncodedAddress, 153n, 9551n);
-    expect(parseRosenData(hex)).toEqual(rosenTestDataBridge);
+    const hex = generateRosenData(
+      rosenTestDataBridge.toChain as NETWORKS,
+      toEncodedAddress,
+      rosenTestDataBridge.networkFee,
+      rosenTestDataBridge.bridgeFee,
+    );
+    expect(hex).toEqual(encodedRosenTestData);
   });
 });
