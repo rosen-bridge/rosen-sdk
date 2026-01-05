@@ -28,10 +28,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@rosen-bridge/abstract-logger": "^3.0.1",
-    "@rosen-bridge/minimum-fee": "^3.1.0",
+    "@rosen-bridge/abstract-logger": "^4.0.0",
+    "@rosen-bridge/minimum-fee": "^3.1.1",
     "@rosen-bridge/sdk-constant": "^0.0.0",
-    "@rosen-bridge/tokens": "^4.0.1"
+    "@rosen-bridge/tokens": "^5.0.0"
   },
   "devDependencies": {
     "@vitest/coverage-istanbul": "^3.1.4",
