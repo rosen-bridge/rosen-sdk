@@ -15,7 +15,7 @@ abstract class AbstractRosenUtxoChainSDK<
   protected constructor(
     protected tokenMap: TokenMap,
     protected lockAddress: string,
-    protected logger?: AbstractLogger,
+    logger?: AbstractLogger,
   ) {
     super(tokenMap, lockAddress, logger);
   }

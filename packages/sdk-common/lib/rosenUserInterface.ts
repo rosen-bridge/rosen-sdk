@@ -143,7 +143,7 @@ class RosenUserInterface {
       this.minimumFeeNFT,
       this.ergoNetworkType,
       this.networkUrl,
-      this.logger,
+      this.logger.child('MinimumFeeBox'),
     );
 
     const fetchedBox = await minimumFee.fetchBox();

@@ -85,7 +85,9 @@ class ErgoRosenChainSDK extends AbstractRosenUtxoChainSDK<
       wrappedNetworkFee,
     );
 
-    const selector = new ErgoBoxSelection(this.logger);
+    const selector = new ErgoBoxSelection(
+      this.logger.child('ErgoBoxSelection'),
+    );
 
     // get input boxes
     const selectedBoxes = await selector.getCoveringBoxes(
