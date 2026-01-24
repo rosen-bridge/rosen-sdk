@@ -1,6 +1,6 @@
 {
   "name": "@rosen-bridge/sdk-utils",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "This project includes utils functions that clients or chain sdks require to interact with",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@rosen-bridge/sdk-constant": "^0.0.0"
+    "@rosen-bridge/sdk-constant": "^0.1.0"
   },
   "devDependencies": {
     "@rosen-bridge/address-codec": "^1.0.1",

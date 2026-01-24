@@ -1,6 +1,6 @@
 {
   "name": "@rosen-bridge/sdk-bitcoin",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Bitcoin chain specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
   "repository": {
     "type": "git",
@@ -30,9 +30,9 @@
   "dependencies": {
     "@rosen-bridge/abstract-logger": "^4.0.0",
     "@rosen-bridge/bitcoin-utxo-selection": "^2.0.3",
-    "@rosen-bridge/sdk-abstract": "^0.0.0",
-    "@rosen-bridge/sdk-constant": "^0.0.0",
-    "@rosen-bridge/sdk-utils": "^0.0.0",
+    "@rosen-bridge/sdk-abstract": "^0.1.0",
+    "@rosen-bridge/sdk-constant": "^0.1.0",
+    "@rosen-bridge/sdk-utils": "^0.1.0",
     "@rosen-bridge/tokens": "^5.0.0",
     "bitcoinjs-lib": "^6.1.7"
   },
