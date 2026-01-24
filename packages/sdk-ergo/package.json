@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@rosen-bridge/abstract-logger": "^4.0.0",
-    "@rosen-bridge/ergo-box-selection": "^2.1.0",
+    "@rosen-bridge/ergo-box-selection": "^2.1.1",
     "@rosen-bridge/sdk-abstract": "^0.0.0",
     "@rosen-bridge/sdk-constant": "^0.0.0",
     "@rosen-bridge/tokens": "^5.0.0",

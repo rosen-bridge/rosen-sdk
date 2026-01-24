@@ -119,7 +119,9 @@ class DogecoinRosenChainSDK extends AbstractRosenUtxoChainSDK<
       tokens: [],
     };
 
-    const selector = new BitcoinBoxSelection();
+    const selector = new BitcoinBoxSelection(
+      this.logger.child('BitcoinBoxSelection'),
+    );
     const selectedBoxes: CoveringBoxes<DogecoinUtxo> =
       await selector.getCoveringBoxes(
         lockAssets,

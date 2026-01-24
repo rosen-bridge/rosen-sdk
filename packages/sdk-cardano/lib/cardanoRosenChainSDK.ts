@@ -87,7 +87,9 @@ class CardanoRosenChainSDK extends AbstractRosenUtxoChainSDK<
     // we have to include the other one in the required assets
     requiredAssets.nativeToken += this.estimatedMinBoxValue;
 
-    const selector = new CardanoBoxSelection(this.logger);
+    const selector = new CardanoBoxSelection(
+      this.logger.child('CardanoBoxSelection'),
+    );
     const selectedBoxes = await selector.getCoveringBoxes(
       requiredAssets,
       [],

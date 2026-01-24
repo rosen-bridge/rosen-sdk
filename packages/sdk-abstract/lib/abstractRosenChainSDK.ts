@@ -9,10 +9,11 @@ abstract class AbstractRosenChainSDK<
   ExtraNetworkParams extends unknown[],
 > {
   abstract CHAIN: NETWORKS;
+  protected logger: AbstractLogger;
   protected constructor(
     protected tokenMap: TokenMap,
     protected lockAddress: string,
-    protected logger?: AbstractLogger,
+    logger?: AbstractLogger,
   ) {
     this.logger = logger || new DummyLogger();
   }
