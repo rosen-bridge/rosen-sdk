@@ -1,6 +1,6 @@
 {
   "name": "@rosen-bridge/sdk-constant",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Typescript package containing shared constants and utilities of Rosen SDK packages",
   "repository": {
     "type": "git",

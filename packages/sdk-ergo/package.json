@@ -1,6 +1,6 @@
 {
   "name": "@rosen-bridge/sdk-ergo",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Ergo chain specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
   "dependencies": {
     "@rosen-bridge/abstract-logger": "^4.0.0",
     "@rosen-bridge/ergo-box-selection": "^2.1.1",
-    "@rosen-bridge/sdk-abstract": "^0.0.0",
-    "@rosen-bridge/sdk-constant": "^0.0.0",
+    "@rosen-bridge/sdk-abstract": "^0.1.0",
+    "@rosen-bridge/sdk-constant": "^0.1.0",
     "@rosen-bridge/tokens": "^5.0.0",
     "ergo-lib-wasm-nodejs": "0.24.1"
   },
