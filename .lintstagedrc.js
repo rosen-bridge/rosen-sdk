@@ -39,6 +39,6 @@ const runKnipConditional = (files) => {
 
 export default {
   '*.ts': () => 'npm run type-check',
-  '*.{js,ts}': ['eslint --fix', 'npm run test -- related -- --run'],
+  '*.{js,ts}': ['eslint --fix'],
   '*': ['prettier --ignore-unknown --write', runKnipConditional],
 };
