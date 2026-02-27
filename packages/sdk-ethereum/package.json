@@ -1,0 +1,39 @@
+{
+  "name": "@rosen-bridge/sdk-ethereum",
+  "version": "0.0.0",
+  "description": "Ethereum chain specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
+  },
+  "license": "MIT",
+  "author": "Rosen Team",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+    "lint": "eslint --fix . && npm run prettify",
+    "lint:check": "eslint . && npm run prettify:check",
+    "prettify": "prettier --write . --ignore-path ../../.gitignore",
+    "prettify:check": "prettier --check . --ignore-path ../../.gitignore",
+    "release": "npm run clean && npm run build && npm publish --access public",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rosen-bridge/abstract-logger": "^4.0.0",
+    "@rosen-bridge/sdk-abstract": "^0.1.0",
+    "@rosen-bridge/sdk-constant": "^0.1.0",
+    "@rosen-bridge/sdk-evm": "^0.0.0",
+    "@rosen-bridge/tokens": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=22.18.0",
+    "npm": "11.6.2"
+  }
+}
