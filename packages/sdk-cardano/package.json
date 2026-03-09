@@ -33,7 +33,7 @@
     "@rosen-bridge/cardano-utxo-selection": "^3.0.3",
     "@rosen-bridge/sdk-abstract": "^0.1.0",
     "@rosen-bridge/sdk-constant": "^0.1.0",
-    "@rosen-bridge/tokens": "^5.0.0"
+    "@rosen-bridge/tokens": "^6.0.0"
   },
   "devDependencies": {
     "@rosen-bridge/json-bigint": "^1.1.0"

@@ -1,7 +1,7 @@
 {
-  "name": "@rosen-bridge/sdk-abstract",
-  "version": "0.1.0",
-  "description": "Abstract interface for rosen chain SDKs",
+  "name": "@rosen-bridge/sdk-evm",
+  "version": "0.0.0",
+  "description": "EVM chains specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
@@ -29,10 +29,14 @@
   },
   "dependencies": {
     "@rosen-bridge/abstract-logger": "^4.0.0",
-    "@rosen-bridge/json-bigint": "^1.1.0",
+    "@rosen-bridge/sdk-abstract": "^0.1.0",
     "@rosen-bridge/sdk-constant": "^0.1.0",
-    "@rosen-bridge/selection-types": "^1.0.1",
-    "@rosen-bridge/tokens": "^6.0.0"
+    "@rosen-bridge/sdk-utils": "^0.1.0",
+    "@rosen-bridge/tokens": "^6.0.0",
+    "ethers": "6.16.0"
+  },
+  "devDependencies": {
+    "@rosen-bridge/address-codec": "^1.2.0"
   },
   "engines": {
     "node": ">=22.18.0",

@@ -33,11 +33,11 @@
     "@rosen-bridge/sdk-abstract": "^0.1.0",
     "@rosen-bridge/sdk-constant": "^0.1.0",
     "@rosen-bridge/sdk-utils": "^0.1.0",
-    "@rosen-bridge/tokens": "^5.0.0",
+    "@rosen-bridge/tokens": "^6.0.0",
     "bitcoinjs-lib": "^6.1.7"
   },
   "devDependencies": {
-    "@rosen-bridge/address-codec": "^1.0.1"
+    "@rosen-bridge/address-codec": "^1.2.0"
   },
   "engines": {
     "node": ">=22.18.0",

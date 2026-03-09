@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./lib"
+  },
+  "exclude": [],
+  "references": [
+    { "path": "../sdk-abstract/tsconfig.build.json" },
+    { "path": "../sdk-constant/tsconfig.build.json" },
+    { "path": "../sdk-evm/tsconfig.build.json" }
+  ]
+}

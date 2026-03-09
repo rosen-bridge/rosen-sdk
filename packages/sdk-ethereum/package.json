@@ -1,7 +1,7 @@
 {
-  "name": "@rosen-bridge/sdk-abstract",
-  "version": "0.1.0",
-  "description": "Abstract interface for rosen chain SDKs",
+  "name": "@rosen-bridge/sdk-ethereum",
+  "version": "0.0.0",
+  "description": "Ethereum chain specific functions of Rosen SDK to interact with and create transactions on Rosen Bridge",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rosen-bridge/rosen-sdk.git"
@@ -18,20 +18,18 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
-    "coverage": "npm run test -- --coverage",
     "lint": "eslint --fix . && npm run prettify",
     "lint:check": "eslint . && npm run prettify:check",
     "prettify": "prettier --write . --ignore-path ../../.gitignore",
     "prettify:check": "prettier --check . --ignore-path ../../.gitignore",
-    "release": "npm run clean && npm run build && npm run test -- --run && npm publish --access public",
-    "test": "NODE_OPTIONS='--import tsx' vitest",
+    "release": "npm run clean && npm run build && npm publish --access public",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@rosen-bridge/abstract-logger": "^4.0.0",
-    "@rosen-bridge/json-bigint": "^1.1.0",
+    "@rosen-bridge/sdk-abstract": "^0.1.0",
     "@rosen-bridge/sdk-constant": "^0.1.0",
-    "@rosen-bridge/selection-types": "^1.0.1",
+    "@rosen-bridge/sdk-evm": "^0.0.0",
     "@rosen-bridge/tokens": "^6.0.0"
   },
   "engines": {
