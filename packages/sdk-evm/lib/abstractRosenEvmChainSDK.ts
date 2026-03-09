@@ -42,8 +42,9 @@ abstract class AbstractRosenEvmChainSDK extends AbstractRosenChainSDK<
         to: this.lockAddress,
         data: '0x' + rosenData,
         value: '0x' + unwrappedAmount.toString(16),
-        ...(fromAddress && { from: fromAddress }),
       };
+      if (fromAddress)
+        transactionParameters = { ...transactionParameters, from: fromAddress };
     } else {
       const contract = new Contract(tokenId, transferABI, undefined);
       const data = contract.interface.encodeFunctionData('transfer', [
@@ -54,8 +55,9 @@ abstract class AbstractRosenEvmChainSDK extends AbstractRosenChainSDK<
       transactionParameters = {
         to: tokenId,
         data: data + rosenData,
-        ...(fromAddress && { from: fromAddress }),
       };
+      if (fromAddress)
+        transactionParameters = { ...transactionParameters, from: fromAddress };
     }
     return transactionParameters;
   };

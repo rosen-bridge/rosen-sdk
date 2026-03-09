@@ -34,6 +34,7 @@
     "@rosen-bridge/address-codec": "^1.2.0"
   },
   "engines": {
-    "node": ">=22.18.0"
+    "node": ">=22.18.0",
+    "npm": "11.6.2"
   }
 }

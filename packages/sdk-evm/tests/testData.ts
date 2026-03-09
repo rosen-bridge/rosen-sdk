@@ -169,5 +169,17 @@ export const rosenTokens: RosenTokens = [
 export const ethLockAddress = '0x451698faa07fc68301af622a3ad42205f13c6e4b';
 export const ergoAddress =
   '9hBEAVZ9MHLf7mwVrvP3nqptdqYVdYGu1byPH8XFzC7KDuzrb8W';
-export const userAddress =
-  '0x2e81EC31237d350a2050215250561e51404d4542'.toLowerCase();
+export const userAddress = '0x2e81ec31237d350a2050215250561e51404d4542';
+export const rosenDataETHBridge = {
+  toChain: 'ergo',
+  toAddress: '9hBEAVZ9MHLf7mwVrvP3nqptdqYVdYGu1byPH8XFzC7KDuzrb8W',
+  bridgeFee: '1',
+  networkFee: '1',
+};
+
+export const rosenDataRpnRSNBridge = {
+  toChain: 'ergo',
+  toAddress: '9hBEAVZ9MHLf7mwVrvP3nqptdqYVdYGu1byPH8XFzC7KDuzrb8W',
+  bridgeFee: '200000',
+  networkFee: '100000',
+};

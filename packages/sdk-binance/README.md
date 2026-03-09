@@ -44,40 +44,42 @@ import { TokenMap } from '@rosen-bridge/tokens';
 
 const rosenTokens = [
   {
-    ergo: {
-      tokenId: 'erg',
-      name: 'ERG',
-      decimals: 9,
-      type: 'native',
-      residency: 'native',
-      extra: {},
-    },
     binance: {
-      tokenId: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+      tokenId: 'bnb',
       name: 'BNB',
       decimals: 18,
       type: 'native',
       residency: 'native',
       extra: {},
     },
-  },
-  {
+    ethereum: {
+      tokenId: '0x3189b3d05ddff3c5e9755579830be2cbe512f200',
+      name: 'rpnBNB',
+      decimals: 18,
+      type: 'ERC-20',
+      residency: 'wrapped',
+      extra: {},
+    },
     ergo: {
       tokenId:
-        '00352535a0914c311a6a68f18e9e1444d03e63a13a040b2a0c1a938886d38a4c',
-      name: 'rsADA',
-      decimals: 6,
+        '82f7cec6d682e8a0d965e6d93de66ec18933f72181c59a5d85802f0fe2afc98c',
+      name: 'rpnBNB',
+      decimals: 9,
       type: 'EIP-004',
       residency: 'wrapped',
       extra: {},
     },
-    binance: {
-      tokenId: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-      name: 'rsADA',
-      decimals: 6,
-      type: 'BEP20',
+    cardano: {
+      tokenId:
+        '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e424e42',
+      name: 'rpnBNB',
+      decimals: 9,
+      type: 'CIP26',
       residency: 'wrapped',
-      extra: {},
+      extra: {
+        policyId: '57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb',
+        assetName: '72706e424e42',
+      },
     },
   },
 ];
