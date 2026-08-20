@@ -4,6 +4,7 @@ export enum NETWORKS {
   ETHEREUM = 'ethereum',
   BINANCE = 'binance',
   BITCOIN = 'bitcoin',
+  BITCOIN_RUNES = 'bitcoin-runes',
   DOGE = 'doge',
 }
 
@@ -13,6 +14,7 @@ export const NATIVE_TOKEN_IDS = {
   [NETWORKS.ETHEREUM]: 'eth',
   [NETWORKS.BINANCE]: 'bnb',
   [NETWORKS.BITCOIN]: 'btc',
+  [NETWORKS.BITCOIN_RUNES]: 'btc',
   [NETWORKS.DOGE]: 'doge',
 };
 
@@ -23,4 +25,5 @@ export const NETWORKS_INDEX = {
   [NETWORKS.ETHEREUM]: 3,
   [NETWORKS.BINANCE]: 4,
   [NETWORKS.DOGE]: 5,
+  [NETWORKS.BITCOIN_RUNES]: 6,
 };

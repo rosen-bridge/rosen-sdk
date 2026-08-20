@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./lib"
+  },
+  "exclude": ["tests", "vitest.config.ts"],
+  "references": [
+    { "path": "../sdk-abstract/tsconfig.build.json" },
+    { "path": "../sdk-constant/tsconfig.build.json" },
+    { "path": "../sdk-utils/tsconfig.build.json" }
+  ]
+}
