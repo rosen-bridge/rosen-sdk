@@ -20,7 +20,7 @@ export class InvalidAddressException extends Error {
   }
 }
 
-export class InvalidUtxoException extends Error {
+export class InvalidUtxoAddressException extends Error {
   constructor(utxo: BitcoinRunesUtxo) {
     super(
       `The provided utxo [${utxo.txId}.${utxo.index}] with address [${utxo.address}] is invalid. Bitcoin runes utxos require a taproot or native segwit address.`,
@@ -28,10 +28,18 @@ export class InvalidUtxoException extends Error {
   }
 }
 
-export class InvalidTaprootInfoException extends Error {
+export class InvalidUtxoTaprootInfoException extends Error {
   constructor(utxo: BitcoinRunesUtxo) {
     super(
       `The provided utxo [${utxo.txId}.${utxo.index}] with address [${utxo.address}] is invalid. Bitcoin runes utxos with taproot script should provide a valid internalPubkey in taprootScriptInfo.`,
+    );
+  }
+}
+
+export class InvalidTaprootInfoException extends Error {
+  constructor(address: string) {
+    super(
+      `The provided address [${address}] is invalid. For taproot addresses should provide a valid internalPubkey in taprootScriptInfo.`,
     );
   }
 }

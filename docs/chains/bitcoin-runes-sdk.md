@@ -79,7 +79,7 @@ export interface BitcoinRunesUtxo {
 }
 ```
 
-Every UTxO is validated as it is pulled from the iterator, and one whose address is missing or is neither native segwit nor taproot causes an `InvalidUtxoException`.
+Every UTxO is validated as it is pulled from the iterator, and one whose address is missing or is neither native segwit nor taproot causes an `InvalidUtxoAddressException`.
 
 The required satoshi is not a parameter of the transfer, it is derived from the number of lock data chunks:
 
@@ -98,7 +98,7 @@ export type NetworkParams = {
 };
 ```
 
-A taproot address that is selected as an input but is missing from `taprootScriptInfo` causes an `InvalidTaprootInfoException`.
+A taproot address that is selected as an input but is missing from `taprootScriptInfo` causes an `InvalidUtxoTaprootInfoException`.
 
 The fee is estimated from the virtual size of the assumed transaction, counting the weight units of the inputs by their type, the outputs that are known in advance (the lock output and the data outputs), the change outputs and the runestone script.
 

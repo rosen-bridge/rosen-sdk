@@ -1,54 +1,24 @@
 import { Psbt } from 'bitcoinjs-lib';
 
 import { encodeAddress } from '@rosen-bridge/address-codec';
-import {
-  EmptyTokenMapException,
-  InsufficientAssetsException,
-} from '@rosen-bridge/sdk-abstract';
+import { InsufficientAssetsException } from '@rosen-bridge/sdk-abstract';
 import { NETWORKS } from '@rosen-bridge/sdk-constant';
 import { TokenMap } from '@rosen-bridge/tokens';
 
 import {
   BitcoinRunesRosenChainSDK,
   MINIMUM_BTC_FOR_NATIVE_SEGWIT_OUTPUT,
-} from '../lib';
-import {
   InvalidAddressException,
-  InvalidTaprootInfoException,
-  InvalidUtxoException,
+  InvalidUtxoTaprootInfoException,
+  InvalidUtxoAddressException,
   UnsupportedTokenException,
 } from '../lib';
-import {
-  adaRuneUtxos,
-  bitcoinRunesLockAddress,
-  insufficientUtxos,
-  invalidAddressUtxos,
-  legacyAddress,
-  mixedAddressUtxos,
-  nativeSegwitAddress,
-  nativeSegwitUtxos,
-  networkParams,
-  pythagorasRuneId,
-  adaRuneId,
-  rosenDataAdaRuneBridge,
-  rosenDataRuneBridge,
-  rosenTokens,
-  sameAddressUtxos,
-  taprootAddress,
-  taprootInternalPubkey,
-  taprootUtxos,
-  LOCK_OUTPUT_INDEX,
-  CHANGE_OUTPUT_INDEX,
-  RUNESTONE_OUTPUT_INDEX,
-  OUTPUTS_COUNT,
-  FIRST_DATA_OUTPUT_INDEX,
-} from './testData';
+import * as testData from './testData';
 import {
   extractLockData,
   extractRunestone,
   parseRosenData,
   toAsyncUtxoIterator,
-  toUtxoIterator,
 } from './utils';
 
 describe(`BitcoinRunesRosenChainSDK`, () => {
@@ -56,7 +26,7 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     let tokenMap: TokenMap;
     beforeEach(async () => {
       tokenMap = new TokenMap();
-      await tokenMap.updateConfigByJson(rosenTokens);
+      await tokenMap.updateConfigByJson(testData.rosenTokens);
     });
 
     /**
@@ -82,75 +52,78 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
       // instantiate BitcoinRunesRosenChainSDK with tokenMap and bitcoinRunesLockAddress
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
       const toEncodedAddress = encodeAddress(
         toChain,
-        rosenDataRuneBridge.toAddress,
+        testData.rosenDataRuneBridge.toAddress,
       );
-      const transferAmount = 100000n;
 
       // call generateLockTransaction
       const result = await bitcoinRunesRosenChainSDK.generateLockTransaction(
-        pythagorasRuneId,
+        testData.pythagorasRuneId,
         toChain,
         toEncodedAddress,
-        nativeSegwitAddress,
-        transferAmount,
-        BigInt(rosenDataRuneBridge.bridgeFee),
-        BigInt(rosenDataRuneBridge.networkFee),
-        toUtxoIterator(nativeSegwitUtxos),
-        networkParams,
+        testData.nativeSegwitAddress,
+        testData.transferAmount,
+        BigInt(testData.rosenDataRuneBridge.bridgeFee),
+        BigInt(testData.rosenDataRuneBridge.networkFee),
+        testData.nativeSegwitUtxos.values(),
+        testData.networkParams,
       );
 
       // parse the unsigned transaction
       const psbt = Psbt.fromBase64(result.psbt);
       expect(psbt.toHex()).toEqual(result.psbtHex);
-      expect(psbt.txOutputs).toHaveLength(OUTPUTS_COUNT);
+      expect(psbt.txOutputs).toHaveLength(testData.OUTPUTS_COUNT);
 
       // check change output
-      expect(psbt.txOutputs[CHANGE_OUTPUT_INDEX].address).toEqual(
-        nativeSegwitAddress,
+      expect(psbt.txOutputs[testData.CHANGE_OUTPUT_INDEX].address).toEqual(
+        testData.nativeSegwitAddress,
       );
 
       // check runestone output
-      expect(psbt.txOutputs[RUNESTONE_OUTPUT_INDEX].value).toEqual(0);
+      expect(psbt.txOutputs[testData.RUNESTONE_OUTPUT_INDEX].value).toEqual(0);
       expect(extractRunestone(psbt)).toEqual({
         edicts: [
           {
-            id: { block: 914209n, tx: 2664 },
-            amount: transferAmount,
-            output: LOCK_OUTPUT_INDEX,
+            id: testData.pythagorasRunestoneId,
+            amount: testData.transferAmount,
+            output: testData.LOCK_OUTPUT_INDEX,
           },
         ],
-        pointer: CHANGE_OUTPUT_INDEX,
+        pointer: testData.CHANGE_OUTPUT_INDEX,
       });
 
       // check lock output
-      expect(psbt.txOutputs[LOCK_OUTPUT_INDEX].address).toEqual(
-        bitcoinRunesLockAddress,
+      expect(psbt.txOutputs[testData.LOCK_OUTPUT_INDEX].address).toEqual(
+        testData.bitcoinRunesLockAddress,
       );
-      expect(psbt.txOutputs[LOCK_OUTPUT_INDEX].value).toEqual(
+      expect(psbt.txOutputs[testData.LOCK_OUTPUT_INDEX].value).toEqual(
         Number(MINIMUM_BTC_FOR_NATIVE_SEGWIT_OUTPUT),
       );
 
       // check data outputs
       expect(
-        psbt.txOutputs.slice(FIRST_DATA_OUTPUT_INDEX).map((box) => box.value),
+        psbt.txOutputs
+          .slice(testData.FIRST_DATA_OUTPUT_INDEX)
+          .map((box) => box.value),
       ).toEqual([294, 295, 296]);
       expect(
-        parseRosenData(extractLockData(psbt, FIRST_DATA_OUTPUT_INDEX)),
+        parseRosenData(extractLockData(psbt, testData.FIRST_DATA_OUTPUT_INDEX)),
       ).toEqual({
-        toChain: rosenDataRuneBridge.toChain,
-        toAddress: rosenDataRuneBridge.toAddress,
-        bridgeFee: rosenDataRuneBridge.wrappedBridgeFee,
-        networkFee: rosenDataRuneBridge.wrappedNetworkFee,
+        toChain: testData.rosenDataRuneBridge.toChain,
+        toAddress: testData.rosenDataRuneBridge.toAddress,
+        bridgeFee: testData.rosenDataRuneBridge.wrappedBridgeFee,
+        networkFee: testData.rosenDataRuneBridge.wrappedNetworkFee,
       });
 
       // check inputs
       expect(psbt.inputCount).toEqual(1);
-      expect(result.signInputs).toEqual({ [nativeSegwitAddress]: [0] });
+      expect(result.signInputs).toEqual({
+        [testData.nativeSegwitAddress]: [0],
+      });
     });
 
     /**
@@ -171,35 +144,35 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should generate lock transaction correctly with a taproot source address`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
       const toEncodedAddress = encodeAddress(
         toChain,
-        rosenDataRuneBridge.toAddress,
+        testData.rosenDataRuneBridge.toAddress,
       );
 
       const result = await bitcoinRunesRosenChainSDK.generateLockTransaction(
-        pythagorasRuneId,
+        testData.pythagorasRuneId,
         toChain,
         toEncodedAddress,
-        taprootAddress,
-        100000n,
-        BigInt(rosenDataRuneBridge.bridgeFee),
-        BigInt(rosenDataRuneBridge.networkFee),
-        toUtxoIterator(taprootUtxos),
-        networkParams,
+        testData.taprootAddress,
+        testData.transferAmount,
+        BigInt(testData.rosenDataRuneBridge.bridgeFee),
+        BigInt(testData.rosenDataRuneBridge.networkFee),
+        testData.taprootUtxos.values(),
+        testData.networkParams,
       );
 
       const psbt = Psbt.fromBase64(result.psbt);
-      expect(psbt.txOutputs).toHaveLength(OUTPUTS_COUNT);
-      expect(psbt.txOutputs[CHANGE_OUTPUT_INDEX].address).toEqual(
-        taprootAddress,
+      expect(psbt.txOutputs).toHaveLength(testData.OUTPUTS_COUNT);
+      expect(psbt.txOutputs[testData.CHANGE_OUTPUT_INDEX].address).toEqual(
+        testData.taprootAddress,
       );
       expect(psbt.data.inputs[0].tapInternalKey?.toString('hex')).toEqual(
-        taprootInternalPubkey,
+        testData.taprootInternalPubkey,
       );
-      expect(result.signInputs).toEqual({ [taprootAddress]: [0] });
+      expect(result.signInputs).toEqual({ [testData.taprootAddress]: [0] });
     });
 
     /**
@@ -219,34 +192,34 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should generate lock transaction correctly when the selected utxos belong to different addresses`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
       const toEncodedAddress = encodeAddress(
         toChain,
-        rosenDataRuneBridge.toAddress,
+        testData.rosenDataRuneBridge.toAddress,
       );
 
       const result = await bitcoinRunesRosenChainSDK.generateLockTransaction(
-        pythagorasRuneId,
+        testData.pythagorasRuneId,
         toChain,
         toEncodedAddress,
-        nativeSegwitAddress,
-        100000n,
-        BigInt(rosenDataRuneBridge.bridgeFee),
-        BigInt(rosenDataRuneBridge.networkFee),
-        toAsyncUtxoIterator(mixedAddressUtxos),
-        networkParams,
+        testData.nativeSegwitAddress,
+        testData.transferAmount,
+        BigInt(testData.rosenDataRuneBridge.bridgeFee),
+        BigInt(testData.rosenDataRuneBridge.networkFee),
+        toAsyncUtxoIterator(testData.mixedAddressUtxos),
+        testData.networkParams,
       );
 
       const psbt = Psbt.fromBase64(result.psbt);
       expect(psbt.inputCount).toEqual(2);
       expect(result.signInputs).toEqual({
-        [taprootAddress]: [0],
-        [nativeSegwitAddress]: [1],
+        [testData.taprootAddress]: [0],
+        [testData.nativeSegwitAddress]: [1],
       });
       expect(psbt.data.inputs[0].tapInternalKey?.toString('hex')).toEqual(
-        taprootInternalPubkey,
+        testData.taprootInternalPubkey,
       );
       expect(psbt.data.inputs[1].tapInternalKey).toBeUndefined();
     });
@@ -268,29 +241,31 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should generate lock transaction correctly when multiple utxos of the source address are selected`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
       const toEncodedAddress = encodeAddress(
         toChain,
-        rosenDataRuneBridge.toAddress,
+        testData.rosenDataRuneBridge.toAddress,
       );
 
       const result = await bitcoinRunesRosenChainSDK.generateLockTransaction(
-        pythagorasRuneId,
+        testData.pythagorasRuneId,
         toChain,
         toEncodedAddress,
-        nativeSegwitAddress,
-        100000n,
-        BigInt(rosenDataRuneBridge.bridgeFee),
-        BigInt(rosenDataRuneBridge.networkFee),
-        toUtxoIterator(sameAddressUtxos),
-        networkParams,
+        testData.nativeSegwitAddress,
+        testData.transferAmount,
+        BigInt(testData.rosenDataRuneBridge.bridgeFee),
+        BigInt(testData.rosenDataRuneBridge.networkFee),
+        testData.sameAddressUtxos.values(),
+        testData.networkParams,
       );
 
       const psbt = Psbt.fromBase64(result.psbt);
       expect(psbt.inputCount).toEqual(2);
-      expect(result.signInputs).toEqual({ [nativeSegwitAddress]: [0, 1] });
+      expect(result.signInputs).toEqual({
+        [testData.nativeSegwitAddress]: [0, 1],
+      });
     });
 
     /**
@@ -309,34 +284,34 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should not drop any decimal of the fees when the runes holds the significant decimals of its token set`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.CARDANO;
       const toEncodedAddress = encodeAddress(
         toChain,
-        rosenDataAdaRuneBridge.toAddress,
+        testData.rosenDataAdaRuneBridge.toAddress,
       );
 
       const result = await bitcoinRunesRosenChainSDK.generateLockTransaction(
-        adaRuneId,
+        testData.adaRuneId,
         toChain,
         toEncodedAddress,
-        nativeSegwitAddress,
-        100000n,
-        BigInt(rosenDataAdaRuneBridge.bridgeFee),
-        BigInt(rosenDataAdaRuneBridge.networkFee),
-        toUtxoIterator(adaRuneUtxos),
-        networkParams,
+        testData.nativeSegwitAddress,
+        testData.transferAmount,
+        BigInt(testData.rosenDataAdaRuneBridge.bridgeFee),
+        BigInt(testData.rosenDataAdaRuneBridge.networkFee),
+        testData.adaRuneUtxos.values(),
+        testData.networkParams,
       );
 
       const psbt = Psbt.fromBase64(result.psbt);
       expect(
-        parseRosenData(extractLockData(psbt, FIRST_DATA_OUTPUT_INDEX)),
+        parseRosenData(extractLockData(psbt, testData.FIRST_DATA_OUTPUT_INDEX)),
       ).toEqual({
-        toChain: rosenDataAdaRuneBridge.toChain,
-        toAddress: rosenDataAdaRuneBridge.toAddress,
-        bridgeFee: rosenDataAdaRuneBridge.bridgeFee,
-        networkFee: rosenDataAdaRuneBridge.networkFee,
+        toChain: testData.rosenDataAdaRuneBridge.toChain,
+        toAddress: testData.rosenDataAdaRuneBridge.toAddress,
+        bridgeFee: testData.rosenDataAdaRuneBridge.bridgeFee,
+        networkFee: testData.rosenDataAdaRuneBridge.networkFee,
       });
     });
 
@@ -354,21 +329,21 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should throw UnsupportedTokenException when the token is the native token of the chain`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
 
       await expect(
         bitcoinRunesRosenChainSDK.generateLockTransaction(
-          'btc',
+          'btc-runes',
           toChain,
-          encodeAddress(toChain, rosenDataRuneBridge.toAddress),
-          nativeSegwitAddress,
-          100000n,
-          BigInt(rosenDataRuneBridge.bridgeFee),
-          BigInt(rosenDataRuneBridge.networkFee),
-          toUtxoIterator(nativeSegwitUtxos),
-          networkParams,
+          encodeAddress(toChain, testData.rosenDataRuneBridge.toAddress),
+          testData.nativeSegwitAddress,
+          testData.transferAmount,
+          BigInt(testData.rosenDataRuneBridge.bridgeFee),
+          BigInt(testData.rosenDataRuneBridge.networkFee),
+          testData.nativeSegwitUtxos.values(),
+          testData.networkParams,
         ),
       ).rejects.toThrow(UnsupportedTokenException);
     });
@@ -387,27 +362,27 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should throw InvalidAddressException when the source address is neither taproot nor native segwit`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
 
       await expect(
         bitcoinRunesRosenChainSDK.generateLockTransaction(
-          pythagorasRuneId,
+          testData.pythagorasRuneId,
           toChain,
-          encodeAddress(toChain, rosenDataRuneBridge.toAddress),
-          legacyAddress,
-          100000n,
-          BigInt(rosenDataRuneBridge.bridgeFee),
-          BigInt(rosenDataRuneBridge.networkFee),
-          toUtxoIterator(nativeSegwitUtxos),
-          networkParams,
+          encodeAddress(toChain, testData.rosenDataRuneBridge.toAddress),
+          testData.legacyAddress,
+          testData.transferAmount,
+          BigInt(testData.rosenDataRuneBridge.bridgeFee),
+          BigInt(testData.rosenDataRuneBridge.networkFee),
+          testData.nativeSegwitUtxos.values(),
+          testData.networkParams,
         ),
       ).rejects.toThrow(InvalidAddressException);
     });
 
     /**
-     * @target generateLockTransaction should throw InvalidUtxoException when a
+     * @target generateLockTransaction should throw InvalidUtxoAddressException when a
      * utxo address is neither taproot nor native segwit
      * @dependencies
      * - TokenMap
@@ -415,28 +390,28 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
      * - instantiate BitcoinRunesRosenChainSDK with tokenMap and bitcoinRunesLockAddress
      * - call generateLockTransaction with a utxo of a legacy address
      * @expected
-     * - generateLockTransaction should throw InvalidUtxoException
+     * - generateLockTransaction should throw InvalidUtxoAddressException
      */
-    it(`should throw InvalidUtxoException when a utxo address is neither taproot nor native segwit`, async () => {
+    it(`should throw InvalidUtxoAddressException when a utxo address is neither taproot nor native segwit`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
 
       await expect(
         bitcoinRunesRosenChainSDK.generateLockTransaction(
-          pythagorasRuneId,
+          testData.pythagorasRuneId,
           toChain,
-          encodeAddress(toChain, rosenDataRuneBridge.toAddress),
-          nativeSegwitAddress,
-          100000n,
-          BigInt(rosenDataRuneBridge.bridgeFee),
-          BigInt(rosenDataRuneBridge.networkFee),
-          toUtxoIterator(invalidAddressUtxos),
-          networkParams,
+          encodeAddress(toChain, testData.rosenDataRuneBridge.toAddress),
+          testData.nativeSegwitAddress,
+          testData.transferAmount,
+          BigInt(testData.rosenDataRuneBridge.bridgeFee),
+          BigInt(testData.rosenDataRuneBridge.networkFee),
+          testData.invalidAddressUtxos.values(),
+          testData.networkParams,
         ),
-      ).rejects.toThrow(InvalidUtxoException);
+      ).rejects.toThrow(InvalidUtxoAddressException);
     });
 
     /**
@@ -453,27 +428,27 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
     it(`should throw InsufficientAssetsException when the utxos do not cover the required assets`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
 
       await expect(
         bitcoinRunesRosenChainSDK.generateLockTransaction(
-          pythagorasRuneId,
+          testData.pythagorasRuneId,
           toChain,
-          encodeAddress(toChain, rosenDataRuneBridge.toAddress),
-          nativeSegwitAddress,
-          100000n,
-          BigInt(rosenDataRuneBridge.bridgeFee),
-          BigInt(rosenDataRuneBridge.networkFee),
-          toUtxoIterator(insufficientUtxos),
-          networkParams,
+          encodeAddress(toChain, testData.rosenDataRuneBridge.toAddress),
+          testData.nativeSegwitAddress,
+          testData.transferAmount,
+          BigInt(testData.rosenDataRuneBridge.bridgeFee),
+          BigInt(testData.rosenDataRuneBridge.networkFee),
+          testData.insufficientUtxos.values(),
+          testData.networkParams,
         ),
       ).rejects.toThrow(InsufficientAssetsException);
     });
 
     /**
-     * @target generateLockTransaction should throw InvalidTaprootInfoException when
+     * @target generateLockTransaction should throw InvalidUtxoTaprootInfoException when
      * the internal pubkey of a taproot utxo is not provided
      * @dependencies
      * - TokenMap
@@ -482,64 +457,31 @@ describe(`BitcoinRunesRosenChainSDK`, () => {
      * - call generateLockTransaction with networkParams missing the internal pubkey
      *   of the taproot utxo address
      * @expected
-     * - generateLockTransaction should throw InvalidTaprootInfoException
+     * - generateLockTransaction should throw InvalidUtxoTaprootInfoException
      */
     it(`should throw InvalidTaprootInfoException when the internal pubkey of a taproot utxo is not provided`, async () => {
       const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
         tokenMap,
-        bitcoinRunesLockAddress,
+        testData.bitcoinRunesLockAddress,
       );
       const toChain = NETWORKS.ERGO;
 
       await expect(
         bitcoinRunesRosenChainSDK.generateLockTransaction(
-          pythagorasRuneId,
+          testData.pythagorasRuneId,
           toChain,
-          encodeAddress(toChain, rosenDataRuneBridge.toAddress),
-          nativeSegwitAddress,
-          100000n,
-          BigInt(rosenDataRuneBridge.bridgeFee),
-          BigInt(rosenDataRuneBridge.networkFee),
-          toUtxoIterator(taprootUtxos),
+          encodeAddress(toChain, testData.rosenDataRuneBridge.toAddress),
+          testData.nativeSegwitAddress,
+          testData.transferAmount,
+          BigInt(testData.rosenDataRuneBridge.bridgeFee),
+          BigInt(testData.rosenDataRuneBridge.networkFee),
+          testData.taprootUtxos.values(),
           {
-            ...networkParams,
+            ...testData.networkParams,
             taprootScriptInfo: new Map(),
           },
         ),
-      ).rejects.toThrow(InvalidTaprootInfoException);
-    });
-
-    /**
-     * @target generateLockTransaction should throw EmptyTokenMapException when
-     * the token map is empty
-     * @dependencies
-     * - TokenMap
-     * @scenario
-     * - instantiate BitcoinRunesRosenChainSDK with an empty tokenMap
-     * - call generateLockTransaction
-     * @expected
-     * - generateLockTransaction should throw EmptyTokenMapException
-     */
-    it(`should throw EmptyTokenMapException when the token map is empty`, async () => {
-      const bitcoinRunesRosenChainSDK = new BitcoinRunesRosenChainSDK(
-        new TokenMap(),
-        bitcoinRunesLockAddress,
-      );
-      const toChain = NETWORKS.ERGO;
-
-      await expect(
-        bitcoinRunesRosenChainSDK.generateLockTransaction(
-          pythagorasRuneId,
-          toChain,
-          encodeAddress(toChain, rosenDataRuneBridge.toAddress),
-          nativeSegwitAddress,
-          100000n,
-          BigInt(rosenDataRuneBridge.bridgeFee),
-          BigInt(rosenDataRuneBridge.networkFee),
-          toUtxoIterator(nativeSegwitUtxos),
-          networkParams,
-        ),
-      ).rejects.toThrow(EmptyTokenMapException);
+      ).rejects.toThrow(InvalidUtxoTaprootInfoException);
     });
   });
 });

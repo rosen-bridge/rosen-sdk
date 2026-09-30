@@ -83,7 +83,11 @@ export const rosenTokens: RosenTokens = [
 ];
 
 export const pythagorasRuneId = '914209:2664';
+// pythagorasRuneId as it is encoded in a runestone edict
+export const pythagorasRunestoneId = { block: 914209n, tx: 2664 };
 export const adaRuneId = '915909:3639';
+
+export const transferAmount = 100000n;
 
 export const bitcoinRunesLockAddress =
   'bc1qkpxh7l6g7tmtnl70e6eqt4yv3y6uzsvvymjj4v';
@@ -230,4 +234,28 @@ export const rosenDataAdaRuneBridge = {
 export const networkParams = {
   feeRatio: 2,
   taprootScriptInfo,
+};
+
+// single dust-value utxos without runes, one per address type
+export const nativeSegwitDustUtxo: BitcoinRunesUtxo = {
+  txId: 'd1797fa384ada5953128474f397b31d18681376fb542e24c2e1f79ee94799637',
+  index: 0,
+  value: 294n,
+  runes: [],
+  address: nativeSegwitAddress,
+};
+
+export const taprootDustUtxo: BitcoinRunesUtxo = {
+  ...nativeSegwitDustUtxo,
+  address: taprootAddress,
+};
+
+export const legacyDustUtxo: BitcoinRunesUtxo = {
+  ...nativeSegwitDustUtxo,
+  address: legacyAddress,
+};
+
+export const noAddressDustUtxo: BitcoinRunesUtxo = {
+  ...nativeSegwitDustUtxo,
+  address: undefined,
 };

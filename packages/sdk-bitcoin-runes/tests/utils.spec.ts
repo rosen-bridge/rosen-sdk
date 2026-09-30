@@ -1,6 +1,4 @@
-import { BitcoinRunesUtxo } from '@rosen-bridge/bitcoin-runes-utxo-selection';
-
-import { InvalidUtxoException } from '../lib';
+import { InvalidUtxoAddressException } from '../lib';
 import {
   generateFeeEstimatorWithAssumptions,
   isNativeSegWit,
@@ -10,13 +8,7 @@ import {
   makeTaprootPayment,
   validateBitcoinRunesUtxo,
 } from '../lib/utils';
-import {
-  legacyAddress,
-  nativeSegwitAddress,
-  secondTaprootAddress,
-  taprootAddress,
-  taprootInternalPubkey,
-} from './testData';
+import * as testData from './testData';
 
 describe(`utils`, () => {
   describe(`isNativeSegWit`, () => {
@@ -30,10 +22,12 @@ describe(`utils`, () => {
      * - only native segwit addresses should be detected, regardless of their case
      */
     it(`should detect native segwit addresses`, () => {
-      expect(isNativeSegWit(nativeSegwitAddress)).toEqual(true);
-      expect(isNativeSegWit(nativeSegwitAddress.toUpperCase())).toEqual(true);
-      expect(isNativeSegWit(taprootAddress)).toEqual(false);
-      expect(isNativeSegWit(legacyAddress)).toEqual(false);
+      expect(isNativeSegWit(testData.nativeSegwitAddress)).toEqual(true);
+      expect(
+        isNativeSegWit(testData.nativeSegwitAddress.toUpperCase()),
+      ).toEqual(true);
+      expect(isNativeSegWit(testData.taprootAddress)).toEqual(false);
+      expect(isNativeSegWit(testData.legacyAddress)).toEqual(false);
     });
   });
 
@@ -48,10 +42,10 @@ describe(`utils`, () => {
      * - only taproot addresses should be detected, regardless of their case
      */
     it(`should detect taproot addresses`, () => {
-      expect(isTaproot(taprootAddress)).toEqual(true);
-      expect(isTaproot(taprootAddress.toUpperCase())).toEqual(true);
-      expect(isTaproot(nativeSegwitAddress)).toEqual(false);
-      expect(isTaproot(legacyAddress)).toEqual(false);
+      expect(isTaproot(testData.taprootAddress)).toEqual(true);
+      expect(isTaproot(testData.taprootAddress.toUpperCase())).toEqual(true);
+      expect(isTaproot(testData.nativeSegwitAddress)).toEqual(false);
+      expect(isTaproot(testData.legacyAddress)).toEqual(false);
     });
   });
 
@@ -68,9 +62,11 @@ describe(`utils`, () => {
      * - legacy addresses should be invalid
      */
     it(`should accept only taproot and native segwit addresses`, () => {
-      expect(isValidBitcoinRunesAddress(nativeSegwitAddress)).toEqual(true);
-      expect(isValidBitcoinRunesAddress(taprootAddress)).toEqual(true);
-      expect(isValidBitcoinRunesAddress(legacyAddress)).toEqual(false);
+      expect(isValidBitcoinRunesAddress(testData.nativeSegwitAddress)).toEqual(
+        true,
+      );
+      expect(isValidBitcoinRunesAddress(testData.taprootAddress)).toEqual(true);
+      expect(isValidBitcoinRunesAddress(testData.legacyAddress)).toEqual(false);
     });
   });
 
@@ -86,9 +82,9 @@ describe(`utils`, () => {
      * - the payment output script should be generated
      */
     it(`should generate the payment of a native segwit address`, () => {
-      const payment = makeP2wpkhPayment(nativeSegwitAddress);
+      const payment = makeP2wpkhPayment(testData.nativeSegwitAddress);
 
-      expect(payment.address).toEqual(nativeSegwitAddress);
+      expect(payment.address).toEqual(testData.nativeSegwitAddress);
       expect(payment.output).toBeDefined();
     });
 
@@ -101,7 +97,7 @@ describe(`utils`, () => {
      * - makeP2wpkhPayment should throw
      */
     it(`should throw when the address is not native segwit`, () => {
-      expect(() => makeP2wpkhPayment(taprootAddress)).toThrow();
+      expect(() => makeP2wpkhPayment(testData.taprootAddress)).toThrow();
     });
   });
 
@@ -117,11 +113,14 @@ describe(`utils`, () => {
      * - the payment internal pubkey should be the given internal pubkey
      */
     it(`should generate the payment of a taproot address`, () => {
-      const payment = makeTaprootPayment(taprootInternalPubkey, taprootAddress);
+      const payment = makeTaprootPayment(
+        testData.taprootInternalPubkey,
+        testData.taprootAddress,
+      );
 
-      expect(payment.address).toEqual(taprootAddress);
+      expect(payment.address).toEqual(testData.taprootAddress);
       expect(payment.internalPubkey?.toString('hex')).toEqual(
-        taprootInternalPubkey,
+        testData.taprootInternalPubkey,
       );
     });
 
@@ -136,77 +135,76 @@ describe(`utils`, () => {
      */
     it(`should throw when the internal pubkey does not belong to the address`, () => {
       expect(() =>
-        makeTaprootPayment(taprootInternalPubkey, secondTaprootAddress),
+        makeTaprootPayment(
+          testData.taprootInternalPubkey,
+          testData.secondTaprootAddress,
+        ),
       ).toThrow();
     });
   });
 
   describe(`validateBitcoinRunesUtxo`, () => {
     /**
-     * @target validateBitcoinRunesUtxo should accept utxos of taproot and native
-     * segwit addresses
+     * @target validateBitcoinRunesUtxo should accept a utxo of a native segwit
+     * address
      * @dependencies
      * @scenario
-     * - call validateBitcoinRunesUtxo with utxos of a native segwit and a taproot address
+     * - call validateBitcoinRunesUtxo with a utxo of a native segwit address
      * @expected
      * - validateBitcoinRunesUtxo should not throw
      */
-    it(`should accept utxos of taproot and native segwit addresses`, () => {
-      const utxo: BitcoinRunesUtxo = {
-        txId: 'd1797fa384ada5953128474f397b31d18681376fb542e24c2e1f79ee94799637',
-        index: 0,
-        value: 294n,
-        runes: [],
-        address: nativeSegwitAddress,
-      };
-
-      expect(() => validateBitcoinRunesUtxo(utxo)).not.toThrow();
+    it(`should accept a utxo of a native segwit address`, () => {
       expect(() =>
-        validateBitcoinRunesUtxo({ ...utxo, address: taprootAddress }),
+        validateBitcoinRunesUtxo(testData.nativeSegwitDustUtxo),
       ).not.toThrow();
     });
 
     /**
-     * @target validateBitcoinRunesUtxo should throw InvalidUtxoException when the
-     * utxo address is invalid or missing
+     * @target validateBitcoinRunesUtxo should accept a utxo of a taproot address
+     * @dependencies
+     * @scenario
+     * - call validateBitcoinRunesUtxo with a utxo of a taproot address
+     * @expected
+     * - validateBitcoinRunesUtxo should not throw
+     */
+    it(`should accept a utxo of a taproot address`, () => {
+      expect(() =>
+        validateBitcoinRunesUtxo(testData.taprootDustUtxo),
+      ).not.toThrow();
+    });
+
+    /**
+     * @target validateBitcoinRunesUtxo should throw InvalidUtxoAddressException when the
+     * utxo address is neither taproot nor native segwit
      * @dependencies
      * @scenario
      * - call validateBitcoinRunesUtxo with a utxo of a legacy address
+     * @expected
+     * - validateBitcoinRunesUtxo should throw InvalidUtxoAddressException
+     */
+    it(`should throw InvalidUtxoAddressException when the utxo address is neither taproot nor native segwit`, () => {
+      expect(() => validateBitcoinRunesUtxo(testData.legacyDustUtxo)).toThrow(
+        InvalidUtxoAddressException,
+      );
+    });
+
+    /**
+     * @target validateBitcoinRunesUtxo should throw InvalidUtxoAddressException when the
+     * utxo address is missing
+     * @dependencies
+     * @scenario
      * - call validateBitcoinRunesUtxo with a utxo without address
      * @expected
-     * - validateBitcoinRunesUtxo should throw InvalidUtxoException in both cases
+     * - validateBitcoinRunesUtxo should throw InvalidUtxoAddressException
      */
-    it(`should throw InvalidUtxoException when the utxo address is invalid or missing`, () => {
-      const utxo: BitcoinRunesUtxo = {
-        txId: 'd1797fa384ada5953128474f397b31d18681376fb542e24c2e1f79ee94799637',
-        index: 0,
-        value: 294n,
-        runes: [],
-        address: legacyAddress,
-      };
-
-      expect(() => validateBitcoinRunesUtxo(utxo)).toThrow(
-        InvalidUtxoException,
-      );
+    it(`should throw InvalidUtxoAddressException when the utxo address is missing`, () => {
       expect(() =>
-        validateBitcoinRunesUtxo({ ...utxo, address: undefined }),
-      ).toThrow(InvalidUtxoException);
+        validateBitcoinRunesUtxo(testData.noAddressDustUtxo),
+      ).toThrow(InvalidUtxoAddressException);
     });
   });
 
   describe(`generateFeeEstimatorWithAssumptions`, () => {
-    const nativeSegwitUtxo: BitcoinRunesUtxo = {
-      txId: 'd1797fa384ada5953128474f397b31d18681376fb542e24c2e1f79ee94799637',
-      index: 0,
-      value: 294n,
-      runes: [],
-      address: nativeSegwitAddress,
-    };
-    const taprootUtxo: BitcoinRunesUtxo = {
-      ...nativeSegwitUtxo,
-      address: taprootAddress,
-    };
-
     /**
      * @target generateFeeEstimatorWithAssumptions should estimate the fee of a
      * native segwit transaction
@@ -223,11 +221,11 @@ describe(`utils`, () => {
         2,
         4,
         0,
-        nativeSegwitAddress,
+        testData.nativeSegwitAddress,
       );
 
       // vsize = (42 + 272 + (36 + 10 * 4) + 5 * 124) / 4 = 252.5
-      expect(estimateFee([nativeSegwitUtxo], 1)).toEqual(505n);
+      expect(estimateFee([testData.nativeSegwitDustUtxo], 1)).toEqual(505n);
     });
 
     /**
@@ -246,11 +244,11 @@ describe(`utils`, () => {
         1,
         4,
         0,
-        taprootAddress,
+        testData.taprootAddress,
       );
 
       // vsize = (42 + 230 + (36 + 10 * 4) + 4 * 124 + 1 * 172) / 4 = 254
-      expect(estimateFee([taprootUtxo], 1)).toEqual(254n);
+      expect(estimateFee([testData.taprootDustUtxo], 1)).toEqual(254n);
     });
 
     /**
@@ -269,11 +267,16 @@ describe(`utils`, () => {
         3,
         4,
         0,
-        legacyAddress,
+        testData.legacyAddress,
       );
 
       // vsize = (42 + 230 + 272 + (36 + 10 * 4) + 4 * 124) / 4 = 279
-      expect(estimateFee([taprootUtxo, nativeSegwitUtxo], 0)).toEqual(837n);
+      expect(
+        estimateFee(
+          [testData.taprootDustUtxo, testData.nativeSegwitDustUtxo],
+          0,
+        ),
+      ).toEqual(837n);
     });
 
     /**
@@ -293,13 +296,13 @@ describe(`utils`, () => {
         2,
         4,
         0,
-        nativeSegwitAddress,
+        testData.nativeSegwitAddress,
       );
 
       const estimations = [
-        estimateFee([nativeSegwitUtxo], 1),
-        estimateFee([nativeSegwitUtxo], 1),
-        estimateFee([nativeSegwitUtxo], 1),
+        estimateFee([testData.nativeSegwitDustUtxo], 1),
+        estimateFee([testData.nativeSegwitDustUtxo], 1),
+        estimateFee([testData.nativeSegwitDustUtxo], 1),
       ];
 
       expect(estimations).toEqual([505n, 505n, 505n]);

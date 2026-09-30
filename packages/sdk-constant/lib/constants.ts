@@ -14,7 +14,7 @@ export const NATIVE_TOKEN_IDS = {
   [NETWORKS.ETHEREUM]: 'eth',
   [NETWORKS.BINANCE]: 'bnb',
   [NETWORKS.BITCOIN]: 'btc',
-  [NETWORKS.BITCOIN_RUNES]: 'btc',
+  [NETWORKS.BITCOIN_RUNES]: 'btc-runes',
   [NETWORKS.DOGE]: 'doge',
 };
 

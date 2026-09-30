@@ -12,7 +12,7 @@ import {
   TAPROOT_INPUT_WEIGHT_UNIT,
   TAPROOT_OUTPUT_WEIGHT_UNIT,
 } from './constants';
-import { InvalidUtxoException } from './errors';
+import { InvalidUtxoAddressException } from './errors';
 
 // taproot payments require an elliptic curve implementation to tweak the
 // internal pubkey, which bitcoinjs-lib does not bundle
@@ -181,5 +181,5 @@ export const isValidBitcoinRunesAddress = (address: string) => {
  */
 export const validateBitcoinRunesUtxo = (utxo: BitcoinRunesUtxo) => {
   if (!utxo.address || !isValidBitcoinRunesAddress(utxo.address))
-    throw new InvalidUtxoException(utxo);
+    throw new InvalidUtxoAddressException(utxo);
 };

@@ -166,8 +166,8 @@ The SDK may throw the following errors:
 
 - `UnsupportedTokenException`: Thrown if the provided token is BTC, which is not bridgeable on this chain.
 - `InvalidAddressException`: Thrown if `fromAddress` is neither a native segwit nor a taproot address.
-- `InvalidUtxoException`: Thrown if a UTxO has no address, or its address is neither native segwit nor taproot.
-- `InvalidTaprootInfoException`: Thrown if a taproot UTxO is selected but its internal public key is missing from `taprootScriptInfo`.
+- `InvalidUtxoAddressException`: Thrown if a UTxO has no address, or its address is neither native segwit nor taproot.
+- `InvalidUtxoTaprootInfoException`: Thrown if a taproot UTxO is selected but its internal public key is missing from `taprootScriptInfo`.
 - `InsufficientAssetsException`: Thrown if the provided UTxOs do not cover the required rune amount or satoshi for the transaction.
 - `InvalidChunkDataException`: Thrown if the rosen data cannot be split into chunks.
 
@@ -177,7 +177,7 @@ Example:
 import {
   InsufficientAssetsException,
   InvalidAddressException,
-  InvalidTaprootInfoException,
+  InvalidUtxoTaprootInfoException,
   UnsupportedTokenException,
 } from '@rosen-bridge/sdk-bitcoin-runes';
 
@@ -188,7 +188,7 @@ try {
     // Handle unsupported token
   } else if (e instanceof InvalidAddressException) {
     // Handle unsupported source address type
-  } else if (e instanceof InvalidTaprootInfoException) {
+  } else if (e instanceof InvalidUtxoTaprootInfoException) {
     // Handle missing taproot internal public key
   } else if (e instanceof InsufficientAssetsException) {
     // Handle insufficient assets

@@ -23,6 +23,7 @@ import {
   InvalidAddressException,
   InvalidChunkDataException,
   InvalidTaprootInfoException,
+  InvalidUtxoTaprootInfoException,
   UnsupportedTokenException,
 } from './errors';
 import { UnsignedPsbtData, NetworkParams } from './types';
@@ -88,6 +89,9 @@ class BitcoinRunesRosenChainSDK extends AbstractRosenUtxoChainSDK<
   ): Promise<UnsignedPsbtData> => {
     if (tokenId === NATIVE_TOKEN_IDS[this.CHAIN])
       throw new UnsupportedTokenException(tokenId);
+    if (!isValidBitcoinRunesAddress(fromAddress))
+      throw new InvalidAddressException(fromAddress);
+
     const lockData = generateRosenData(
       toChain,
       toEncodedAddress,
@@ -96,9 +100,6 @@ class BitcoinRunesRosenChainSDK extends AbstractRosenUtxoChainSDK<
     );
     const lockDataChunks = lockData.match(/.{1,40}/g);
     if (!lockDataChunks) throw new InvalidChunkDataException(lockData);
-
-    if (!isValidBitcoinRunesAddress(fromAddress))
-      throw new InvalidAddressException(fromAddress);
 
     // validate each utxo as it is pulled, so that the iterator is not consumed
     // before the box selection
@@ -197,7 +198,7 @@ class BitcoinRunesRosenChainSDK extends AbstractRosenUtxoChainSDK<
             },
             tapInternalKey: taprootPayment.internalPubkey,
           });
-        } else throw new InvalidTaprootInfoException(box);
+        } else throw new InvalidUtxoTaprootInfoException(box);
       } else {
         const p2wpkhPayment = makeP2wpkhPayment(box.address!);
         psbt.addInput({
@@ -223,15 +224,17 @@ class BitcoinRunesRosenChainSDK extends AbstractRosenUtxoChainSDK<
         value: changeNativeToken,
       });
     } else {
-      const taprootPayment = makeTaprootPayment(
-        networkParams.taprootScriptInfo.get(fromAddress)!,
-        fromAddress,
-      );
-      psbt.addOutput({
-        value: changeNativeToken,
-        script: taprootPayment.output!,
-        tapInternalKey: taprootPayment.internalPubkey,
-      });
+      if (networkParams.taprootScriptInfo.has(fromAddress)) {
+        const taprootPayment = makeTaprootPayment(
+          networkParams.taprootScriptInfo.get(fromAddress)!,
+          fromAddress,
+        );
+        psbt.addOutput({
+          value: changeNativeToken,
+          script: taprootPayment.output!,
+          tapInternalKey: taprootPayment.internalPubkey,
+        });
+      } else throw new InvalidTaprootInfoException(fromAddress);
     }
 
     // OP_RETURN

@@ -1,5 +1,6 @@
 import {
   RunestoneSpec,
+  isRunestone,
   tryDecodeRunestone,
 } from '@magiceden-oss/runestone-lib';
 import { Psbt } from 'bitcoinjs-lib';
@@ -72,28 +73,23 @@ export const extractLockData = (
  * decodes the runestone of the transaction
  * @param psbt
  * @returns the decoded runestone
+ * @throws if the transaction has no runestone or it decodes to a cenotaph
  */
-export const extractRunestone = (psbt: Psbt): RunestoneSpec =>
-  tryDecodeRunestone({
+export const extractRunestone = (psbt: Psbt): RunestoneSpec => {
+  const artifact = tryDecodeRunestone({
     vout: psbt.txOutputs.map((output) => ({
       scriptPubKey: { hex: output.script.toString('hex') },
     })),
-  }) as RunestoneSpec;
-
-/**
- * wraps utxos in a sync iterator
- * @param utxos
- */
-export const toUtxoIterator = (
-  utxos: Array<BitcoinRunesUtxo>,
-): Iterator<BitcoinRunesUtxo, undefined> => {
-  let index = 0;
-  return {
-    next: () =>
-      index < utxos.length
-        ? { done: false, value: utxos[index++] }
-        : { done: true, value: undefined },
-  };
+  });
+  if (artifact === null) {
+    throw new Error('Transaction does not contain a runestone');
+  }
+  if (!isRunestone(artifact)) {
+    throw new Error(
+      `Transaction runestone is a cenotaph with flaws [${artifact.flaws.join(', ')}]`,
+    );
+  }
+  return artifact;
 };
 
 /**
@@ -103,7 +99,7 @@ export const toUtxoIterator = (
 export const toAsyncUtxoIterator = (
   utxos: Array<BitcoinRunesUtxo>,
 ): AsyncIterator<BitcoinRunesUtxo, undefined> => {
-  const iterator = toUtxoIterator(utxos);
+  const iterator = utxos.values();
   return {
     next: async () => iterator.next(),
   };
