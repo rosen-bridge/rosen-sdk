@@ -416,6 +416,33 @@ describe(`RosenUserInterface`, () => {
     });
 
     /**
+     * @target convertFeeToAssetUnit should wrap the fee with the toChain native token decimals when the bridged token drops different decimals
+     * @dependencies
+     * - getMinimumFeeBox
+     * @scenario
+     * - mock getMinimumFeeBox to return an object whose getFee returns ChainMinimumFee
+     * - call convertFeeToAssetUnit for ERG from ergo to ethereum with the fee in wei
+     * - check returned fees amount
+     * @expected
+     * - it should wrap the fee using the ETH token set (dropping 9 decimals) rather than the ERG token set (dropping none), so the result is not 10^9 times too large
+     */
+    it(`should wrap the fee with the toChain native token decimals when the bridged token drops different decimals`, async () => {
+      mockGetMinimumFeeBox(rosenUserInterface, [
+        ergToErgoFeeSample,
+        ethToEthereumFeeSample,
+      ]);
+
+      const result = await rosenUserInterface.convertFeeToAssetUnit(
+        NETWORKS.ERGO,
+        'erg',
+        1599000,
+        NETWORKS.ETHEREUM,
+        1_000_000_000_000_000n, // fee in wei, the ethereum native token unit
+      );
+      expect(result).toEqual(1_750_000_000n);
+    });
+
+    /**
      * @target convertFeeToAssetUnit should convert fee to asset unit for tokens like ETH from insignificant fromChain decimal correctly
      * @dependencies
      * - getMinimumFeeBox

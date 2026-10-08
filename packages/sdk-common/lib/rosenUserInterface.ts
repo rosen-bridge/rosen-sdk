@@ -267,11 +267,6 @@ class RosenUserInterface {
     this.logger.debug(
       `Converting fee to asset unit: tokenId=[${tokenId}], fromChain=[${fromChain}], toChain=[${toChain}], height=[${height}], fee=[${fee}]`,
     );
-    const wrappedFee = this.tokenMap.wrapAmount(
-      tokenId,
-      fee,
-      toChain, // The fee is in the toChain native token unit so the value should be wrapped from toChain
-    ).amount;
     const tokenChains = this.getTokenDetails(fromChain, tokenId, toChain);
     const tokenIdOnErgo = this.tokenMap.getID(tokenChains, NETWORKS.ERGO);
 
@@ -286,6 +281,16 @@ class RosenUserInterface {
     const nativeToken = nativeTokens[0];
 
     const nativeTokenIdOnErgo = this.tokenMap.getID(nativeToken, NETWORKS.ERGO);
+
+    // The fee is in the toChain native token unit, so it must be wrapped
+    // using the native token's decimal set, not the bridged token's: the two
+    // can drop a different number of decimals (e.g. bridging ERG to Ethereum,
+    // the fee is in wei and ETH drops 9 decimals while ERG drops none).
+    const wrappedFee = this.tokenMap.wrapAmount(
+      this.tokenMap.getID(nativeToken, toChain),
+      fee,
+      toChain,
+    ).amount;
 
     const minimumFeeForGivenAsset = await this.getMinimumFeeBox(tokenIdOnErgo);
     const minimumFeeForChainNativeToken =
